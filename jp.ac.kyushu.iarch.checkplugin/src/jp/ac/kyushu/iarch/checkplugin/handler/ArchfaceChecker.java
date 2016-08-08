@@ -31,13 +31,13 @@ public class ArchfaceChecker extends XMLreader {
 	// }
 	public void checkProject() {
 		checkProjectValidation(getArchfileResource(),
-				getClassDiagramResource(),
+				getClassDiagramResource(), getDataflowDiagramResource(),
 				getSequenceDiagramResource(), getSourceCodeResource(),
 				getARXMLResource());
 	}
 
 	public synchronized void checkProjectValidation(IResource archfile,
-			IResource classDiagramResource,
+			IResource classDiagramResource, IResource dataflowDiagramResource,
 			List<IResource> sequenceDiagramResources,
 			List<IResource> sourceCodeResources, IResource aRXMLResource) {
 		if (archfile == null) {
@@ -60,6 +60,13 @@ public class ArchfaceChecker extends XMLreader {
 				sequenceDiagramChecker.checkSequenceDiagram(archModel,
 						sequenceDiagramResource);
 			}
+		}
+
+		// check dataflow diagram
+		if (dataflowDiagramResource != null) {
+			DataflowDiagramChecker dataflowDiagramChecker = new DataflowDiagramChecker();
+			dataflowDiagramChecker.checkDataflowDiagram(archModel,
+					dataflowDiagramResource);
 		}
 
 		// Check source code

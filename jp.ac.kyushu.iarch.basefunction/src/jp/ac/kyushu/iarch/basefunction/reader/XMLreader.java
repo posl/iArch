@@ -29,6 +29,7 @@ import org.eclipse.swt.SWT;
 public class XMLreader {
 	private String ArchfilePath = null;
 	private String ClassDiagramPath = null;
+	private String DataflowDiagramPath = null;
 	private List<String> SequenceDiagramPathes= new ArrayList<String>();
 	private List<String> SourceCodePathes = new ArrayList<String>();
 	private String ARXMLPath = null;
@@ -70,6 +71,15 @@ public class XMLreader {
 					List<Node> Archfilelist = document.selectNodes("//Archfile/Path/@Attribute");
 					Attribute attribute=(Attribute) Archfilelist.get(0);
 					setArchfilePath(attribute.getValue());
+				}
+
+				{
+					@SuppressWarnings("unchecked")
+					List<Node> Dataflowlist = document.selectNodes("//DataflowDiagram/Path/@Attribute");
+					if(Dataflowlist.size()!=0){
+						Attribute attribute=(Attribute) Dataflowlist.get(0);
+						setDataflowDiagramPath(attribute.getValue());
+					}
 				}
 
 				{
@@ -168,6 +178,25 @@ public class XMLreader {
 	 */
 	public void setArchfilePath(String archfilePath) {
 		ArchfilePath = archfilePath;
+	}
+
+	//2014.10.30
+	/**
+	 * @return the dataflowDiagramResource
+	 */
+	public IResource getDataflowDiagramResource() {
+		if(DataflowDiagramPath == null)
+			return null;
+		IPath path = new Path(DataflowDiagramPath);
+		IResource DataflowDiagramResource = readIResource(path);
+		return DataflowDiagramResource;
+	}
+
+	/**
+	 * @param classDiagramPath the classDiagramPath to set
+	 */
+	public void setDataflowDiagramPath(String dataflowDiagramPath) {
+		DataflowDiagramPath = dataflowDiagramPath;
 	}
 
 	/**

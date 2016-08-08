@@ -7,7 +7,8 @@ Model:
 	u_interfaces+=UncertainInterface |
 	behaviors+=Behavior |
 	u_connectors+=UncertainConnector |
-	connectors+=Connector)*;
+	connectors+=Connector|
+	dflows+=Dflow)*;
 
 UncertainInterface:
 	"uncertain component" name=ID ("extends" superInterface=[Interface])? "{"
@@ -36,6 +37,36 @@ OptMethod:
 Param:
 	type=ID name=ID;
 
+cParam :
+    name=ID
+;
+
+dParam :
+    name=ID
+;
+
+Dflow:
+    "interface dflow" name=ID "("(dparam+=dParam(","dparam+=dParam)*)?")" "{"
+        dataflows+=Dataflow*
+     "}";
+
+Dataflow:
+        dparam=[dParam] "="
+        ("|"getflow+=[dParam]"|""->>"
+        call+=[Method|FQN]
+        "->>""|"getflow+=[dParam]"|""->>"
+        getIf+=[Interface]
+        ("->>""|"getflow+=[dParam]"|""->>"
+        call+=[Method|FQN])*
+        "->>"end=[dParam])?";"
+;
+
+/* some definition Directions
+*
+* "getflow"-> get flow_name (for instance:"state"),
+* "call"-> get Method_name (for instance:"getState" and so on),
+* "getIf"-> get Interface_name (for instance:"Subject" or "Observer").
+*/
 
 Connector:
 	"interface connector" name=ID "{"

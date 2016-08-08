@@ -37,6 +37,8 @@ public class CheckerWorkSpaceJob extends Job {
 		Display.getDefault().asyncExec(new Runnable() {
 			@Override
 			public synchronized void run() {
+				AbstractionRatioController arhander = new AbstractionRatioController();
+				arhander.checkAR(archfaceChecker.getArchfileResource(), archfaceChecker.getARXMLResource());
 				SourceCodeCheckerHandler srchandler = new SourceCodeCheckerHandler();
 				srchandler.showArchface(archfaceChecker.getClassPairs(), archfaceChecker.getBehaviorPairs());
 			}

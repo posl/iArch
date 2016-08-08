@@ -33,7 +33,7 @@ import umlClass.OptionalOperation;
 import umlClass.Property;
 
 public class DiagramFeatureProvider extends DefaultFeatureProvider {
-
+	 
     public DiagramFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
     }
@@ -71,7 +71,7 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 
     @Override
     public ICreateConnectionFeature[] getCreateConnectionFeatures() {
-       return new ICreateConnectionFeature[] {
+       return new ICreateConnectionFeature[] { 
            new CreateAssociationFeature (this) };
     }
 
@@ -122,8 +122,8 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
             return new MoveOperationFeature(this);
         }
         return super.getMoveShapeFeature(context);
-     }
-
+     } 
+    
     @Override
     public ILayoutFeature getLayoutFeature(ILayoutContext context) {
         PictogramElement pictogramElement = context.getPictogramElement();
@@ -137,7 +137,13 @@ public class DiagramFeatureProvider extends DefaultFeatureProvider {
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
 		return new ICustomFeature[] {
+				new RenameClassFeature(this),
+				new RenameAssociationFeature(this),
+				new RenameAttributeFeature(this),
+				new RenameOperationFeature(this),
+				new RefactorRemoveMethodFeature(this),
 				new GenerateClassDiagramFeature(this),
+				new RefactoringRemoveClass(this),
 				new TypeCheckFeature(this) };
 	}
 

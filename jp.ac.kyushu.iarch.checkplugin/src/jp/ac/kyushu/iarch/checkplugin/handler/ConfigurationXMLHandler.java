@@ -41,6 +41,13 @@ public class ConfigurationXMLHandler implements IHandler{
 			PathElement.addAttribute("Attribute", AllDialog.getClassDiagram().getFullPath().toOSString());
 		}
 
+		final Element DataflowDiagramElement = rootElement.addElement("DataflowDiagram");
+		if(AllDialog.getDataflowDiagram() != null)
+		{
+			final Element PathElement = DataflowDiagramElement.addElement("Path");
+			PathElement.addAttribute("Attribute", AllDialog.getDataflowDiagram().getFullPath().toOSString());
+		}
+
 		final Element SequenceDiagramElement = rootElement.addElement("SequenceDiagram");
 		if(AllDialog.getSequenceDiagrams() != null)
 		{
@@ -49,6 +56,7 @@ public class ConfigurationXMLHandler implements IHandler{
 				PathElement.addAttribute("Attribute", resource.getFullPath().toOSString());
 			}
 		}
+
 
 		final Element SourceCodeElement = rootElement.addElement("SourceCode");
 		{

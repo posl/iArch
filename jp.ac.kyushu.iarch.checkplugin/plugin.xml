@@ -18,6 +18,11 @@
             id="jp.ac.kyushu.iarch.checkPlugin.generateArch"
             name="Generate ArchCode">
       </command>
+   <command
+         categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+         id="jp.ac.kyushu.iarch.checkPlugin.checkARCommand"
+         name="Check AR">
+   </command>
    
    
        <command
@@ -52,6 +57,12 @@
                   id="jp.ac.kyushu.iarch.checkPlugin.configurationCommandMenu"
                   label="Check Configuration"
                   mnemonic="C"
+                  style="push">
+            </command>
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkPlugin.checkARCommand"
+                  id="jp.ac.kyushu.iarch.checkPlugin.checkARCommandMenu"
+                  label="Check AR"
                   style="push">
             </command>
 			<command
@@ -121,6 +132,10 @@
             class="jp.ac.kyushu.iarch.checkplugin.handler.ConfigurationXMLHandler"
             commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand">
       </handler>
+            <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.CheckARHandler"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.checkARCommand">
+      </handler>
 	  <handler
             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"
             commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch">
@@ -147,6 +162,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.views">
+      <view
+            class="jp.ac.kyushu.iarch.checkplugin.view.AbstractionRatioViewPart"
+            id="jp.ac.kyushu.iarch.checkplugin.abstractionratioview"
+            name="Abstraction Ratio View"
+            restorable="true">
+      </view>
       <view
             class="jp.ac.kyushu.iarch.checkplugin.view.ArchfaceViewPart"
             id="jp.ac.kyushu.iarch.checkplugin.archfaceview"

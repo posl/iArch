@@ -8,7 +8,6 @@ import java.util.WeakHashMap;
 import java.util.logging.Logger;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.Behavior;
-import jp.ac.kyushu.iarch.archdsl.archDSL.Connector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
@@ -45,7 +44,7 @@ import behavior.Object;
 
 /**
  * Auto generate sequence diagram feature.
- *
+ * 
  * @author Templar
  *
  */
@@ -118,7 +117,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 	/**
 	 * Auto generate sequence diagram. <br>
 	 * The main method of the class.
-	 *
+	 * 
 	 * @param sequenceResource
 	 *            The sequence diagram resource in which the diagram will
 	 *            generate into.
@@ -177,12 +176,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 		}
 
 		boolean actorMessageExist = false;//The message from actor will be generated only one time.
-		List<Connector> connectorList = archfaceModel.getConnectors();
-		List<Behavior> allBehaviorsList = new ArrayList<Behavior>();
-		for(Connector con : connectorList){
-			allBehaviorsList.addAll(con.getBehaviors());
-		}
-		List<Behavior> behaviorList = findFirstBehavior(allBehaviorsList);
+		List<Behavior> behaviorList = findFirstBehavior(archfaceModel.getBehaviors());
 		// Add message
 		int space = 0;
 		for (Behavior behavior : behaviorList) {
@@ -194,7 +188,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 					String sourceName = targetName;
 					if (i == 0 && !actorMessageExist) {
 						sourceName = "Actor";
-
+						
 					}else if (behavior.getCall().size() == 1){
 						targetName = behavior.getEnd().getName();
 					} else if (i > 1 && i == behavior.getCall().size() - 1) {
@@ -243,7 +237,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Add all '<b>LifeLines</b>' into the selected sequence diagram <br>
 	 * for all '<em><b>interface components</b></em>' in Archface code and an Actor.
@@ -311,7 +305,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 	/**
 	 * Add a <b>Message</b> between <em><b>sourcePE</b></em> and
 	 * <em><b>targetPE</b></em> from the <em><b>startY</b></em>.
-	 *
+	 * 
 	 * @param startY
 	 *            The start position Y of message on the lifeline.
 	 * @param sourcePE
@@ -377,7 +371,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 		getDiagram().getConnections().clear();//Remove connections.
 		getDiagram().getPictogramLinks().clear();//Remove links between business model and graphical element.
 	}
-
+	
 	/**
 	 * Check if a method has been generated in the diagram.
 	 * @param methodName The name of method to check.
@@ -389,7 +383,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 				if(((Message)eobj).getName().equals(methodName)){
 					return true;
 				}
-
+				
 			}
 		}
 		return false;
@@ -414,7 +408,7 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 		//If no method exist, swap the behavior to the first one, and return.
 		for (int i = 0 ; i< newbehaviorList.size() ; i++){
 			Method tofindMethod = newbehaviorList.get(i).getCall().get(0);
-
+			
 			if(i == newbehaviorList.size()){
 				Behavior temp = newbehaviorList.get(0);
 				//exchange the first behavior and behavior(i)

@@ -64,7 +64,7 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
 
 	@Override
 	public ICreateFeature[] getCreateFeatures() {
-		return new ICreateFeature[]{new CreateObjectFeature(this),
+		return new ICreateFeature[]{new CreateObjectFeature(this), 
 									new CreateActorFeature(this)};
 	}
 	@Override
@@ -77,7 +77,7 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
 	       }
 	       if (bo instanceof behavior.Object) {
 	           return new UpdateObjectFeature(this);
-	       }
+	       }	       
        }else if(pictogramElement instanceof FreeFormConnection){
     	   Object bo = getBusinessObjectForPictogramElement(pictogramElement);
     	   if(bo instanceof Message){
@@ -92,7 +92,7 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
     	   }
        }
 	   return super.getUpdateFeature(context);
-	 }
+	 } 
 
 	@Override
 	public ICreateConnectionFeature[] getCreateConnectionFeatures() {
@@ -109,7 +109,7 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
 	    Object bo = getBusinessObjectForPictogramElement(shape);
 	    if (bo instanceof Lifeline) {
 	        return new MoveLifelineFeature(this);
-	    }
+	    }	    
 	    else if (bo instanceof Actor) {
 	        return new MoveActorFeature(this);
 	    }else if (bo instanceof behavior.Object) {
@@ -122,16 +122,16 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
 	    	return new MoveMessageOccurrenceSpecificationFeature(this);
 	    }
 	    return super.getMoveShapeFeature(context);
-	 }
+	 } 
 	@Override
 	public IMoveAnchorFeature getMoveAnchorFeature(IMoveAnchorContext context) {
-
+		
 		return new MoveAnchorFeature(this);
 	}
 	@Override
 	public IReconnectionFeature getReconnectionFeature(IReconnectionContext context) {
 		return new ReconnectionFeature(this);
-		}
+		} 
 	@Override
 	public IDirectEditingFeature getDirectEditingFeature(
 	    IDirectEditingContext context) {
@@ -150,11 +150,12 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
         	return new DirectEditMessageFeature(this);
         }
         return super.getDirectEditingFeature(context);
-     }
+     } 
 
 	@Override
 	public ICustomFeature[] getCustomFeatures(ICustomContext context) {
 		return new ICustomFeature[] {
+				new RenameMessageFeature(this),
 				new GenerateSequenceDiagramFeature(this),
 				new TypeCheckFeature(this) };
 	}
@@ -177,5 +178,5 @@ public class SequenceFeatureProvider extends DefaultFeatureProvider {
 	    }
 	    return super.getResizeShapeFeature(context);
 	 }
-
+	
 }

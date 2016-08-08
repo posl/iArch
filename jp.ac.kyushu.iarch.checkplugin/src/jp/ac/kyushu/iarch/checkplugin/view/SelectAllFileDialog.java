@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.TableItem;
 public class SelectAllFileDialog extends Dialog {
 	private Table archiTable;
 	private Table classTable;
+	private Table dataflowTable;
 	private Table sequenceTable;
 	private Table sourceTable;
 	private Table xmlTable;
@@ -36,10 +37,11 @@ public class SelectAllFileDialog extends Dialog {
 	private Button okButton;
 	private IResource archiface;
 	private IResource classDiagram;
+	private IResource dataflowDiagram;
 	private IResource xml;
 	private List<IResource> sequenceDiagrams;
 	private List<IResource> sourceCode;
-
+	
 	/**
 	 * Constructor
 	 * @param parentShell
@@ -51,18 +53,18 @@ public class SelectAllFileDialog extends Dialog {
 		sequenceDiagrams = new  ArrayList<>();
 		sourceCode = new  ArrayList<>();
 	}
-
+	
 	@Override
 	protected Point getInitialSize() {
 		return new Point(480, 840);
 	}
-
+	
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Select All Files");
 	}
-
+	
 	/**
 	 * Create dialog widgets
 	 */
@@ -81,13 +83,19 @@ public class SelectAllFileDialog extends Dialog {
 		classTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
 		classTable.setLayoutData(new GridData(400, 50));
 		classTable.addSelectionListener(checkboxListener);
+		
+		Label dataflowLabel = new Label(composite, SWT.NONE);
+		dataflowLabel.setText("Dataflow Diagram");
+		dataflowTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
+		dataflowTable.setLayoutData(new GridData(400, 50));
+		dataflowTable.addSelectionListener(checkboxListener);
 
 		Label sequenceLabel = new Label(composite, SWT.NONE);
 		sequenceLabel.setText("Sequence Diagrams");
 		sequenceTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
 		sequenceTable.setLayoutData(new GridData(400, 100));
 		sequenceTable.addSelectionListener(checkboxListener);
-
+		
 		Label sourceLabel = new Label(composite, SWT.NONE);
 		sourceLabel.setText("Source code files");
 		sourceTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
@@ -95,15 +103,15 @@ public class SelectAllFileDialog extends Dialog {
 		sourceTable.addSelectionListener(checkboxListener);
 
 		Label xmlLabel = new Label(composite,SWT.NONE);
-		xmlLabel.setText("Code xml files");
+		xmlLabel.setText("Abstraction Ratio files");
 		xmlTable = new Table(composite, SWT.CHECK|SWT.BORDER | SWT.V_SCROLL);
 		xmlTable.setLayoutData(new GridData(400, 50));
 		xmlTable.addSelectionListener(checkboxListener);
 		setInitialItems();
-
+		
 		return composite;
 	}
-
+	
 	/**
 	 * Create OK and Cancel button
 	 */
@@ -113,7 +121,7 @@ public class SelectAllFileDialog extends Dialog {
 		okButton.setEnabled(true);
 		createButton(parent, IDialogConstants.CANCEL_ID,"Cancel", true);
 	}
-
+	
 	/**
 	 * move selected files from widget
 	 */
@@ -129,7 +137,13 @@ public class SelectAllFileDialog extends Dialog {
 				classDiagram = (IResource)item.getData();
 			}
 		}
-
+		
+		for(TableItem item : dataflowTable.getItems()){
+			if(item.getChecked()){
+				dataflowDiagram = (IResource)item.getData();
+			}
+		}
+		
 		for(TableItem item : sequenceTable.getItems()){
 			if(item.getChecked()){
 				sequenceDiagrams.add((IResource)item.getData());
@@ -148,7 +162,7 @@ public class SelectAllFileDialog extends Dialog {
 		setReturnCode(OK);
 		super.okPressed();
 	}
-
+	
 	/**
 	 * @author Ai Di
 	 * Selection validation
@@ -158,6 +172,7 @@ public class SelectAllFileDialog extends Dialog {
 		public void widgetSelected(SelectionEvent e) {
 			int cntArchiFiles = 0;
 			int cntClassDiagrams = 0;
+			int cntDataflowDiagrams = 0;
 			int cntSequenceDiagrams = 0;
 			int cntSourceCode = 0;
 			int cnxml = 0;
@@ -167,26 +182,29 @@ public class SelectAllFileDialog extends Dialog {
 			for(TableItem item : classTable.getItems()){
 				if(item.getChecked()) cntClassDiagrams++;
 			}
+			for(TableItem item : dataflowTable.getItems()){
+				if(item.getChecked()) cntDataflowDiagrams++;
+			}
 			for(TableItem item : sequenceTable.getItems()){
 				if(item.getChecked()) cntSequenceDiagrams++;
 			}
 			for(TableItem item : sourceTable.getItems()){
 				if(item.getChecked()) cntSourceCode++;
 			}
-			for(TableItem item : xmlTable.getItems()){
+			for(TableItem item : classTable.getItems()){
 				if(item.getChecked()) cnxml++;
 			}
 
-			if(cntArchiFiles==1&&cntClassDiagrams>=0&&cntSequenceDiagrams>=0&&cntSourceCode>0&&cnxml==1){
+			if(cntArchiFiles==1&&cntClassDiagrams>=0&&cntDataflowDiagrams>=0&&cntSequenceDiagrams>=0&&cntSourceCode>0&&cnxml==1){
 				okButton.setEnabled(true);
 			}else{
 				okButton.setEnabled(false);
 			}
 		}
 		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {	}
+		public void widgetDefaultSelected(SelectionEvent e) {	}		
 	}
-
+	
 	/**
 	 * Set archiface file and diagram files to table.
 	 */
@@ -213,10 +231,15 @@ public class SelectAllFileDialog extends Dialog {
 							citem.setText(resource.getName());
 							citem.setData(resource);
 							citem.setChecked(true);
+						}else if("DataflowDiagram".equals(o.getDiagramTypeId())){
+							TableItem citem = new TableItem(dataflowTable, SWT.CHECK);
+							citem.setText(resource.getName());
+							citem.setData(resource);							
+							citem.setChecked(true);
 						}else if("SequenceDiagram".equals(o.getDiagramTypeId())){
 							TableItem sitem = new TableItem(sequenceTable, SWT.CHECK);
 							sitem.setText(resource.getName());
-							sitem.setData(resource);
+							sitem.setData(resource);							
 							sitem.setChecked(true);
 						}else{
 							System.err.println("undefine diagram types");
@@ -248,24 +271,28 @@ public class SelectAllFileDialog extends Dialog {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/*Accessors*/
 	public IResource getArchiface(){
 		return archiface;
 	}
-
+	
 	public IResource getClassDiagram(){
 		return classDiagram;
 	}
-
+	
+	public IResource getDataflowDiagram(){
+		return dataflowDiagram;
+	}
+	
 	public List<IResource> getSequenceDiagrams(){
 		return sequenceDiagrams;
 	}
-
+	
 	public List<IResource> getSourceCode(){
 		return sourceCode;
 	}
-
+	
 	public IResource getXml(){
 		return xml;
 	}
