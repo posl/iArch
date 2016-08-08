@@ -1,0 +1,33 @@
+interface component cSubject {
+	String getState();
+	void setState(String state);
+}
+
+interface component cObserver {
+	void update(); 
+}
+
+interface connector cObserverPattern(cSubject,cObserver){	
+cSubject = 
+	cSubject.setState->
+	cObserver.update->
+	cSubject.getState->
+	cSubject;            
+cObserver = 
+	cObserver.update->
+	cSubject.getState
+	->cObserver;
+}
+
+interface dflow dObserverPattern(dStateNotification,cSubject,cObserver,state){
+	dStateNotification = 
+		 |state|->>
+	cSubject.setState
+	  ->>|state|->>
+	cSubject
+	  ->>|state|->>
+	cSubject.getState
+	  ->>|state|->>
+	cObserver.update
+	->>dStateNotification;
+}

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            id="jp.ac.kyushu.iarch.checkPlugin.configurationCommand"
+            name="Check Archface Configuration">
+      </command>
+      <category
+            description="iArch Category"
+            id="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            name="iArch Category">
+      </category>
+	  <command
+            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            id="jp.ac.kyushu.iarch.checkPlugin.generateArch"
+            name="Generate ArchCode">
+      </command>
+   
+   
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.setOptionalUncertaintyCommand"
+             name="Set Optional Uncertainty">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.setAlternativeUncertaintyCommand"
+             name="Set Alternative Uncertainty">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsNecessaryCommand"
+             name="Remove Uncertainty as Necessary">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsUnnecessaryCommand"
+             name="Remove Uncertainty as Unnecessary">
+       </command>
+   
+   
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+         <menu
+               id="jp.ac.kyushu.iarch.checkPlugin.checkarchmenu"
+               label="iArch"
+               mnemonic="C">
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand"
+                  id="jp.ac.kyushu.iarch.checkPlugin.configurationCommandMenu"
+                  label="Check Configuration"
+                  mnemonic="C"
+                  style="push">
+            </command>
+			<command
+                  commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch"
+                  id="jp.ac.kyushu.iarch.checkPlugin.generateArchCode"
+                  label="Generate ArchCode"
+                  mnemonic="D"
+                  style="push">
+            </command>
+            
+
+            
+         </menu>
+      </menuContribution>
+      <menuContribution
+            allPopups="true"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="jp.ac.kyushu.iarch.checkplugin.setOptionalUncertaintyCommand"
+               label="iArch: Set Optional"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="jp.ac.kyushu.iarch.checkplugin.uncertaintyOperationConditionDefinition">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkplugin.setAlternativeUncertaintyCommand"
+               label="iArch: Set Alternative"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="jp.ac.kyushu.iarch.checkplugin.uncertaintyOperationConditionDefinition">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsNecessaryCommand"
+               label="iArch: Remove Uncertainty as Necessary"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="jp.ac.kyushu.iarch.checkplugin.uncertaintyOperationConditionDefinition">
+               </reference>
+            </visibleWhen>
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsUnnecessaryCommand"
+               label="iArch: Remove Uncertainty as Unnecessary"
+               style="push">
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="jp.ac.kyushu.iarch.checkplugin.uncertaintyOperationConditionDefinition">
+               </reference>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.ConfigurationXMLHandler"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand">
+      </handler>
+	  <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch">
+      </handler>
+      
+      
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.SetOptionalUncertaintyHandler"
+             commandId="jp.ac.kyushu.iarch.checkplugin.setOptionalUncertaintyCommand">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.SetAlternativeUncertaintyHandler"
+             commandId="jp.ac.kyushu.iarch.checkplugin.setAlternativeUncertaintyCommand">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.RemoveUncertaintyAsNecessaryHandler"
+             commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsNecessaryCommand">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.RemoveUncertaintyAsUnnecessaryHandler"
+             commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsUnnecessaryCommand">
+       </handler>
+      
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <view
+            class="jp.ac.kyushu.iarch.checkplugin.view.ArchfaceViewPart"
+            id="jp.ac.kyushu.iarch.checkplugin.archfaceview"
+            name="Archface-U View"
+            restorable="true">
+      </view>
+      <view
+            class="jp.ac.kyushu.iarch.checkplugin.view.TestSupportViewPart"
+            id="jp.ac.kyushu.iarch.checkplugin.testsupportview"
+            name="Test Support View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.fileModificationValidator">
+         <fileModificationValidator class="jp.ac.kyushu.iarch.checkplugin.Savehook"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+         <startup class="jp.ac.kyushu.iarch.checkplugin.Savehook"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.ide.markerResolution">
+      <markerResolutionGenerator
+            class="jp.ac.kyushu.iarch.checkplugin.ArchfaceMarkerResolutionGenerator">
+      </markerResolutionGenerator>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jp.ac.kyushu.iarch.checkplugin.view.CheckPluginPreferencePage"
+            id="jp.ac.kyushu.iarch.checkplugin.PreferencePage"
+            name="iArch">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="jp.ac.kyushu.iarch.checkplugin.CheckPluginPreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         id="jp.ac.kyushu.iarch.checkplugin.OptionalMarker"
+         name="iArch-U Optional Marker"
+         point="org.eclipse.core.resources.markers">
+      <persistent
+            value="true">
+      </persistent>
+      <attribute
+            name="location">
+      </attribute>
+      <attribute
+            name="message">
+      </attribute>
+   </extension>
+   <extension
+         id="jp.ac.kyushu.iarch.checkplugin.OptionalMarkerAnnotation"
+         point="org.eclipse.ui.editors.annotationTypes">
+      <type
+            markerType="jp.ac.kyushu.iarch.checkplugin.OptionalMarker"
+            name="jp.ac.kyushu.iarch.checkplugin.OptionalMarkerAnnotation"
+            super="org.eclipse.ui.workbench.texteditor.info">
+      </type>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="jp.ac.kyushu.iarch.checkplugin.uncertaintyOperationConditionDefinition">
+         <with
+               variable="activePartId">
+            <or>
+               <equals
+                     value="org.eclipse.jdt.ui.CompilationUnitEditor">
+               </equals>
+               <equals
+                     value="org.eclipse.graphiti.ui.editor.DiagramEditor">
+               </equals>
+            </or>
+         </with>
+      </definition>
+   </extension>
+
+</plugin>

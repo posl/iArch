@@ -1,0 +1,9 @@
+*.class
+
+*.xtendbin
+
+# Package Files #
+
+*.war
+*.ear
+*.jar
