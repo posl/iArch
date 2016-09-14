@@ -20,6 +20,7 @@ Export-Package: ch.qos.logback.classic,
  jp.ac.kyushu.iarch.basefunction.controller,
  jp.ac.kyushu.iarch.basefunction.model,
  jp.ac.kyushu.iarch.basefunction.reader,
+ jp.ac.kyushu.iarch.basefunction.utils,
  org.dom4j,
  org.dom4j.io,
  org.slf4j

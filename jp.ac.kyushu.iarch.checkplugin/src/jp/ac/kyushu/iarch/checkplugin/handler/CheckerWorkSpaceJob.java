@@ -1,5 +1,7 @@
 package jp.ac.kyushu.iarch.checkplugin.handler;
 
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;

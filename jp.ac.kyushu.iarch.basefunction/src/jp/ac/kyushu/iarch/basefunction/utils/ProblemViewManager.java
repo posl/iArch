@@ -1,4 +1,4 @@
-package jp.ac.kyushu.iarch.checkplugin.handler;
+package jp.ac.kyushu.iarch.basefunction.utils;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;

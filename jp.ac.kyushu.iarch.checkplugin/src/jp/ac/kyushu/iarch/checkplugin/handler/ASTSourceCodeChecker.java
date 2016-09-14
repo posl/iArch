@@ -16,6 +16,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
 import jp.ac.kyushu.iarch.checkplugin.model.AltMethodPairsContainer;
 import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.CallPairModel;
