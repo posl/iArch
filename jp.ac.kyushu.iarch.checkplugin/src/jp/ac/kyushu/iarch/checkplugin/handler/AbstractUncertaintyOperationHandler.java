@@ -536,7 +536,7 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 			return callerClassName;
 		}
 		public String callerMethodName() {
-			return callerMessage.getName();
+			return callerMessage == null ? null : callerMessage.getName();
 		}
 		public String calleeTypeName() {
 			return calleeClassName;
@@ -572,7 +572,11 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 			}
 		}
 		public MethodEquality callerMethodEquality() {
-			return methodEquality(callerClassName, callerMessage);
+			if (callerClassName == null || callerMessage == null) {
+				return MethodEqualityUtils.nullMethod;
+			} else {
+				return methodEquality(callerClassName, callerMessage);
+			}
 		}
 		public MethodEquality calleeMethodEquality() {
 			return methodEquality(calleeClassName, calleeMessage);
@@ -630,27 +634,25 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 				System.out.println(className + ": failed to get callee Message.");
 
 			} else {
-				Message callerMessage = DiagramUtils.getCaller(calleeMessage);
-				if (callerMessage == null) {
-					System.out.println(className + ": failed to get caller Message.");
+				String calleeClassName = DiagramUtils.getMessageClassName(calleeMessage);
+				if (calleeClassName == null) {
+					System.out.println(className + ": failed to get callee class name.");
 
 				} else {
-					String calleeClassName = DiagramUtils.getMessageClassName(calleeMessage);
-					String callerClassName = DiagramUtils.getMessageClassName(callerMessage);
-					if (calleeClassName == null || callerClassName == null) {
-						System.out.println(className + ": failed to get caller/callee class name.");
+					// Find Interface by name.
+					Interface cInterface = ArchModelUtils.findInterfaceByName(model, calleeClassName);
+					if (cInterface == null) {
+						System.out.println(className + ": interface is not found in Archcode: " + calleeClassName);
 
 					} else {
-						// Find Interface by name.
-						Interface cInterface = ArchModelUtils.findInterfaceByName(model, calleeClassName);
-						if (cInterface == null) {
-							System.out.println(className + ": interface is not found in Archcode: " + calleeClassName);
+						// callerMessage/callerClassName can be null.
+						Message callerMessage = DiagramUtils.getCaller(calleeMessage);
+						String callerClassName = callerMessage == null ? null
+								: DiagramUtils.getMessageClassName(callerMessage);
 
-						} else {
-							MessageInfo messageInfo = new MessageInfo(callerClassName, callerMessage,
-									calleeClassName, calleeMessage, message.getName(), cInterface);
-							operateDiagramMessage(event, messageInfo, archModel);
-						}
+						MessageInfo messageInfo = new MessageInfo(callerClassName, callerMessage,
+								calleeClassName, calleeMessage, message.getName(), cInterface);
+						operateDiagramMessage(event, messageInfo, archModel);
 					}
 				}
 			}
