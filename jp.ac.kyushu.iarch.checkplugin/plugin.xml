@@ -13,10 +13,20 @@
             id="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
             name="iArch Category">
       </category>
-	  <command
+      <command
             categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
             id="jp.ac.kyushu.iarch.checkPlugin.generateArch"
             name="Generate ArchCode">
+      </command>
+      <command
+            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            id="jp.ac.kyushu.iarch.checkPlugin.generateAspect"
+            name="Generate Aspect">
+      </command>
+      <command
+            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            id="jp.ac.kyushu.iarch.checkPlugin.removeAspect"
+            name="Remove Aspect">
       </command>
    
    
@@ -41,31 +51,41 @@
    </extension>
    <extension
          point="org.eclipse.ui.menus">
+      
+      <!-- BEGIN Toolbar pulldown button -->
       <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
-         <menu
-               id="jp.ac.kyushu.iarch.checkPlugin.checkarchmenu"
-               label="iArch"
-               mnemonic="C">
+            locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
+         <toolbar
+               id="jp.ac.kyushu.iarch.checkplugin.toolbar">
             <command
+                  label="iArch"
+                  id="jp.ac.kyushu.iarch.checkplugin.pulldown"
                   commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand"
-                  id="jp.ac.kyushu.iarch.checkPlugin.configurationCommandMenu"
-                  label="Check Configuration"
-                  mnemonic="C"
-                  style="push">
+                  style="pulldown">
             </command>
-			<command
-                  commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch"
-                  id="jp.ac.kyushu.iarch.checkPlugin.generateArchCode"
-                  label="Generate ArchCode"
-                  mnemonic="D"
-                  style="push">
-            </command>
-            
-
-            
-         </menu>
+         </toolbar>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:jp.ac.kyushu.iarch.checkplugin.pulldown">
+         <command
+               commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand"
+               style="push">
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch"
+               style="push">
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkPlugin.generateAspect"
+               style="push">
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkPlugin.removeAspect"
+               style="push">
+         </command>
+      </menuContribution>
+      <!-- END Toolbar pulldown button -->
+      
       <menuContribution
             allPopups="true"
             locationURI="popup:org.eclipse.ui.popup.any?after=additions">
@@ -121,9 +141,17 @@
             class="jp.ac.kyushu.iarch.checkplugin.handler.ConfigurationXMLHandler"
             commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand">
       </handler>
-	  <handler
+      <handler
             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"
             commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch">
+      </handler>
+      <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateAspectCode"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.generateAspect">
+      </handler>
+      <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.RemoveAspectCode"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.removeAspect">
       </handler>
       
       
@@ -151,12 +179,6 @@
             class="jp.ac.kyushu.iarch.checkplugin.view.ArchfaceViewPart"
             id="jp.ac.kyushu.iarch.checkplugin.archfaceview"
             name="Archface-U View"
-            restorable="true">
-      </view>
-      <view
-            class="jp.ac.kyushu.iarch.checkplugin.view.TestSupportViewPart"
-            id="jp.ac.kyushu.iarch.checkplugin.testsupportview"
-            name="Test Support View"
             restorable="true">
       </view>
    </extension>

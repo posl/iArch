@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
-import jp.ac.kyushu.iarch.checkplugin.utils.ProjectSelectionUtils;
+import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectDiagramsDialog;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -40,7 +40,7 @@ public class GenerateArchCode implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IProject project = ProjectSelectionUtils.getProject(event, "Generate ArchiCode");
+		IProject project = ProjectReader.getProject();
 		
 		SelectDiagramsDialog dialog = new SelectDiagramsDialog(
 				HandlerUtil.getActiveShell(event), project);

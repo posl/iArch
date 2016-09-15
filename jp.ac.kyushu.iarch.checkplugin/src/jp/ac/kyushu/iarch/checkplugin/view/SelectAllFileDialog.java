@@ -1,14 +1,18 @@
 package jp.ac.kyushu.iarch.checkplugin.view;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.jface.dialogs.Dialog;
@@ -54,13 +58,18 @@ public class SelectAllFileDialog extends Dialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(480, 840);
+		return new Point(480, 740);
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText("Select All Files");
+	}
+	
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 
 	/**
@@ -70,34 +79,36 @@ public class SelectAllFileDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		CheckCheckedStateListener checkboxListener = new CheckCheckedStateListener();
 		Composite composite = (Composite)super.createDialogArea(parent);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+
 		Label archiLabel = new Label(composite, SWT.NONE);
-		archiLabel.setText("Archiface file");
+		archiLabel.setText("Archiface file (Select exactly 1 file)");
 		archiTable = new Table(composite, SWT.CHECK|SWT.BORDER | SWT.V_SCROLL);
-		archiTable.setLayoutData(new GridData(400, 50));
+		archiTable.setLayoutData(gridData);
 		archiTable.addSelectionListener(checkboxListener);
 
 		Label classLabel = new Label(composite, SWT.NONE);
 		classLabel.setText("Class Diagram");
 		classTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
-		classTable.setLayoutData(new GridData(400, 50));
+		classTable.setLayoutData(gridData);
 		classTable.addSelectionListener(checkboxListener);
 
 		Label sequenceLabel = new Label(composite, SWT.NONE);
 		sequenceLabel.setText("Sequence Diagrams");
 		sequenceTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
-		sequenceTable.setLayoutData(new GridData(400, 100));
+		sequenceTable.setLayoutData(gridData);
 		sequenceTable.addSelectionListener(checkboxListener);
 
 		Label sourceLabel = new Label(composite, SWT.NONE);
-		sourceLabel.setText("Source code files");
+		sourceLabel.setText("Source code files (Select 1 or more files)");
 		sourceTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
-		sourceTable.setLayoutData(new GridData(400, 100));
+		sourceTable.setLayoutData(gridData);
 		sourceTable.addSelectionListener(checkboxListener);
 
 		Label xmlLabel = new Label(composite,SWT.NONE);
-		xmlLabel.setText("Code xml files");
+		xmlLabel.setText("Code xml files (Select exactly 1 file)");
 		xmlTable = new Table(composite, SWT.CHECK|SWT.BORDER | SWT.V_SCROLL);
-		xmlTable.setLayoutData(new GridData(400, 50));
+		xmlTable.setLayoutData(gridData);
 		xmlTable.addSelectionListener(checkboxListener);
 		setInitialItems();
 
@@ -191,6 +202,17 @@ public class SelectAllFileDialog extends Dialog {
 	 * Set archiface file and diagram files to table.
 	 */
 	private void setInitialItems() {
+		// automatically create codeXML
+		IFile xmlFile = project.getFile("codeXML.xml");
+		if (!xmlFile.exists()) {
+			try {
+				xmlFile.create(new ByteArrayInputStream("".getBytes()), false, new NullProgressMonitor());
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		try {
 			project.accept(new IResourceVisitor() {
 				@Override

@@ -107,6 +107,48 @@ public class ArchModelUtils {
 		}
 		return null;
 	}
+	
+	public static Method findMethodByName(UncertainInterface uInterface, String methodName) {
+		for (AltMethod altMethod : uInterface.getAltmethods()) {
+			for (Method method : altMethod.getMethods()) {
+				if (method.getName().equals(methodName)) {
+					return method;
+				}
+			}
+		}
+		for (OptMethod optMethod: uInterface.getOptmethods()) {
+			Method method = optMethod.getMethod();
+			if (method.getName().equals(methodName)) {
+				return method;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 特定のインターフェースとそのサブインターフェースの中から特定のメソッドを探す。
+	 * @param model
+	 * @param ifName
+	 * @param methodName
+	 * @return
+	 */
+	public static Method searchMethodByInterfaceAndName(Model model, String ifName, String methodName) {
+		Method method;
+		Interface cInterface = findInterfaceByName(model, ifName);
+		if (cInterface != null) {
+			method = findMethodByName(cInterface, methodName);
+			if (method != null) {
+				return method;
+			}
+		}
+		for (UncertainInterface uInterface : searchUncertainInterfaceBySuperName(model, ifName)) {
+			method = findMethodByName(uInterface, methodName);
+			if (method != null) {
+				return method;
+			}
+		}
+		return null;
+	}
 
 	public static String getClassName(Method method) {
 		return getClassName(method, true);

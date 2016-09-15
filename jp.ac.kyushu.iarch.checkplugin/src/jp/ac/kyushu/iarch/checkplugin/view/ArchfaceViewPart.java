@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import jp.ac.kyushu.iarch.basefunction.exception.ProjectNotFoundException;
+import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.checkplugin.handler.ASTSourceCodeChecker;
+import jp.ac.kyushu.iarch.checkplugin.handler.CheckerWorkSpaceJob;
 import jp.ac.kyushu.iarch.checkplugin.model.AltMethodPairsContainer;
 import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.CallPairModel;
@@ -13,6 +16,7 @@ import jp.ac.kyushu.iarch.checkplugin.model.ComponentClassPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.ComponentMethodPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.UncertainBehaviorContainer;
 
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jdt.ui.ISharedImages;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -32,6 +36,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 public class ArchfaceViewPart extends ViewPart {
@@ -182,19 +188,19 @@ public class ArchfaceViewPart extends ViewPart {
 					if (((ComponentClassPairModel) element).hasJavaNode()) {
 						return "✔";
 					} else {
-						return "×";
+						return "✘";
 					}
 				} else if (element instanceof AltMethodPairsContainer) {
 					if (((AltMethodPairsContainer) element).hasJavaNode()) {
 						return "✔";
 					} else {
-						return "x";
+						return "✘";
 					}
 				} else if (element instanceof ComponentMethodPairModel) {
 					if (((ComponentMethodPairModel) element).hasJavaNode()) {
 						return "✔";
 					} else {
-						return "×";
+						return "✘";
 					}
 				}
 				break;
@@ -345,18 +351,18 @@ public class ArchfaceViewPart extends ViewPart {
 			case 1:
 				if (element instanceof UncertainBehaviorContainer) {
 					if (((UncertainBehaviorContainer) element).getCompileSuccessedBehaviors().size() == 1) {
-						return "✓";
+						return "✔";
 					} else {
-						return "x";
+						return "✘";
 					}
 				} else if (element instanceof BehaviorPairModel) {
 					UncertainBehaviorContainer parentContainer = ((BehaviorPairModel) element)
 							.getParentUncertainBehaviorContainer();
 					if (parentContainer != null) {
 						if (parentContainer.getCompileSuccessedBehaviors().contains((BehaviorPairModel) element)) {
-							return "✓";
+							return "✔";
 						} else if (parentContainer.getCompileFailedBehaviors().contains((BehaviorPairModel) element)) {
-							return "x";
+							return "✘";
 						} else {
 							return "-";
 						}
@@ -463,6 +469,18 @@ public class ArchfaceViewPart extends ViewPart {
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	@Override
+	public void init(IViewSite site) throws PartInitException {
+		// ビューの初期化の時にビューの内容を更新する。
+		// これにより、Eclipse起動時にArchface-U Viewの内容が表示されるようになる。
+		try {
+			CheckerWorkSpaceJob.getInstance(ProjectReader.getProject()).checkProject(new NullProgressMonitor());
+		} catch (ProjectNotFoundException e) {
+			// do nothing
+		}
+		super.init(site);
 	}
 
 }
