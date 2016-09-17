@@ -9,9 +9,11 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.model.ComponentTypeCheckModel;
 import jp.ac.kyushu.iarch.basefunction.model.ComponentTypeCheckModel.MethodModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
-import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.PlatformUtils;
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.ecore.EObject;
@@ -46,8 +48,11 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
+		// Get file of class diagram.
+		IFile diagramFile = PlatformUtils.getActiveFile();
+
 		// Get Archface model within the project.
-		IProject project = ProjectReader.getProject();
+		IProject project = diagramFile != null ? diagramFile.getProject() : null;
 		if (project == null) {
 			System.out.println("TypeCheckFeature: failed to get active project.");
 			return;
@@ -56,10 +61,15 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
-		doTypeCheck(model, getDiagram());
+		doTypeCheck(diagramFile, model, getDiagram());
 	}
 
-	private void doTypeCheck(Model model, Diagram diagram) {
+	private void doTypeCheck(IResource diagramFile, Model model, Diagram diagram) {
+		// TODO: Change marker type to unique one so as not to remove by other checkers.
+		ProblemViewManager problemViewManager = ProblemViewManager.getInstance();
+		// Remove previously added markers.
+		problemViewManager.removeProblems(diagramFile, false);
+
 		// For each Class object in diagram
 		// (Note that objects are assumed to be direct children of the root.)
 		for (EObject obj : diagram.eResource().getContents()) {
@@ -68,44 +78,59 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 				String className = eClass.getName();
 				System.out.println("[Class " + className + "]");
 
+				// Construct a component model for type check from archface.
 				ComponentTypeCheckModel ctcModel =
 						ComponentTypeCheckModel.getTypeCheckModel(model, className);
 				if (ctcModel == null) {
-					System.out.println("Not defined in Archcode.");
+					String msg = "Not defined in Archcode.";
+					System.out.println(msg);
+					problemViewManager.createWarningMarker(diagramFile, "", className);
 				} else {
+					// For each method in component model,
 					for (MethodModel mm : ctcModel.getMethodModels()) {
 						String methodName = mm.getMethod().getName();
+						String classMethodName = className + "." + methodName;
+
 						if (mm.isCertain()) {
-							// Should be defined as certain.
+							// If the method in archface is certain (not overridden by opt/alt),
+							// corresponding operation in model should be defined as certain.
 							Operation operation = findNonAltOperation(eClass, methodName);
 							if (operation == null) {
-								System.out.println("ERROR: " + methodName + ": Not defined in Class model.");
+								String msg = "Not defined in Class model.";
+								System.out.println("ERROR: " + methodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName, 10);
 							} else if (operation instanceof OptionalOperation) {
-								System.out.println("ERROR: " + methodName + ": Not defined as Certain.");
+								String msg = "Not defined as Certain.";
+								System.out.println("ERROR: " + methodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName);
 							} else {
 								System.out.println("INFO: " + methodName + ": Defined as Certain.");
 							}
 						} else if (mm.isOptional()) {
+							// If the method in archface is optional (not overridden by alt),
+							// corresponding operation in model should be defined as optional.
 							String optMethodName = "opt[" + methodName + "]";
 							Operation operation = findNonAltOperation(eClass, methodName);
 							if (operation == null) {
-								System.out.println("ERROR: " + optMethodName + ": Not defined in Class model.");
+								String msg = "Not defined in Class model.";
+								System.out.println("ERROR: " + optMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName);
 							} else if (operation instanceof OptionalOperation) {
 								System.out.println("INFO: " + optMethodName + ": Defined as Optional.");
 							} else {
-								System.out.println("ERROR: " + optMethodName + ": Not defined as Optional.");
+								String msg = "Not defined as Optional.";
+								System.out.println("ERROR: " + optMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName);
 							}
 						}
 					}
 
+					// For each alternative method in component model,
 					for (AltMethod am : ctcModel.getAltMethods()) {
-						StringBuilder altMethodNameSB = new StringBuilder("alt{");
-						for (Method m : am.getMethods()) {
-							altMethodNameSB.append(m.getName()).append(" ");
-						}
-						altMethodNameSB.deleteCharAt(altMethodNameSB.length() - 1).append("}");
-						String altMethodName = altMethodNameSB.toString();
+						String altMethodName = joinAltNames(am, " ", "alt{", "}");
+						String classAltMethodName = joinAltNames(am, "/", className + ".", null);
 
+						// 1. any alternatives should not be defined as certain.
 						boolean definedAsCertain = false;
 						for (Method m : am.getMethods()) {
 							String methodName = m.getName();
@@ -115,11 +140,14 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 							} else if (operation instanceof OptionalOperation) {
 								// NOP but checked afterward
 							} else {
-								System.out.println("ERROR: " + altMethodName + ": Defined as Certain: " + methodName);
+								String msg = "Defined as Certain: " + methodName;
+								System.out.println("ERROR: " + altMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classAltMethodName);
 								definedAsCertain = true;
 							}
 						}
 
+						// 2. same alternative operation should be defined in class model.
 						if (!definedAsCertain) {
 							HashSet<String> methodNames = new HashSet<String>();
 							for (Method m : am.getMethods()) {
@@ -127,39 +155,49 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 							}
 							AlternativeOperation altOperation = findAltOperation(eClass, methodNames);
 							if (altOperation == null) {
-								System.out.println("ERROR: " + altMethodName + ": Not defined in Class model.");
+								String msg = "Not defined in Class model.";
+								System.out.println("ERROR: " + altMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classAltMethodName);
 							} else {
 								System.out.println("INFO: " + altMethodName + ": Defined as Alternative.");
 							}
 						}
 					}
 
+					// For each optional/alternative operation in class model,
 					for (Operation op : eClass.getOwnedOperation()) {
 						String methodName = op.getName();
 						if (op instanceof OptionalOperation) {
-							String optMethodName = "opt[" + op.getName() + "]";
-
+							// If operation is optional,
+							// corresponding optional method should exist.
 							MethodModel mm = ctcModel.getMethodModel(methodName);
 							if (mm == null) {
-								System.out.println("ERROR: " + optMethodName + ": Not defined in Archcode.");
+								String optMethodName = "opt[" + methodName + "]";
+								String classMethodName = className + "." + methodName;
+
+								String msg = "Not defined in Archcode.";
+								System.out.println("ERROR: " + optMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName);
 							}
 						} else if (op instanceof AlternativeOperation) {
+							// If operation is alternative,
+							// corresponding alternative method should exist.
 							HashSet<String> altMethodNames = new HashSet<String>();
 							for (Operation childOp : ((AlternativeOperation) op).getOperations()) {
 								altMethodNames.add(childOp.getName());
 							}
 							AltMethod am = ctcModel.getAltMethod(altMethodNames);
 							if (am == null) {
-								StringBuilder altMethodNameSB = new StringBuilder("alt{");
-								for (Operation childOp : ((AlternativeOperation) op).getOperations()) {
-									altMethodNameSB.append(childOp.getName()).append(" ");
-								}
-								altMethodNameSB.deleteCharAt(altMethodNameSB.length() - 1).append("}");
-								String altMethodName = altMethodNameSB.toString();
+								String altMethodName = joinAltNames((AlternativeOperation) op, " ", "alt{", "}");
+								String classMethodName = joinAltNames((AlternativeOperation) op, "/", className + ".", null);
 
-								System.out.println("ERROR: " + altMethodName + ": Not defined in Archcode.");
+								String msg = "Not defined in Archcode.";
+								System.out.println("ERROR: " + altMethodName + ": " + msg);
+								problemViewManager.createErrorMarker(diagramFile, msg, classMethodName);
 							}
 						} else {
+							// If operation is certain,
+							// corresponding method may not exist.
 							MethodModel mm = ctcModel.getMethodModel(methodName);
 							if (mm == null) {
 								System.out.println("INFO: " + methodName + ": Not defined in Archcode.");
@@ -199,6 +237,35 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			}
 		}
 		return null;
+	}
+
+	private String joinAltNames(AltMethod altMethod, String sep, String pre, String post) {
+		StringBuilder sb = new StringBuilder();
+		if (pre != null) {
+			sb.append(pre);
+		}
+		for (Method m : altMethod.getMethods()) {
+			sb.append(m.getName()).append(sep);
+		}
+		sb.deleteCharAt(sb.length() - sep.length());
+		if (post != null) {
+			sb.append(post);
+		}
+		return sb.toString();
+	}
+	private String joinAltNames(AlternativeOperation altOperation, String sep, String pre, String post) {
+		StringBuilder sb = new StringBuilder();
+		if (pre != null) {
+			sb.append(pre);
+		}
+		for (Operation op : altOperation.getOperations()) {
+			sb.append(op.getName()).append(sep);
+		}
+		sb.deleteCharAt(sb.length() - sep.length());
+		if (post != null) {
+			sb.append(post);
+		}
+		return sb.toString();
 	}
 
 	@Override

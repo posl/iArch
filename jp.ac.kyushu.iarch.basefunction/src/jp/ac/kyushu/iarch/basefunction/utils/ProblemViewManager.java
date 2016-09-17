@@ -146,4 +146,23 @@ public class ProblemViewManager {
 		manager.setAttribute(marker, IMarker.SEVERITY, null);
 		manager.setAttribute(marker, IMarker.LOCATION, null);
 	}
+
+	// Test function.
+	public static void printMarkers(IResource resource, String type) {
+		System.out.println("[" + resource + " / " + type + "]");
+		try {
+			for (IMarker m : resource.findMarkers(type, true, 2)) {
+				System.out.println(m.getType());
+				System.out.println(m.getResource());
+				for (java.util.Map.Entry<String, Object> entry : m.getAttributes().entrySet()) {
+					System.out.println("\t" + entry.getKey() + ": " + entry.getValue().toString());
+				}
+//				System.out.println(m.isSubtypeOf("org.eclipse.core.resources.marker"));
+//				System.out.println(m.isSubtypeOf("org.eclipse.core.resources.problemmarker"));
+			}
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
