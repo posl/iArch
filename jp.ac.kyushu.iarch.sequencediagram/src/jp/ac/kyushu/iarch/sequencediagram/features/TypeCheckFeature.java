@@ -21,6 +21,7 @@ import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
+import behavior.Actor;
 import behavior.AlternativeMessage;
 import behavior.BehavioredClassifier;
 import behavior.Lifeline;
@@ -177,6 +178,9 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 				diagramBm.add(mcm);
 //				System.out.println(mcm);
 			} else {
+				String msg = "Ignored a message received by Actor.";
+				problemViewManager.createWarningMarker(diagramFile, msg, message.getName());
+
 				System.out.println("WARNING: Message is ignored since it is received by Actor: " + message.getName());
 			}
 		}
@@ -195,15 +199,17 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		}
 		if (!foundBehavior) {
 			String msg = "Sequence is not defined in Archcode.";
-			System.out.println("ERROR: " + msg);
-			problemViewManager.createErrorMarker(diagramFile, msg, null);
+			problemViewManager.createErrorMarker(diagramFile, msg, "-");
+
+			System.out.println("ERROR: Sequence is not defined in Archcode.");
 		}
 	}
 	private boolean checkMessage(Message message) {
 		if (message instanceof AlternativeMessage) {
 			return checkMessage(((AlternativeMessage) message).getMessages().get(0));
 		}
-		return getBehaviorObject(message) != null;
+		behavior.Object bObj = getBehaviorObject(message);
+		return (bObj != null) && !(bObj instanceof Actor);
 	}
 
 	@Override
