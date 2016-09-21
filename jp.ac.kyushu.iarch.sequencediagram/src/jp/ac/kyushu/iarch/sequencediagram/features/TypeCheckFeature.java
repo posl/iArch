@@ -8,9 +8,11 @@ import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel.BehaviorModel;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel.CallModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
-import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.PlatformUtils;
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.ecore.EObject;
@@ -49,8 +51,11 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
+		// Get file of class diagram.
+		IFile diagramFile = PlatformUtils.getActiveFile();
+
 		// Get Archface model within the project.
-		IProject project = ProjectReader.getProject();
+		IProject project = diagramFile != null ? diagramFile.getProject() : null;
 		if (project == null) {
 			System.out.println("TypeCheckFeature: failed to get active project.");
 			return;
@@ -59,7 +64,7 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
-		doTypeCheck(model, getDiagram());
+		doTypeCheck(diagramFile, model, getDiagram());
 	}
 
 	private static behavior.Object getBehaviorObject(Message message) {
@@ -130,7 +135,12 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		}
 	}
 
-	private void doTypeCheck(Model model, Diagram diagram) {
+	private void doTypeCheck(IFile diagramFile, Model model, Diagram diagram) {
+		// TODO: Change marker type to unique one so as not to remove by other checkers.
+		ProblemViewManager problemViewManager = ProblemViewManager.getInstance();
+		// Remove previously added markers.
+		problemViewManager.removeProblems(diagramFile, false);
+
 		// Collect Messages from diagram.
 		// Note that Messages are assumed to:
 		// 1. be direct children of the root
@@ -184,7 +194,9 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			}
 		}
 		if (!foundBehavior) {
-			System.out.println("ERROR: Sequence is not defined in Archcode.");
+			String msg = "Sequence is not defined in Archcode.";
+			System.out.println("ERROR: " + msg);
+			problemViewManager.createErrorMarker(diagramFile, msg, null);
 		}
 	}
 	private boolean checkMessage(Message message) {
