@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.Map;
 
 import jp.ac.kyushu.iarch.archdsl.ArchDSLPlugin;
+import jp.ac.kyushu.iarch.archdsl.archDSL.ArchDSLFactory;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.archdsl.ui.internal.ArchDSLActivator;
 
@@ -25,16 +26,35 @@ import com.google.inject.Injector;
  */
 public class ArchModel {
 	protected Resource resource = null;
+
 	final private static Injector injector = ArchDSLActivator.getInstance()
 			.getInjector(ArchDSLPlugin.getLanguageName());
+
 	public ArchModel(IResource archfile){
-		readResoure(archfile);
+		this(archfile, false);
 	}
+	public ArchModel(IResource archfile, boolean create){
+		if (create) {
+			createResource(archfile);
+		} else {
+			readResource(archfile);
+		}
+	}
+
 	public Model getModel(){
 		return (Model) resource.getContents().get(0);
 	}
 
-	private void readResoure(IResource archfile) {
+	private void createResource(IResource archfile) {
+		XtextResourceSet rs = (XtextResourceSet) injector.getInstance(
+				XtextResourceSetProvider.class).get(archfile.getProject());
+
+		resource = rs.createResource(URI.createPlatformResourceURI(
+				archfile.getFullPath().toString(), true));
+		resource.getContents().add(ArchDSLFactory.eINSTANCE.createModel());
+	}
+
+	private void readResource(IResource archfile) {
 		XtextResourceSet rs = (XtextResourceSet) injector.getInstance(
 				XtextResourceSetProvider.class).get(archfile.getProject());
 		rs.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
