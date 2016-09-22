@@ -1,7 +1,6 @@
 package jp.ac.kyushu.iarch.sequencediagram.features;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel;
@@ -11,11 +10,11 @@ import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
 import jp.ac.kyushu.iarch.basefunction.utils.PlatformUtils;
 import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
+import jp.ac.kyushu.iarch.sequencediagram.utils.MessageUtils;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
@@ -23,11 +22,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 
 import behavior.Actor;
 import behavior.AlternativeMessage;
-import behavior.BehavioredClassifier;
-import behavior.Lifeline;
 import behavior.Message;
-import behavior.MessageEnd;
-import behavior.MessageOccurrenceSpecification;
 import behavior.OptionalMessage;
 
 public class TypeCheckFeature extends AbstractCustomFeature {
@@ -68,21 +63,6 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		doTypeCheck(diagramFile, model, getDiagram());
 	}
 
-	private static behavior.Object getBehaviorObject(Message message) {
-		MessageEnd recvEvent = message.getReceiveEvent();
-		if (recvEvent instanceof MessageOccurrenceSpecification) {
-			Lifeline lifeline =
-					((MessageOccurrenceSpecification) recvEvent).getCovered().get(0);
-			if (lifeline != null) {
-				BehavioredClassifier actor = lifeline.getActor();
-				if (actor instanceof behavior.Object) {
-					return (behavior.Object) actor;
-				}
-			}
-		}
-		return null;
-	}
-
 	private static class MessageCallModel extends CallModel {
 		private boolean certain;
 		private boolean optional;
@@ -110,7 +90,7 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			}
 		}
 		private boolean setMessage(Message message, boolean setClassName) {
-			behavior.Object bObj = getBehaviorObject(message);
+			behavior.Object bObj = MessageUtils.getReceivingObject(message);
 			if (bObj != null) {
 				methodNames.add(message.getName());
 				if (setClassName) {
@@ -142,36 +122,12 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		// Remove previously added markers.
 		problemViewManager.removeProblems(diagramFile, false);
 
-		// Collect Messages from diagram.
-		// Note that Messages are assumed to:
-		// 1. be direct children of the root
-		// 2. have their order numbers based upon Y coordinates (if not AlternativeMessage)
-		TreeMap<Integer, Message> messageMap = new TreeMap<Integer, Message>();
-		for (EObject obj : diagram.eResource().getContents()) {
-			if (obj instanceof Message && !(obj instanceof AlternativeMessage)) {
-				Message message = (Message) obj;
-				messageMap.put(message.getMessageOrder(), message);
-			}
-		}
-		// Remove Messages which AlternativeMessage possesses.
-		for (EObject obj : diagram.eResource().getContents()) {
-			if (obj instanceof AlternativeMessage) {
-				AlternativeMessage altMessage = (AlternativeMessage) obj;
-				int altOrder = 0;
-				boolean first = true;
-				for (Message message : altMessage.getMessages()) {
-					int order = message.getMessageOrder();
-					altOrder = first ? order : Math.min(altOrder, order);
-					first = false;
-					messageMap.remove(order);
-				}
-				messageMap.put(altOrder, altMessage);
-			}
-		}
+		// Collect ordered Messages from diagram.
+		List<Message> messages = MessageUtils.collectMessages(diagram);
 
 		// Create behavior model from Messages
 		BehaviorModel diagramBm = new BehaviorModel();
-		for (Message message : messageMap.values()) {
+		for (Message message : messages) {
 			// Check if message is not received by Actor.
 			if (checkMessage(message)) {
 				MessageCallModel mcm = new MessageCallModel(message);
@@ -208,7 +164,7 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		if (message instanceof AlternativeMessage) {
 			return checkMessage(((AlternativeMessage) message).getMessages().get(0));
 		}
-		behavior.Object bObj = getBehaviorObject(message);
+		behavior.Object bObj = MessageUtils.getReceivingObject(message);
 		return (bObj != null) && !(bObj instanceof Actor);
 	}
 

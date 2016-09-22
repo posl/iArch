@@ -347,4 +347,15 @@ public class ArchModelUtils {
 	public static String getParameterName(SingleVariableDeclaration parameter) {
 		return parameter.getName().toString();
 	}
+
+	//
+	// Auto UncertainInterface/Connector name.
+	//
+
+	public static String getAutoUncertainInterfaceName(String interfaceName) {
+		return "u" + interfaceName + "_auto";
+	}
+	public static String getAutoUncertainConnectorName(String connectorName) {
+		return "u" + connectorName + "_auto";
+	}
 }

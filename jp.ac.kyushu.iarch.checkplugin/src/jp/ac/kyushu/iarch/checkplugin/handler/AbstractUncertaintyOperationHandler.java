@@ -666,28 +666,21 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 	protected abstract void operateDiagramMessage(ExecutionEvent event,
 			MessageInfo messageInfo, ArchModel archModel) throws ExecutionException;
 
-	private String getAutoUncertainClassName(String className) {
-		return "u" + className + "_auto";
-	}
-	private String getAutoUncertainConnectorName(String connectorName) {
-		return "u" + connectorName + "_auto";
-	}
-
 	protected UncertainInterface getAutoUncertainInterface(Model model, Interface cInterface) {
-		String uClassName = getAutoUncertainClassName(cInterface.getName());
+		String uClassName = ArchModelUtils.getAutoUncertainInterfaceName(cInterface.getName());
 		return ArchModelUtils.findUncertainInterfaceByName(model, uClassName);
 	}
 	protected UncertainConnector getAutoUncertainConnector(Model model, Connector connector) {
-		String uConnectorName = getAutoUncertainConnectorName(connector.getName());
+		String uConnectorName = ArchModelUtils.getAutoUncertainConnectorName(connector.getName());
 		return ArchModelUtils.findUncertainConnectorByName(model, uConnectorName);
 	}
 
 	private UncertainInterface createAutoUncertainInterface(Interface cInterface) {
-		String uClassName = getAutoUncertainClassName(cInterface.getName());
+		String uClassName = ArchModelUtils.getAutoUncertainInterfaceName(cInterface.getName());
 		return ArchModelUtils.createUncertainInterfaceElement(uClassName, cInterface);
 	}
 	private UncertainConnector createAutoUncertainConnector(Connector connector) {
-		String uConnectorName = getAutoUncertainConnectorName(connector.getName());
+		String uConnectorName = ArchModelUtils.getAutoUncertainConnectorName(connector.getName());
 		return ArchModelUtils.createUncertainConnectorElement(uConnectorName, connector);
 	}
 
