@@ -23,6 +23,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
+import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEquality;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEqualityUtils;
@@ -109,10 +110,13 @@ public class GenerateArchCode implements IHandler {
 		try {
 			archModel.save();
 		} catch (IOException e) {
-			e.printStackTrace();
+			MessageDialogUtils.showError("Generate Archcode", "Failed to save Archcode.");
 		} catch (RuntimeException e) {
 			// Model error falls here.
-			e.printStackTrace();
+			String m = e.getMessage();
+			StringBuilder sb = new StringBuilder("Model validation failed.\n");
+			sb.append(m != null ? m : "Unknown reason.");
+			MessageDialogUtils.showError("Generate Archcode", sb.toString());
 		}
 		
 	}
