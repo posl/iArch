@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltMethod;
@@ -195,15 +196,17 @@ public class GenerateArchCode implements IHandler {
 
 	private void gatherConnector(IResource sequenceDiagramResource, Model model,
 			int resolveType) {
+		// Get connector name from file.
 		String sequenceName = sequenceDiagramResource.getName();
 		// Drop extension.
 		int extIndex = sequenceName.lastIndexOf('.');
 		if (extIndex >= 0) {
 			sequenceName = sequenceName.substring(0, extIndex);
 		}
-		// TODO: verification needed.
-		// https://eclipse.org/Xtext/documentation/301_grammarlanguage.html
-		// sequenceName = generateConnectorName(model, "Connector");
+		// If it does not match ID rule, use safe name.
+		if (!isValidID(sequenceName)) {
+			sequenceName = generateConnectorName(model, "Connector");
+		}
 
 		Resource sequenceDiagram = GraphitiModelManager.getGraphitiModel(sequenceDiagramResource);
 
@@ -245,6 +248,13 @@ public class GenerateArchCode implements IHandler {
 				uConnector.getU_behaviors().add(uBehavior);
 			}
 		}
+	}
+
+	// Xtext ID terminal definition.
+	// see https://eclipse.org/Xtext/documentation/301_grammarlanguage.html
+	private static final Pattern idPattern = Pattern.compile("\\^?[a-zA-Z_]\\w*");
+	private boolean isValidID(String name) {
+		return idPattern.matcher(name).matches();
 	}
 
 	/**
@@ -531,6 +541,7 @@ public class GenerateArchCode implements IHandler {
 			return null;
 		}
 	}
+
 	/**
 	 * Gen the Archiface Code
 	 *
