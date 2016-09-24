@@ -76,17 +76,24 @@ public class GenerateArchCode implements IHandler {
 //			GenerateArchifaceCode(
 //					dialog.getClassDiagram(), dialog.getSequenceDiagrams());
 
-			GenerateArchfaceU(project, dialog.getClassDiagram(), dialog.getSequenceDiagrams());
+			// Generate Archface-U code.
+			IFile file = project.getFile("/Gen-Arch2.arch");
+			GenerateArchfaceU(dialog.getClassDiagram(), dialog.getSequenceDiagrams(), file);
 		}
 
 		return null;
 	}
 
-	private void GenerateArchfaceU(IProject project,
-			IResource classDiagramResource,
-			List<IResource> sequenceDiagramResources) {
+	// Stop generating (Uncertain)Behavior on any inconsistency.
+	private static final int RESOLVE_BY_ABORT = 0;
+	// Skip inconsistent message.
+	private static final int RESOLVE_BY_SKIP = 1;
+	// Generate missing methods as much as possible.
+	private static final int RESOLVE_BY_GENERATE = 2;
+
+	private void GenerateArchfaceU(IResource classDiagramResource,
+			List<IResource> sequenceDiagramResources, IFile file) {
 		// Create empty Archface model.
-		IFile file = project.getFile("/Gen-Arch2.arch");
 		ArchModel archModel = new ArchModel(file, true);
 		Model model = archModel.getModel();
 
@@ -95,16 +102,16 @@ public class GenerateArchCode implements IHandler {
 
 		// Extract Sequences and put them into the model.
 		for (IResource sequenceDiagramResource : sequenceDiagramResources) {
-			gatherConnector(sequenceDiagramResource, model);
+			gatherConnector(sequenceDiagramResource, model, RESOLVE_BY_GENERATE);
 		}
 
 		// Generate Archface file.
 		try {
 			archModel.save();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RuntimeException e) {
+			// Model error falls here.
 			e.printStackTrace();
 		}
 		
@@ -119,11 +126,9 @@ public class GenerateArchCode implements IHandler {
 				String className = eClass.getName();
 
 				// Create interfaces.
-				Interface cInterface = ArchDSLFactory.eINSTANCE.createInterface();
-				cInterface.setName(className);
-				UncertainInterface uInterface = ArchDSLFactory.eINSTANCE.createUncertainInterface();
-				uInterface.setSuperInterface(cInterface);
-				uInterface.setName(ArchModelUtils.getAutoUncertainInterfaceName(className));
+				Interface cInterface = ArchModelUtils.createInterfaceElement(className);
+				String uIfName = ArchModelUtils.getAutoUncertainInterfaceName(className);
+				UncertainInterface uInterface = ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
 
 				// Convert Operations to Methods and put them.
 				for (Operation operation : eClass.getOwnedOperation()) {
@@ -136,8 +141,8 @@ public class GenerateArchCode implements IHandler {
 						}
 						uInterface.getAltmethods().add(altMethod);
 					} else if (operation instanceof OptionalOperation) {
-						OptMethod optMethod = ArchDSLFactory.eINSTANCE.createOptMethod();
-						optMethod.setMethod(convertToMethod(classDiagram, operation));
+						OptMethod optMethod =
+								ArchModelUtils.createOptMethodElement(convertToMethod(classDiagram, operation));
 						uInterface.getOptmethods().add(optMethod);
 					} else {
 						Method method = convertToMethod(classDiagram, operation);
@@ -145,8 +150,13 @@ public class GenerateArchCode implements IHandler {
 					}
 				}
 
-				model.getInterfaces().add(cInterface);
-				if (uInterface.getOptmethods().size() > 0 || uInterface.getAltmethods().size() > 0) {
+				// Add interfaces if needed.
+				boolean uInterfaceNeeded = uInterface.getOptmethods().size() > 0
+						|| uInterface.getAltmethods().size() > 0;
+				if (uInterfaceNeeded || cInterface.getMethods().size() > 0) {
+					model.getInterfaces().add(cInterface);
+				}
+				if (uInterfaceNeeded) {
 					model.getU_interfaces().add(uInterface);
 				}
 			}
@@ -179,7 +189,8 @@ public class GenerateArchCode implements IHandler {
 		return null;
 	}
 
-	private void gatherConnector(IResource sequenceDiagramResource, Model model) {
+	private void gatherConnector(IResource sequenceDiagramResource, Model model,
+			int resolveType) {
 		String sequenceName = sequenceDiagramResource.getName();
 		// Drop extension.
 		int extIndex = sequenceName.lastIndexOf('.');
@@ -188,18 +199,22 @@ public class GenerateArchCode implements IHandler {
 		}
 		// TODO: verification needed.
 		// https://eclipse.org/Xtext/documentation/301_grammarlanguage.html
-		// sequenceName = generateConnectorName(model);
+		// sequenceName = generateConnectorName(model, "Connector");
 
 		Resource sequenceDiagram = GraphitiModelManager.getGraphitiModel(sequenceDiagramResource);
 
 		// Create Connectors.
 		Connector connector = ArchDSLFactory.eINSTANCE.createConnector();
 		connector.setName(sequenceName);
+		model.getConnectors().add(connector);
 
+		// Collect ordered Messages.
 		List<Message> messages = MessageUtils.collectMessages(sequenceDiagram);
+
 		// Check whether message is certain or uncertain.
 		boolean certainBehavior = true;
 		for (Message message : messages) {
+			if (!message.isArchpoint()) { continue; }
 			if (message instanceof OptionalMessage || message instanceof AlternativeMessage) {
 				certainBehavior = false;
 				break;
@@ -208,138 +223,24 @@ public class GenerateArchCode implements IHandler {
 
 		if (certainBehavior) {
 			// Convert Messages to Behavior and put it.
-			Behavior behavior = ArchDSLFactory.eINSTANCE.createBehavior();
-
-			for (Message message : messages) {
-				// Find Method from model.
-				String className = getClassName(message);
-				if (className == null) {
-					// TODO: Maybe diagram is not correct.
-					continue;
-				}
-				Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
-				if (cInterface == null) {
-					// TODO: Generate Interface or abort?
-					continue;
-				}
-				String methodName = message.getName();
-				Method method = ArchModelUtils.findMethodByName(cInterface, methodName);
-				if (method == null) {
-					// TODO: Generate Method or abort?
-					continue;
-				}
-
-				behavior.getCall().add(method);
-
-				if (behavior.getInterface() == null) {
-					behavior.setInterface(cInterface);
-				}
-				behavior.setEnd(cInterface);
+			Behavior behavior = convertToBehavior(model, messages, resolveType);
+			if (behavior != null) {
+				connector.getBehaviors().add(behavior);
 			}
-
-			connector.getBehaviors().add(behavior);
 		} else {
-			// Convert Messages to UncertainBehavior and put it into UncertainConnector.
+			// Create UncertainConnector
 			UncertainConnector uConnector = ArchDSLFactory.eINSTANCE.createUncertainConnector();
 			uConnector.setSuperInterface(connector);
 			uConnector.setName(ArchModelUtils.getAutoUncertainConnectorName(sequenceName));
-			UncertainBehavior uBehavior = ArchDSLFactory.eINSTANCE.createUncertainBehavior();
-			uBehavior.setName(ArchModelUtils.generateUncertainBehaviorName(uConnector));
-
-			for (Message message : messages) {
-				String className = getClassName(message);
-				if (className == null) {
-					// TODO: Maybe diagram is not correct.
-					continue;
-				}
-
-				if (message instanceof AlternativeMessage) {
-					List<UncertainInterface> uInterfaces =
-							ArchModelUtils.searchUncertainInterfaceBySuperName(model, className);
-					if (uInterfaces.isEmpty()) {
-						// TODO: Generate Interface or abort?
-						continue;
-					}
-
-					List<MethodEquality> equalities = new ArrayList<MethodEquality>();
-					for (Message m : ((AlternativeMessage) message).getMessages()) {
-						equalities.add(MethodEqualityUtils.createMethodEquality(m.getName()));
-					}
-					MethodEquality altMethodEquality = MethodEqualityUtils.createMethodEqualityForAlt(equalities);
-
-					AltCall altCall = null;
-					for (UncertainInterface uInterface : uInterfaces) {
-						for (AltMethod altMethod : uInterface.getAltmethods()) {
-							if (altMethodEquality.match(altMethod)) {
-								altCall = ArchDSLFactory.eINSTANCE.createAltCall();
-								boolean first = true;
-								for (Method m : altMethod.getMethods()) {
-									if (first) {
-										altCall.setName(m);
-										first = false;
-									} else {
-										altCall.getA_name().add(m);
-									}
-								}
-								uBehavior.setEnd(uInterface.getSuperInterface());
-							}
-						}
-					}
-					if (altCall == null) {
-						// TODO: Generate AltMethod or abort?
-						continue;
-					}
-					uBehavior.getCall().add(altCall);
-				} else if (message instanceof OptionalMessage) {
-					List<UncertainInterface> uInterfaces =
-							ArchModelUtils.searchUncertainInterfaceBySuperName(model, className);
-					if (uInterfaces.isEmpty()) {
-						// TODO: Generate Interface or abort?
-						continue;
-					}
-
-					String methodName = message.getName();
-					OptCall optCall = null;
-					for (UncertainInterface uInterface : uInterfaces) {
-						for (OptMethod optMethod : uInterface.getOptmethods()) {
-							if (optMethod.getMethod().getName().equals(methodName)) {
-								optCall = ArchDSLFactory.eINSTANCE.createOptCall();
-								optCall.setName(optMethod.getMethod());
-								uBehavior.setEnd(uInterface.getSuperInterface());
-							}
-						}
-					}
-					if (optCall == null) {
-						// TODO: Generate OptMethod or abort?
-						continue;
-					}
-					uBehavior.getCall().add(optCall);
-				} else {
-					Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
-					if (cInterface == null) {
-						// TODO: Generate Interface or abort?
-						continue;
-					}
-
-					String methodName = message.getName();
-					Method method = ArchModelUtils.findMethodByName(cInterface, methodName);
-					if (method == null) {
-						// TODO: Generate Method or abort?
-						continue;
-					}
-
-					CertainCall certainCall = ArchDSLFactory.eINSTANCE.createCertainCall();
-					certainCall.setName(method);
-					uBehavior.getCall().add(certainCall);
-					uBehavior.setEnd(cInterface);
-				}
-			}
-
-			uConnector.getU_behaviors().add(uBehavior);
 			model.getU_connectors().add(uConnector);
-		}
 
-		model.getConnectors().add(connector);
+			// Convert Messages to UncertainBehavior and put it into UncertainConnector.
+			UncertainBehavior uBehavior = convertToUncertainBehavior(model, messages, resolveType);
+			if (uBehavior != null) {
+				uBehavior.setName(ArchModelUtils.generateUncertainBehaviorName(uConnector));
+				uConnector.getU_behaviors().add(uBehavior);
+			}
+		}
 	}
 
 	/**
@@ -347,12 +248,28 @@ public class GenerateArchCode implements IHandler {
 	 * @param model
 	 * @return
 	 */
-	private String generateConnectorName(Model model) {
+	private String generateConnectorName(Model model, String prefix) {
 		for (int i = 0; ; ++i) {
-			String name = "Connector" + String.valueOf(i);
+			String name = prefix + String.valueOf(i);
 			boolean isUnique = true;
 			for (Connector connector : model.getConnectors()) {
 				if (name.equals(connector.getName())) {
+					isUnique = false;
+					break;
+				}
+			}
+			if (isUnique) {
+				return name;
+			}
+		}
+	}
+
+	private String generateUncertainInterfaceName(Model model, String prefix) {
+		for (int i = 0; ; ++i) {
+			String name = prefix + String.valueOf(i);
+			boolean isUnique = true;
+			for (UncertainInterface uInterface : model.getU_interfaces()) {
+				if (name.equals(uInterface.getName())) {
 					isUnique = false;
 					break;
 				}
@@ -371,6 +288,245 @@ public class GenerateArchCode implements IHandler {
 		return bObj == null ? null : bObj.getName();
 	}
 
+	private Behavior convertToBehavior(Model model, List<Message> messages,
+			int resolveType) {
+		Behavior behavior = ArchDSLFactory.eINSTANCE.createBehavior();
+
+		for (Message message : messages) {
+			if (!message.isArchpoint()) { continue; }
+
+			String className = getClassName(message);
+			if (className == null) {
+				// Diagram may be broken.
+				if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				} else {
+					continue;
+				}
+			}
+
+			// Find Method from model.
+			Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+			if (cInterface == null) {
+				if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				} else if (resolveType == RESOLVE_BY_SKIP) {
+					continue;
+				} else {
+					// Generate Interface.
+					cInterface = ArchModelUtils.createInterfaceElement(className);
+					model.getInterfaces().add(cInterface);
+				}
+			}
+			String methodName = message.getName();
+			Method method = ArchModelUtils.findMethodByName(cInterface, methodName);
+			if (method == null) {
+				if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				} else if (resolveType == RESOLVE_BY_SKIP) {
+					continue;
+				} else {
+					// Generate Method.
+					method = ArchModelUtils.createMethodElement(methodName);
+					cInterface.getMethods().add(method);
+				}
+			}
+
+			behavior.getCall().add(method);
+
+			if (behavior.getInterface() == null) {
+				behavior.setInterface(cInterface);
+			}
+			behavior.setEnd(cInterface);
+		}
+
+		return behavior.getCall().size() > 0 ? behavior : null;
+	}
+
+	private UncertainBehavior convertToUncertainBehavior(Model model, List<Message> messages,
+			int resolveType) {
+		UncertainBehavior uBehavior = ArchDSLFactory.eINSTANCE.createUncertainBehavior();
+
+		for (Message message : messages) {
+			if (!message.isArchpoint()) { continue; }
+
+			if (message instanceof AlternativeMessage) {
+				AltCall altCall = convertToAltCall(model, message, resolveType);
+				if (altCall != null) {
+					// AltCall->Method->AltMethod->UncertainInterface->Interface
+					uBehavior.setEnd(((UncertainInterface) altCall.getName().eContainer().eContainer()).getSuperInterface());
+					uBehavior.getCall().add(altCall);
+				} else if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				}
+			} else if (message instanceof OptionalMessage) {
+				OptCall optCall = convertToOptCall(model, message, resolveType);
+				if (optCall != null) {
+					// OptCall->Method->OptMethod->UncertainInterface->Interface
+					uBehavior.setEnd(((UncertainInterface) optCall.getName().eContainer().eContainer()).getSuperInterface());
+					uBehavior.getCall().add(optCall);
+				} else if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				}
+			} else {
+				CertainCall certainCall = convertToCertainCall(model, message, resolveType);
+				if (certainCall != null) {
+					uBehavior.setEnd((Interface) certainCall.getName().eContainer());
+					uBehavior.getCall().add(certainCall);
+				} else if (resolveType == RESOLVE_BY_ABORT) {
+					return null;
+				}
+			}
+		}
+
+		return uBehavior.getCall().size() > 0 ? uBehavior : null;
+	}
+
+	private CertainCall convertToCertainCall(Model model, Message message, int resolveType) {
+		String className = getClassName(message);
+		if (className == null) {
+			// Diagram may be broken.
+			return null;
+		}
+
+		Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+		if (cInterface == null) {
+			if (resolveType == RESOLVE_BY_GENERATE) {
+				// Generate Interface.
+				cInterface = ArchModelUtils.createInterfaceElement(className);
+				model.getInterfaces().add(cInterface);
+			} else {
+				return null;
+			}
+		}
+
+		String methodName = message.getName();
+		Method method = ArchModelUtils.findMethodByName(cInterface, methodName);
+		if (method == null) {
+			if (resolveType == RESOLVE_BY_GENERATE) {
+				// Generate Method.
+				method = ArchModelUtils.createMethodElement(methodName);
+				cInterface.getMethods().add(method);
+			} else {
+				return null;
+			}
+		}
+
+		return ArchModelUtils.createCertainCallElement(method);
+	}
+
+	private OptCall convertToOptCall(Model model, Message message, int resolveType) {
+		String className = getClassName(message);
+		if (className == null) {
+			// Diagram may be broken.
+			return null;
+		}
+
+		String methodName = message.getName();
+
+		OptMethod optMethod = null;
+		for (UncertainInterface uInterface
+				: ArchModelUtils.searchUncertainInterfaceBySuperName(model, className)) {
+			for (OptMethod om : uInterface.getOptmethods()) {
+				if (om.getMethod().getName().equals(methodName)) {
+					optMethod = om;
+					break;
+				}
+			}
+			if (optMethod != null) {
+				break;
+			}
+		}
+
+		if (optMethod == null && resolveType == RESOLVE_BY_GENERATE) {
+			// Generate UncertainInterface and OptMethod.
+			Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+			if (cInterface == null) {
+				cInterface = ArchModelUtils.createInterfaceElement(className);
+				model.getInterfaces().add(cInterface);
+			}
+
+			String uIfName = generateUncertainInterfaceName(model,
+					ArchModelUtils.getAutoUncertainInterfaceName(className));
+			UncertainInterface uInterface =
+					ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
+			model.getU_interfaces().add(uInterface);
+
+			optMethod = ArchModelUtils.createOptMethodElement(methodName);
+			uInterface.getOptmethods().add(optMethod);
+		}
+
+		if (optMethod != null) {
+			return ArchModelUtils.createOptCallElement(optMethod.getMethod());
+		} else {
+			return null;
+		}
+	}
+
+	private AltCall convertToAltCall(Model model, Message message, int resolveType) {
+		String className = getClassName(message);
+		if (className == null) {
+			// Diagram may be broken.
+			return null;
+		}
+
+		List<MethodEquality> equalities = new ArrayList<MethodEquality>();
+		for (Message m : ((AlternativeMessage) message).getMessages()) {
+			equalities.add(MethodEqualityUtils.createMethodEquality(m.getName()));
+		}
+		MethodEquality altMethodEquality = MethodEqualityUtils.createMethodEqualityForAlt(equalities);
+
+		AltMethod altMethod = null;
+		for (UncertainInterface uInterface
+				: ArchModelUtils.searchUncertainInterfaceBySuperName(model, className)) {
+			for (AltMethod am : uInterface.getAltmethods()) {
+				if (altMethodEquality.match(am)) {
+					altMethod = am;
+					break;
+				}
+			}
+			if (altMethod != null) {
+				break;
+			}
+		}
+
+		if (altMethod == null && resolveType == RESOLVE_BY_GENERATE) {
+			// Generate UncertainInterface and AltMethod.
+			Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+			if (cInterface == null) {
+				cInterface = ArchModelUtils.createInterfaceElement(className);
+				model.getInterfaces().add(cInterface);
+			}
+
+			String uIfName = generateUncertainInterfaceName(model,
+					ArchModelUtils.getAutoUncertainInterfaceName(className));
+			UncertainInterface uInterface =
+					ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
+			model.getU_interfaces().add(uInterface);
+
+			altMethod = ArchDSLFactory.eINSTANCE.createAltMethod();
+			for (Message m : ((AlternativeMessage) message).getMessages()) {
+				altMethod.getMethods().add(ArchModelUtils.createMethodElement(m.getName()));
+			}
+			uInterface.getAltmethods().add(altMethod);
+		}
+
+		if (altMethod != null) {
+			AltCall altCall = ArchDSLFactory.eINSTANCE.createAltCall();
+			boolean first = true;
+			for (Method m : altMethod.getMethods()) {
+				if (first) {
+					altCall.setName(m);
+					first = false;
+				} else {
+					altCall.getA_name().add(m);
+				}
+			}
+			return altCall;
+		} else {
+			return null;
+		}
+	}
 	/**
 	 * Gen the Archiface Code
 	 *

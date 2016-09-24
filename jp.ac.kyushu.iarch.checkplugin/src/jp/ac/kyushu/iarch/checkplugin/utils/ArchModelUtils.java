@@ -34,6 +34,12 @@ public class ArchModelUtils {
 	// Interface
 	//
 
+	public static Interface createInterfaceElement(String name) {
+		Interface cInterface = ArchDSLFactory.eINSTANCE.createInterface();
+		cInterface.setName(name);
+		return cInterface;
+	}
+
 	public static Interface findInterfaceByName(Model model, String ifName) {
 		for (Interface cInterface: model.getInterfaces()) {
 			if (cInterface.getName().equals(ifName)) {
