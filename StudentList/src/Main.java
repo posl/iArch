@@ -48,7 +48,7 @@ public class Main extends JFrame implements ActionListener{
 
 		JTable table = new JTable(model);
 
-		JButton button = new JButton("授業取得者のみに絞り込む");
+		JButton button = new JButton("Select who take the class");
 		button.addActionListener(this);
 
 		JPanel p = new JPanel();
@@ -57,7 +57,7 @@ public class Main extends JFrame implements ActionListener{
 		p.add(button);
 
 		getContentPane().add(p, BorderLayout.CENTER);
-
+		getContentPane().revalidate();
 	}
 
 	public static void main(String[] args) {
