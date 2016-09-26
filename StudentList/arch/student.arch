@@ -1,0 +1,11 @@
+interface component Main{
+	void actionPerformed(ActionEvent e);
+}
+
+interface component StudentController{
+	void filterStudent(JTable table);
+}
+
+interface connector cStudent{
+	Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
+}
