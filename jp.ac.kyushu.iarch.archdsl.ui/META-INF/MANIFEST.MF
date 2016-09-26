@@ -23,5 +23,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: jp.ac.kyushu.iarch.archdsl.ui.quickfix,
  jp.ac.kyushu.iarch.archdsl.ui.contentassist,
  jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr,
- jp.ac.kyushu.iarch.archdsl.ui.internal
+ jp.ac.kyushu.iarch.archdsl.ui.internal,
+ jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr.internal
 Bundle-Activator: jp.ac.kyushu.iarch.archdsl.ui.internal.ArchDSLActivator

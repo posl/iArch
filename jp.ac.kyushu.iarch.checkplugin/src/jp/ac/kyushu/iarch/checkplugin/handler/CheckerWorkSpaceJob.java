@@ -25,6 +25,10 @@ public class CheckerWorkSpaceJob extends Job {
 		cwsJob.proj = project;
 		return cwsJob;
 	}
+	
+	public IStatus checkProject(IProgressMonitor monitor) {
+		return run(monitor);
+	}
 
 	// A new job to do the check
 	protected IStatus run(IProgressMonitor monitor) {

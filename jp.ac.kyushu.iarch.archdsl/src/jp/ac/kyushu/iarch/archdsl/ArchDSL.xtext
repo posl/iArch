@@ -21,20 +21,32 @@ Interface:
 	"}";
 
 Method:
-	type=ID name=ID "(" (param+=Param ("," param+=Param)*)? ");";
+	(annotations+=Annotation)* type=ID name=ID "(" (param+=Param ("," param+=Param)*)? ");";
 
 AltMethod:
-	"{"
+	(annotations+=Annotation)* "{"
 	methods+=Method ("," methods+=Method)*
 	"}";
 
 OptMethod:
-	"["
+	(annotations+=Annotation)* "["
 	method=Method
 	"]";
 
 Param:
 	type=ID name=ID;
+
+Annotation:
+	"@" name=ID ("(" args+=Expression ("," args+=Expression)* ")")?;
+
+Expression:
+	STRING | INT | DOUBLE | BOOLEAN;
+
+terminal DOUBLE:
+	INT "." INT;
+
+terminal BOOLEAN:
+	"true" | "false";
 
 
 Connector:
@@ -54,18 +66,19 @@ SuperMethod:
 	Method | OptMethod | AltMethod;
 
 UncertainBehavior:
-	"u" name=ID "=" "("
+	// now preceding "u" is optional. 
+	"u"? name=ID "=" "("
 	(call+=SuperCall ("->" call+=SuperCall)* "->" end=[Interface])?
 	");";
 
 CertainCall:
-	name=[SuperMethod|FQN];
+	(annotations+=Annotation)* name=[SuperMethod|FQN];
 
 OptCall:
-	"[" name=[SuperMethod|FQN] "]";
+	(annotations+=Annotation)* "[" name=[SuperMethod|FQN] "]";
 
 AltCall:
-	"{" (opt?="null" ",")? name=[SuperMethod|FQN] ("," (a_name+=[SuperMethod|FQN] | (opt?="null")?))* "}";
+	(annotations+=Annotation)* "{" (opt?="null" ",")? name=[SuperMethod|FQN] ("," (a_name+=[SuperMethod|FQN] | (opt?="null")?))* "}";
 
 SuperCall:
 	CertainCall | OptCall | AltCall;

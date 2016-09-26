@@ -1,8 +1,11 @@
 package jp.ac.kyushu.iarch.checkplugin.utils;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.NoSuchElementException;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -17,14 +20,23 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ArrayInitializer;
+import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
+import org.eclipse.jdt.core.dom.IExtendedModifier;
+import org.eclipse.jdt.core.dom.ImportDeclaration;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.Modifier;
+import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
+import org.eclipse.jdt.core.dom.StringLiteral;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 public class CodeXMLUtils {
+		
 	public static Document getProjectXML(IJavaProject project) throws JavaModelException {
 		Document document = DocumentHelper.createDocument();
 		generateProjectXML(project, document);
@@ -74,6 +86,38 @@ public class CodeXMLUtils {
 		private Element rootElement;
 		private Element classElement = null;
 		private Element methodElement = null;
+		private Deque<String> importDeclarationNames = new ArrayDeque<>();
+
+		/**
+		 * クラス・メソッドがiArchによるチェックの警告を抑制するアノテーションを付加されているかどうかを判断します。
+		 * @param node
+		 * @return
+		 */
+		@SuppressWarnings("unchecked")
+		private static boolean hasSuppressAnnotation(BodyDeclaration node) {
+			final String ANNOTATION_NAME = "SuppressArchfaceWarnings";
+			final String ANNOTATION_PARAM_ALL = "all";
+			for (IExtendedModifier modifier : (List<IExtendedModifier>) node.modifiers()) {
+				if (modifier instanceof SingleMemberAnnotation){
+					SingleMemberAnnotation annotation = (SingleMemberAnnotation) modifier;
+					if (annotation.getTypeName().getFullyQualifiedName().equals(ANNOTATION_NAME)) {
+						List<Expression> expressions;
+						if (annotation.getValue().getNodeType() == Expression.ARRAY_INITIALIZER) {
+							expressions = ((ArrayInitializer) annotation.getValue()).expressions();
+						} else {
+							expressions = Arrays.asList(annotation.getValue());
+						}
+						for (Expression expression : expressions) {
+							if (expression.getNodeType() == Expression.STRING_LITERAL &&
+									((StringLiteral) expression).getLiteralValue().equals(ANNOTATION_PARAM_ALL)) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+			return false;
+		}
 
 		private ExtractVisitor(CompilationUnit compilationUnit, Element rootElement) {
 			super(true);
@@ -83,6 +127,11 @@ public class CodeXMLUtils {
 
 		@Override
 		public boolean visit(TypeDeclaration node) {
+			if (hasSuppressAnnotation(node)) {
+				importDeclarationNames.clear();
+				return super.visit(node);
+			}
+			
 			String nodeType = (node.isInterface() == true) ? "Interface" : "Class";
 			classElement = rootElement.addElement(nodeType);
 
@@ -99,9 +148,20 @@ public class CodeXMLUtils {
 			classElement.addAttribute("lineNumber", String.valueOf(lineNumber));
 
 			Element modifiersElement = classElement.addElement("ClassModifiers");
-			for (String modifier: convertModifiers(node.getModifiers())) {
+			for (String modifier: convertModifiers(node.modifiers())) {
 				Element modifierElement = modifiersElement.addElement("modifier");
 				modifierElement.setText(modifier);
+			}
+			
+			while (true) {
+				String importDeclarationName;
+				try {
+					importDeclarationName = importDeclarationNames.removeFirst();
+				} catch (NoSuchElementException e) {
+					break;
+				}
+				Element importDeclarationElement = classElement.addElement("ImportDeclaration");
+				importDeclarationElement.addAttribute("name", importDeclarationName);
 			}
 
 			return super.visit(node);
@@ -113,6 +173,8 @@ public class CodeXMLUtils {
 
 		@Override
 		public boolean visit(MethodDeclaration node) {
+			if (hasSuppressAnnotation(node)) {return super.visit(node);}
+			
 			// メソッドが定義されているクラスがない(抽象クラスなど)場合はXMLに登録しない
 			if (classElement != null) {
 				methodElement = classElement.addElement("MethodDeclaration");
@@ -127,7 +189,7 @@ public class CodeXMLUtils {
 
 				// Modifiers of MethodDeclaration
 				Element modifiersElement = methodElement.addElement("MethodModifiers");
-				List<String> modifiers = convertModifiers(node.getModifiers());
+				List<String> modifiers = convertModifiers(node.modifiers());
 				if (methodReturnType.equals("void") && !(modifiers.get(0).toString().equals("void"))) {
 					modifiers.add("void");
 				}
@@ -176,41 +238,25 @@ public class CodeXMLUtils {
 			}
 			return super.visit(node);
 		}
+		
+		@Override
+		public boolean visit(ImportDeclaration node) {
+			// importの定義に出会うたびにリストに追加していき、
+			// クラス定義に出会ったら、今までのimportをそのクラスのものとして開放する。
+			importDeclarationNames.addLast(node.getName().toString());
+			return super.visit(node);
+		}
+		
 	}
 
-	private static List<String> convertModifiers(int modValue) {
+	private static List<String> convertModifiers(List<IExtendedModifier> list) {
 		// TODO: It is incorrect, but original procedure is kept for a while.
 		List<String> modifiers = new LinkedList<String>();
-		String modifier = null;
-
-		if (modValue == Flags.AccDefault) modifier = "void";
-		if (modValue == Flags.AccPublic) modifier = " public";
-		if (modValue == Flags.AccPrivate) modifier = " private";
-		if (modValue == Flags.AccProtected)
-			if (modValue == Flags.AccStatic)
-				modifier = " protective";
-		modifier = " static";
-		if (modValue == Flags.AccFinal) modifier = " final";
-		if (modValue == Flags.AccSynchronized) modifier = "synchronized";
-		if (modValue == Flags.AccVolatile) modifier = "  volatile";
-
-		if (modValue == Flags.AccTransient) modifier = " transient";
-		if (modValue == Flags.AccNative) modifier = " native";
-		if (modValue == Flags.AccInterface) modifier = "interface";
-		if (modValue == Flags.AccAbstract) modifier = " abstract";
-		if (modValue == Flags.AccStrictfp) modifier = "strict";
-
-		if (modifier != null) modifiers.add(modifier);
-
-		if (modValue == (Flags.AccPublic | Flags.AccStatic)) {
-			modifiers.add(" public");
-			modifiers.add("  static");
+		for (IExtendedModifier elem : list) {
+			if (elem instanceof Modifier) {
+				modifiers.add(((Modifier) elem).getKeyword().toString());
+			}
 		}
-
-		if (modValue == Flags.AccPrivate) modifier = " private";
-		if (modValue == Flags.AccProtected) modifier = " protective";
-		if (modValue == Flags.AccProtected) modifier = " protective";
-
 		return modifiers;
 	}
 

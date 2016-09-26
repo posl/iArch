@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import jp.ac.kyushu.iarch.checkplugin.utils.ProjectSelectionUtils;
+import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectAllFileDialog;
 
 import org.dom4j.DocumentHelper;
@@ -109,7 +109,7 @@ public class ConfigurationXMLHandler implements IHandler{
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IProject project = ProjectSelectionUtils.getProject(event, "Configuration");
+		IProject project = ProjectReader.getProject();
 
 		SelectAllFileDialog dialog = new SelectAllFileDialog(
 				HandlerUtil.getActiveShell(event), project);

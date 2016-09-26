@@ -24,11 +24,10 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
-import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
+import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEquality;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEqualityUtils;
-import jp.ac.kyushu.iarch.checkplugin.utils.ProjectSelectionUtils;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectDiagramsDialog;
 import jp.ac.kyushu.iarch.sequencediagram.utils.MessageUtils;
 
@@ -66,7 +65,7 @@ public class GenerateArchCode implements IHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IProject project = ProjectSelectionUtils.getProject(event, "Generate ArchiCode");
+		IProject project = ProjectReader.getProject();
 		
 		SelectDiagramsDialog dialog = new SelectDiagramsDialog(
 				HandlerUtil.getActiveShell(event), project);

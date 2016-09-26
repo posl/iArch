@@ -61,6 +61,11 @@ public class SelectDiagramsDialog extends Dialog {
 		newShell.setText("Select Diagrams");
 	}
 	
+	@Override
+	protected boolean isResizable() {
+		return true;
+	}
+	
 	/**
 	 * Create dialog widgets
 	 */
@@ -68,17 +73,18 @@ public class SelectDiagramsDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		CheckCheckedStateListener checkboxListener = new CheckCheckedStateListener();
 		Composite composite = (Composite)super.createDialogArea(parent);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
 
 		Label classLabel = new Label(composite, SWT.NONE);
-		classLabel.setText("Class Diagram (only one)");
+		classLabel.setText("Class Diagram (Select exactly 1 Diagram)");
 		classTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
-		classTable.setLayoutData(new GridData(350, 60));
+		classTable.setLayoutData(gridData);
 		classTable.addSelectionListener(checkboxListener);
 
 		Label sequenceLabel = new Label(composite, SWT.NONE);
 		sequenceLabel.setText("Sequence Diagrams");
 		sequenceTable = new Table(composite, SWT.CHECK|SWT.BORDER|SWT.V_SCROLL);
-		sequenceTable.setLayoutData(new GridData(350, 100));
+		sequenceTable.setLayoutData(gridData);
 		sequenceTable.addSelectionListener(checkboxListener);
 		
 		setInitialItems();
