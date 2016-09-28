@@ -2,25 +2,25 @@
 
 <Project name="ObserverPattern">
   <Archfile>
-    <Path Attribute="\ObserverPattern\arch\observer_DF.arch"/>
+    <Path Attribute="/ObserverPattern/arch/observer_DF.arch"/>
   </Archfile>
   <ClassDiagram>
-    <Path Attribute="\ObserverPattern\diagrams\Class.diagram"/>
+    <Path Attribute="/ObserverPattern/diagrams/Class.diagram"/>
   </ClassDiagram>
   <DataflowDiagram>
-    <Path Attribute="\ObserverPattern\diagrams\Dataflow.diagram"/>
+    <Path Attribute="/ObserverPattern/diagrams/Dataflow.diagram"/>
   </DataflowDiagram>
   <SequenceDiagram>
-    <Path Attribute="\ObserverPattern\diagrams\Sequence_Valid.diagram"/>
-    <Path Attribute="\ObserverPattern\diagrams\Sequence_Invalid.diagram"/>
+    <Path Attribute="/ObserverPattern/diagrams/Sequence_Valid.diagram"/>
+    <Path Attribute="/ObserverPattern/diagrams/Sequence_Invalid.diagram"/>
   </SequenceDiagram>
   <SourceCode>
-    <Path Attribute="\ObserverPattern\src\Subject.java"/>
-    <Path Attribute="\ObserverPattern\src\State.java"/>
-    <Path Attribute="\ObserverPattern\src\Observer.java"/>
-    <Path Attribute="\ObserverPattern\src\Main.java"/>
+    <Path Attribute="/ObserverPattern/src/Subject.java"/>
+    <Path Attribute="/ObserverPattern/src/State.java"/>
+    <Path Attribute="/ObserverPattern/src/Observer.java"/>
+    <Path Attribute="/ObserverPattern/src/Main.java"/>
   </SourceCode>
   <ARXML>
-    <Path Attribute="\ObserverPattern\codeXML.xml"/>
+    <Path Attribute="/ObserverPattern/codeXML.xml"/>
   </ARXML>
 </Project>
