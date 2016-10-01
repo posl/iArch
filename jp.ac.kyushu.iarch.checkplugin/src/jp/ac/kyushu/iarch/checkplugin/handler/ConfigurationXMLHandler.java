@@ -30,7 +30,7 @@ public class ConfigurationXMLHandler implements IHandler{
 		final Element ArchCodeElement = rootElement.addElement("Archfile");
 		{
 			final Element PathElement = ArchCodeElement.addElement("Path");
-			PathElement.addAttribute("Attribute", AllDialog.getArchiface().getFullPath().toOSString());
+			PathElement.addAttribute("Attribute", AllDialog.getArchiface().getFullPath().toString());
 		}
 
 
@@ -38,7 +38,7 @@ public class ConfigurationXMLHandler implements IHandler{
 		if(AllDialog.getClassDiagram() != null)
 		{
 			final Element PathElement = ClassDiagramElement.addElement("Path");
-			PathElement.addAttribute("Attribute", AllDialog.getClassDiagram().getFullPath().toOSString());
+			PathElement.addAttribute("Attribute", AllDialog.getClassDiagram().getFullPath().toString());
 		}
 
 		final Element SequenceDiagramElement = rootElement.addElement("SequenceDiagram");
@@ -46,7 +46,7 @@ public class ConfigurationXMLHandler implements IHandler{
 		{
 			for(IResource resource:AllDialog.getSequenceDiagrams()){
 				final Element PathElement = SequenceDiagramElement.addElement("Path");
-				PathElement.addAttribute("Attribute", resource.getFullPath().toOSString());
+				PathElement.addAttribute("Attribute", resource.getFullPath().toString());
 			}
 		}
 
@@ -55,7 +55,7 @@ public class ConfigurationXMLHandler implements IHandler{
 
 			for(IResource resource:AllDialog.getSourceCode()){
 				final Element PathElement = SourceCodeElement.addElement("Path");
-				PathElement.addAttribute("Attribute", resource.getFullPath().toOSString());
+				PathElement.addAttribute("Attribute", resource.getFullPath().toString());
 			}
 		}
 
@@ -64,7 +64,7 @@ public class ConfigurationXMLHandler implements IHandler{
 		{
 			final Element PathElement = XMLElement.addElement("Path");
 			try{
-			PathElement.addAttribute("Attribute", AllDialog.getXml().getFullPath().toOSString());
+			PathElement.addAttribute("Attribute", AllDialog.getXml().getFullPath().toString());
 			}catch(Exception e){
 				System.out.println(e.getMessage());
 			}
