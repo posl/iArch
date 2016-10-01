@@ -63,7 +63,7 @@ public class ArchfaceViewPart extends ViewPart {
 		public Object[] getElements(Object inputElement) {
 			// TODO Auto-generated method stub
 			if (inputElement instanceof List) {
-				return ((List) inputElement).toArray();
+				return ((List<?>) inputElement).toArray();
 			}
 			return null;
 		}
@@ -245,7 +245,7 @@ public class ArchfaceViewPart extends ViewPart {
 		public Object[] getElements(Object inputElement) {
 			// TODO 自動生成されたメソッド・スタブ
 			if (inputElement instanceof List) {
-				return ((List) inputElement).toArray();
+				return ((List<?>) inputElement).toArray();
 			}
 			return null;
 		}

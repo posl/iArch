@@ -1,7 +1,6 @@
 package jp.ac.kyushu.iarch.checkplugin.view;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
