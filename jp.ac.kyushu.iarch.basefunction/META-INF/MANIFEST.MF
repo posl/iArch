@@ -32,7 +32,7 @@ Bundle-ClassPath: .,
  lib/logback-classic-1.0.13.jar,
  lib/logback-core-1.0.13.jar,
  lib/slf4j-api-1.7.9.jar,
- lib/jgit-4.1.1.201511131810-r.jar,
+ lib/org.eclipse.jgit-4.4.1.201607150455-r.jar,
  lib/freemarker.jar
 Import-Package: org.eclipse.graphiti.mm.pictograms,
  org.slf4j
