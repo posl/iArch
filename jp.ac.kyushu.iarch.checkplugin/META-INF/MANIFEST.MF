@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CheckPlugin
 Bundle-SymbolicName: jp.ac.kyushu.iarch.checkplugin;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0
 Bundle-Activator: jp.ac.kyushu.iarch.checkplugin.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -33,3 +33,4 @@ Import-Package: jp.ac.kyushu.iarch.basefunction.controller,
  org.apache.log4j;version="1.2.15",
  org.eclipse.debug.core,
  org.eclipse.debug.core.model
+Bundle-Vendor: POSL Research Group

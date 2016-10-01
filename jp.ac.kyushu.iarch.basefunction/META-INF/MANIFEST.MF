@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Basefunction
+Bundle-Name: BaseFunction
 Bundle-SymbolicName: jp.ac.kyushu.iarch.basefunction
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0
 Bundle-Activator: jp.ac.kyushu.iarch.basefunction.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -36,3 +36,4 @@ Bundle-ClassPath: .,
  lib/freemarker.jar
 Import-Package: org.eclipse.graphiti.mm.pictograms,
  org.slf4j
+Bundle-Vendor: POSL Research Group

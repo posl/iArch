@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: jp.ac.kyushu.iarch.archdsl.tests
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Name: ArchDSL.Tests
+Bundle-Vendor: POSL Research Group
+Bundle-Version: 1.0
 Bundle-SymbolicName: jp.ac.kyushu.iarch.archdsl.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: jp.ac.kyushu.iarch.archdsl,

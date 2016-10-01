@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: SequenceDiagram
 Bundle-SymbolicName: jp.ac.kyushu.iarch.sequencediagram;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.0
 Bundle-Activator: jp.ac.kyushu.iarch.sequencediagram.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
@@ -19,3 +19,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: jp.ac.kyushu.iarch.sequencediagram.diagram.providers,
  jp.ac.kyushu.iarch.sequencediagram.features,
  jp.ac.kyushu.iarch.sequencediagram.utils
+Bundle-Vendor: POSL Research Group
