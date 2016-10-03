@@ -36,6 +36,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 
@@ -101,7 +102,13 @@ public class ASTSourceCodeChecker{
 		for (Behavior behavior: archface.getBehaviors()) {
 			String interfaceName = behavior.getInterface().getName();
 			//First LastClass is defined first Method's Class
-			String prevClassName = ((Interface) behavior.getCall().get(0).eContainer()).getName();
+			String prevClassName = null;
+			if (behavior.getCall().size() > 0) {
+				EObject methodContainer = behavior.getCall().get(0).eContainer();
+				if (methodContainer instanceof Interface) {
+					prevClassName = ((Interface) methodContainer).getName();
+				}
+			}
 			String prevMethodName = null;
 			String infoString = null;
 			for (Method method: behavior.getCall()) {

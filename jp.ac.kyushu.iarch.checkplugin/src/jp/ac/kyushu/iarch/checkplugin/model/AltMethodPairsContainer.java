@@ -27,7 +27,8 @@ public class AltMethodPairsContainer extends ComponentMethodPairModel {
 			List<ComponentMethodPairModel> altMethodModels,
 			ComponentClassPairModel parentModel) {
 		super(altMethodModels, parentModel);
-		this.name = altMethodModels.get(0).getName();
+		// Not copying string, override getter (implemented below).
+		//this.name = altMethodModels.get(0).getName();
 		this.altMethodPairs = altMethodModels;
 		for (ComponentMethodPairModel model : altMethodModels) {
 			model.setParentAltMethodPairsContainer(this);
@@ -60,4 +61,21 @@ public class AltMethodPairsContainer extends ComponentMethodPairModel {
 		this.altMethodPairs = altMethodPairs;
 	}
 
+	@Override
+	public String getName() {
+		if (altMethodPairs.size() > 0) {
+			return altMethodPairs.get(0).getName();
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public ComponentClassPairModel getParentModel() {
+		if (altMethodPairs.size() > 0) {
+			return altMethodPairs.get(0).getParentModel();
+		} else {
+			return null;
+		}
+	}
 }

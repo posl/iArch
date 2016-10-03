@@ -32,7 +32,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -138,11 +137,6 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		return -1;
 	}
 
-	// Get Archface model from the path given by Config.xml
-	private ArchModel getArchModel(IProject project) {
-		IResource archfile = new XMLreader(project).getArchfileResource();
-		return new ArchModel(archfile);
-	}
 	protected boolean saveArchModel(ArchModel archModel) {
 		boolean result = false;
 		try {
@@ -310,7 +304,12 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		}
 
 		// Get Archface model from the path given by Config.xml
-		ArchModel archModel = getArchModel(file.getProject());
+		IResource archfile = new XMLreader(file.getProject()).getArchfileResource();
+		if (archfile == null) {
+			System.out.println(className + ": failed to get the archfile resource.");
+			return;
+		}
+		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
 		// Check if cursor line is on MethodDeclaration or MethodInvocation.
@@ -594,7 +593,12 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		}
 
 		// Get Archface model from the path given by Config.xml
-		ArchModel archModel = getArchModel(file.getProject());
+		IResource archfile = new XMLreader(file.getProject()).getArchfileResource();
+		if (archfile == null) {
+			System.out.println(className + ": failed to get the archfile resource.");
+			return;
+		}
+		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
 		// Get business object from selection.

@@ -58,6 +58,10 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			return;
 		}
 		IResource archfile = new XMLreader(project).getArchfileResource();
+		if (archfile == null) {
+			System.out.println("TypeCheckFeature: failed to get the archfile resource.");
+			return;
+		}
 		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
