@@ -108,7 +108,7 @@ public class MethodEqualityUtils {
 			if (method == null) {
 				return false;
 			}
-			if (!ArchModelUtils.getClassName(method, allowUncertain).equals(className)) {
+			if (!className.equals(ArchModelUtils.getClassName(method, allowUncertain))) {
 				return false;
 			}
 			return true;

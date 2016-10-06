@@ -78,4 +78,15 @@ public class AltMethodPairsContainer extends ComponentMethodPairModel {
 			return null;
 		}
 	}
+
+	@Override
+	public boolean hasInvocation(String name) {
+		// returns true if one of alternatives has specified invocation.
+		for (ComponentMethodPairModel methodModel : altMethodPairs) {
+			if (methodModel.hasInvocation(name)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
