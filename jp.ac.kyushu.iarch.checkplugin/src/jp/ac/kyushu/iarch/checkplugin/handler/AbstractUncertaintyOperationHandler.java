@@ -21,6 +21,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.CodeXMLUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.CodeXMLUtils.FindVisitor;
@@ -145,7 +146,15 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		} catch (IOException e) {
 			e.printStackTrace();
 			String className = this.getClass().getSimpleName();
+			MessageDialogUtils.showError(className, "Failed to save Archfile.");
 			System.out.println(className + ": failed to save Archfile.");
+		} catch (RuntimeException e) {
+			// Model error falls here.
+			String className = this.getClass().getSimpleName();
+			String m = e.getMessage();
+			StringBuilder sb = new StringBuilder("Model validation failed.\n");
+			sb.append(m != null ? m : "Unknown reason.");
+			MessageDialogUtils.showError(className, sb.toString());
 		}
 		return result;
 	}
