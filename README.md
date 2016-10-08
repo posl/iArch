@@ -23,7 +23,7 @@ How to run iArch
 run->Launch Runtime Eclipse
 
 
-Require library
+Required libraries
 ------
 * Java SDK 1.7~
 * Graphiti SDK Plus(Incubation) 0.10.2<-Don't update Graphiti!
@@ -34,3 +34,4 @@ Require library
     * [logback-1.0.13](http://logback.qos.ch/) | [(EPL v1.0 or LPGL 2.1)](http://logback.qos.ch/license.html)
     * [jgit-4.4.1.201607150455](https://eclipse.org/jgit/) | [(Eclipse Distribution License v1.0)](http://www.eclipse.org/org/documents/edl-v10.php)
     * [slf4j-api-1.7.9](http://www.slf4j.org/) | [(MIT License)](http://www.slf4j.org/license.html)
+    * freemarker
