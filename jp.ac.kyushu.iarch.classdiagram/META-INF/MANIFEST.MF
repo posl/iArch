@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: ClassDiagram
+Bundle-Name: iArch ClassDiagram
 Bundle-SymbolicName: jp.ac.kyushu.iarch.classdiagram;singleton:=true
-Bundle-Version: 1.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: POSL Research Group
 Bundle-Localization: plugin

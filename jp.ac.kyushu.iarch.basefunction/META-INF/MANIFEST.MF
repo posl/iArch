@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: BaseFunction
+Bundle-Name: iArch BaseFunction
 Bundle-SymbolicName: jp.ac.kyushu.iarch.basefunction
-Bundle-Version: 1.0
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: jp.ac.kyushu.iarch.basefunction.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
