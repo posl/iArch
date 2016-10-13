@@ -6,17 +6,16 @@
 # 'jekyll serve'. If you change this file, please restart the server process.
 
 # Site settings
-title: iArch
-email: your-email@domain.com
-description: > # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "/iArch" # the subpath of your site, e.g. /blog
-url: "http://posl.github.io" # the base hostname & protocol for your site
-twitter_username: jekyllrb
-github_username:  jekyll
+title: iArch-U
+email: iarch@posl.ait.kyushu-u.ac.jp
+description: >
+  iArch-U is an Eclipse plug-in for managing and modelling uncertainty which arises during the software development process.
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://posl.github.io/iArch" # the base hostname & protocol for your site
+github_username:  posl
 
 # Build settings
 markdown: kramdown
-theme: minima
+exclude: [vendor]
+repository: posl/posl.github.io
+highlighter: rouge
