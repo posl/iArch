@@ -50,7 +50,10 @@ public class CallPairModel{
 		this.archMethod = methodSuperCall.getName();
 		// tmp impl(finally, archMethod type will change Method from
 		// SuperMethod)
-		this.name = ((Method) this.archMethod).getName();
+		//this.name = ((Method) this.archMethod).getName();
+		// It is found that archMethod get a SuperMethod instance, which is not used normally,
+		// so ad-hoc treatment is applied temporally. we should correct afterwards.
+		this.name = (archMethod instanceof Method) ? ((Method) archMethod).getName() : "-";
 
 		this.methodModel = getMethodPairModelByArchMethod(archMethod);
 		if (methodSuperCall instanceof OptCall) {

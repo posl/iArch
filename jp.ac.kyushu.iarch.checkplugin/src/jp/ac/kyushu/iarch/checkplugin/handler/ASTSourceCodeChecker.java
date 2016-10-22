@@ -249,16 +249,30 @@ public class ASTSourceCodeChecker{
 				IResource currentResource =
 						currentCallModel.getMethodModel().getParentModel().getClassPath(project);
 				String currentResourcePath = currentResource.getLocationURI().getPath();
-				int lineNumber = Integer.parseInt(((Element) currentCallModel.getMethodModel().getJavaMethodNode()).attributeValue("lineNumber"));
+
+				// TODO: We should confirm whether a method model can lack a Java node or cannot.
+				Integer lineNumber = null;
+				Node currentMethodNode = currentCallModel.getMethodModel().getJavaMethodNode();
+				if (currentMethodNode instanceof Element) {
+					lineNumber = Integer.parseInt(((Element) currentMethodNode).attributeValue("lineNumber"));
+				}
 
 				if (currentCallModel.getMethodModel().hasInvocation(nextCallModel.getName())) {
-					ProblemViewManager.addInfo1(currentResource,
-							"Behavior - " + currentCallModel.getName() + " -> " + nextCallModel.getName() + " is defined",
-							currentResourcePath, lineNumber);
+					String msg = "Behavior - " + currentCallModel.getName()
+							+ " -> " + nextCallModel.getName() + " is defined";
+					if (lineNumber != null) {
+						ProblemViewManager.addInfo1(currentResource, msg, currentResourcePath, lineNumber);
+					} else {
+						ProblemViewManager.addInfo(currentResource, msg, currentResourcePath);
+					}
 				} else {
-					ProblemViewManager.addError1(currentResource,
-							"Behavior - " + currentCallModel.getName() + " -> " + nextCallModel.getName() + " is not defined",
-							currentResourcePath, lineNumber);
+					String msg = "Behavior - " + currentCallModel.getName()
+							+ " -> " + nextCallModel.getName() + " is not defined";
+					if (lineNumber != null) {
+						ProblemViewManager.addError1(currentResource, msg, currentResourcePath, lineNumber);
+					} else {
+						ProblemViewManager.addError(currentResource, msg, currentResourcePath);
+					}
 				}
 			}
 		}
