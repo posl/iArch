@@ -13,27 +13,27 @@ First, please clone the sample project to your local machine from [StudentList](
 Then, open the cloned project as an existing Java project in iArch-U, or in Eclipse in other words.
 
 
-# Brief introduction to iArch-U
+# iArch-U editors and a view
 
-This section provides an introduction to the iArch-U IDE.
-First, open the following files contained in the sample project:
+iArch-U is implemented on top of the Eclipse IDE and you can access functionalities provided by iArch-U using integrated editors and a view.
+To take a glance at these editors and a view, open the following files contained in the sample project:
 
 - StudentList/Main.Java
 - StudentList/arch/student.arch
 - StudentList/diagrams/Class.diagram
 - StudentList/diagrams/Sequence.diagram
 
-Taking a look at the appearance of iArch-U, there are some view sections.
-These views are peculiar to iArch-U, helping implement and design embracing uncertainty in your project.
+You may notice that there appear some code editors and UML diagrams.
+These are displayed in custom editors of iArch-U to help you design and implement programs embracing uncertainty.
 
 
 ## Archface-U editor
 
 ![Archface-U editor](../images/archcode.jpg)
 
-In this view, We can express the Archface-U code.
-We should equalize the structure of classes and methods between Archcode in this section and Java source code.
-If there are contradiction between them, error will be occured.
+In this editor, we can write Archcode, which is code written in the Archface-U DSL, just like you can write Java code in the Java editor.
+Archcode fills the gap between programs and models by enforcing both sides to be aligned with the interface described as Archcode.
+If there are misalignment between them, errors will be reported.
 
 
 ## iArch-U model editors
@@ -42,18 +42,18 @@ If there are contradiction between them, error will be occured.
 
 ![iArch-U sequence diagram editor](../images/sequence_diagram_tut_01.jpg)
 
-The class diagram and the sequence diagram belong to this section.
-If there are some structural update in this diagrams, then Archcode will be changed to follow this update.
-This change will be operated not only if uncertainty is changed to be certain, but also if certain component or connector is changed to be uncertain.
+You can see iArch-U class and sequence diagrams, which are extensions of the UML class and sequence diagrams respectively, by opening corresponding files.
+Once you make some changes in these diagrams, Archcode will be changed accordingly.
+This will happen not only when a certain component or connector is changed to be uncertain, but also when an uncertain component or connector is changed to be certain.
 
 
 ## Archface-U view
 
 ![Archface-U view](../images/archface_u_view_tut.jpg)
 
-Archface-U view provides the overview of uncertainty in the project.
-Component names, uncertain types, implementation status and recent changes are listed.
-Behaviors are also listed under components list.
+`Archface-U View` reports the overview of the project status regarding uncertainty.
+It displays the current component status as well as history information collected from the past commit log of a tied repository.
+The behaviour list is also displayed under the component list.
 
 
 # Overview of the sample project
