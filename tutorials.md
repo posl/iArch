@@ -38,9 +38,9 @@ If there are contradiction between them, error will be occured.
 
 ## iArch-U model editors
 
-![iArch-U class diagram editor](../images/classDiagram.jpg)
+![iArch-U class diagram editor](../images/class_diagram_tut_01.jpg)
 
-![iArch-U sequence diagram editor](../images/sequenceDiagram.jpg)
+![iArch-U sequence diagram editor](../images/sequence_diagram_tut_01.jpg)
 
 The class diagram and the sequence diagram belong to this section.
 If there are some structural update in this diagrams, then Archcode will be changed to follow this update.
@@ -49,7 +49,7 @@ This change will be operated not only if uncertainty is changed to be certain, b
 
 ## Archface-U view
 
-![Archface-U view](../images/archfaceView.jpg)
+![Archface-U view](../images/archface_u_view_tut.jpg)
 
 Archface-U view provides the overview of uncertainty in the project.
 Component names, uncertain types, implementation status and recent changes are listed.
@@ -146,18 +146,18 @@ Also in *ucStudent*, currently we can't decide which to be implemented at last, 
 
 We can also generate a model map and a sequence map.
 
-![iArch-U class diagram editor](../images/classDiagram_2.jpg)
+![iArch-U class diagram editor](../images/class_diagram_tut_02.jpg)
 
-![iArch-U sequence diagram editor](../images/sequenceDiagram_2.jpg)
+![iArch-U sequence diagram editor](../images/sequence_diagram_tut_02.jpg)
 
 
 # Modelling
 Here shows an example of Modeling.
 At first, the class map and sequence map are expressed like this.
 
-![iArch-U class diagram editor](../images/classDiagram.jpg)
+![iArch-U class diagram editor](../images/class_diagram_tut_01.jpg)
 
-![iArch-U sequence diagram editor](../images/sequenceDiagram.jpg)
+![iArch-U sequence diagram editor](../images/sequence_diagram_tut_01.jpg)
 
 The code is written as below.
 
@@ -178,9 +178,9 @@ interface connector cStudent{
 Subsequently, we will describe design models containing uncertainty using model editor.
 At this time, model type inspection makes sure to describe models following Archface-U.
 
-!iArch-U class diagram editor](../images/classDiagram_2.jpg)
+![iArch-U class diagram editor](../images/class_diagram_tut_02.jpg)
 
-![iArch-U sequence diagram editor](../images/sequenceDiagram_2.jpg)
+![iArch-U sequence diagram editor](../images/sequence_diagram_tut_02.jpg)
 
 The archcode at this time is written as below.
 
