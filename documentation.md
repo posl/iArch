@@ -7,26 +7,6 @@ permalink: /documentation/
 - TOC
 {:toc}
 
-# System requirements
-
-- Java SE 7~
-- Eclipse Mars.2~
-- Graphiti SDK Plus 0.12.2~
-- Xtext Complete SDK 2.9.1~
-
-These requirements are not strict.
-You might be able to run iArch-U with older versions of middleware and/or libraries.
-
-
-# Installation
-
-1. Download the iArch-U package archive.
-1. Expand the archive and copy expanded `plugins` directory into your Eclipse application directory.
-1. Start Eclipse.
-1. Select `Help` -> `Install New Software`
-  - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
-1. Restart Eclipse.
-
 
 # Terminology
 

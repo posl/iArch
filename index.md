@@ -23,6 +23,27 @@ It also has testing support and model inspection features for testing the softwa
 ![iArch-U overview](images/ide_overview.png)
 
 
+# System requirements
+
+- Java SE 7~
+- Eclipse Mars.2~
+- Graphiti SDK Plus 0.12.2~
+- Xtext Complete SDK 2.9.1~
+
+These requirements are not strict.
+You might be able to run iArch-U with older versions of middleware and/or libraries.
+
+
+# Installation
+
+1. Download the iArch-U package archive.
+1. Expand the archive and copy expanded `plugins` directory into your Eclipse application directory.
+1. Start Eclipse.
+1. Select `Help` -> `Install New Software`
+  - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
+1. Restart Eclipse.
+
+
 # Contact
 
 If you have any questions or comments, please email us: [iarch@posl.ait.kyushu-u.ac.jp](mailto:iarch@posl.ait.kyushu-u.ac.jp)
@@ -33,3 +54,8 @@ If you have any questions or comments, please email us: [iarch@posl.ait.kyushu-u
 iArch-U is distributed under EPL - [Eclipse Public License v 1.0](https://eclipse.org/org/documents/epl-v10.php)
 
 EPL is compatible with the MIT license.
+
+
+# Acknowledgements
+
+This research is being conducted as a part of the Grant-in-aid for Scientific Research (A) 26240007 by the Ministry of Education, Culture, Sports, Science and Technology, Japan.
