@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: default_index
 title: iArch-U
 permalink: /
 ---
@@ -19,9 +19,6 @@ It is an interface between UML models and Java code described on the iArch-U IDE
 iArch-U also has modelling and coding features which facilitate design and implementation involving uncertainty.
 iArch-U is an [Eclipse](https://eclipse.org/) plug-in, so you can view and edit project assets within an environment tightly integrated with Eclipse.
 It also has testing support and model inspection features for testing the software with uncertainty.
-
-![iArch-U overview](images/ide_overview.png)
-
 
 # System requirements
 
