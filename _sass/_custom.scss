@@ -1,0 +1,6 @@
+$theme_hue: 230;
+$theme_sat: 1;
+
+.site-header, .site-footer {
+    background-color: hsl($theme_hue, 20% * $theme_sat, 90%);
+}
