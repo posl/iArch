@@ -87,7 +87,7 @@ If the teacher still doesn't have decided which one he would take, filterStudent
 <!-- Caption Lv3: Set an alternative uncertainty -->
 Select this method call arrow in the sequence diagram, and click "Set Alternative" operation from the context menu.
 
-Input an alternative method name to this dialogue box, which is colorStudent in this case.
+Input the alternative method name to this dialogue box, which is colorStudent in this case.
 
 Here you see the sequence diagram has been changed to display alternative uncertainty and the corresponding Archcode has also been changed.
 
