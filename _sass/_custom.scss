@@ -1,11 +1,25 @@
 $theme_hue: 240;
 $theme_sat: 1;
 
-$accent_font: $base-font-family;
-$accent_font_weight: 500;
+$body_font: Georgia, serif;
+$sub_font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+$accent_font: "Gill Sans", "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$accent_font_weight: 600;
+
+// body font
+body {
+    font-family: $body_font;
+}
+
+// define em color
+div.page-content em {
+    color: adjust-hue(hsl($theme_hue, 40% * $theme_sat, 40%), 60deg);
+}
 
 // color header and footer
 .site-header, .site-footer {
+    font-family: $sub_font;
     background-color: hsl($theme_hue, 30% * $theme_sat, 92%);
     border-top: solid 2px hsl($theme_hue, 20% * $theme_sat, 50%);
 }
@@ -29,6 +43,7 @@ $toc_margin_left: -($toc_padding_left + $toc_padding_right + $toc_margin_right +
 
 // style table of contents
 #markdown-toc {
+    font-family: $sub_font;
     background-color: hsl($theme_hue, 30% * $theme_sat, 95%);
     border-radius: 4px;
     padding: 10px 30px;
