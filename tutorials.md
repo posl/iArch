@@ -102,7 +102,7 @@ We define that, in *StudentController* class, the method which change to show on
 To manage the uncertainty caused from this request, we express this uncertainty, whether this system will be implemented with using *colorStudent* method.
 
 In Archface-U, we describe alternative uncertainty with bracketing by **"{}"** like **"{ A, B }"**.
-Optional uncertainty is described with bracketing by **"[]"** like **"[ C ]"**.
+Optional uncertainty is described with bracketing by **"[ ]"** like **"[ C ]"**.
 So we can express the code as below.
 
 ```

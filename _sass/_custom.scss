@@ -1,4 +1,4 @@
-$theme_hue: 240;
+$theme_hue: 230;
 $theme_sat: 1;
 
 $body_font: Georgia, serif;
@@ -12,9 +12,32 @@ body {
     font-family: $body_font;
 }
 
-// define em color
+// define em / strong
 div.page-content em {
-    color: adjust-hue(hsl($theme_hue, 40% * $theme_sat, 40%), 60deg);
+    color: adjust-hue(hsl($theme_hue, 30% * $theme_sat, 55%), 30deg);
+}
+
+div.page-content strong {
+    font-family: $sub_font;
+}
+
+// list marker
+ul li {
+    list-style-type: none;
+    position: relative;
+}
+
+ul li::after {
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0.65em;
+    left: -0.75em;
+    width: 5px;
+    height: 5px;
+    background-color: hsl($theme_hue, 0% * $theme_sat, 50%);
+    border-style: none;
+    border-radius: 100%;
 }
 
 // color header and footer
@@ -107,8 +130,8 @@ h2 {
 nav.site-nav > div.trigger > a.page-link:last-child {
     background-color: hsl($theme_hue, 20% * $theme_sat, 40%);
     color: hsl(0, 0%, 100%);
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    border-radius: 8px;
 }
 
 // code
