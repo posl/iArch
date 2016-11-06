@@ -4,11 +4,27 @@ title: Documentation
 permalink: /documentation/
 ---
 
+<h1 markdown="0" id="page-title">Documentation</h1>
+
+This is the documentation for iArch 1.0.
+
 - TOC
 {:toc}
 
+# iArch-U
 
-# Terminology
+## OverView
+
+![OverView](../images/iArch_features.svg)
+
+_iArch-U_ is the IDE, which supports uncertainty-aware software development.
+iArch-U has the interface component _Archface-U_ as the central mechanism to support development.
+
+## Screen Shot
+
+![ScreenShot](../images/ide_overview_2x.png)
+
+## Terminology
 
 - _Archface_ is a Domain Specific Language (DSL) to bridge the gap between UML models and Java code.
 - _Archcode_ is code written in Archface.
@@ -19,8 +35,6 @@ permalink: /documentation/
 
 
 # Archface-U
-
-## Overview
 
 Archface-U is a new interface designed to enable continuous development with ensuring traceability between software design and implementation.
 It is an interface between UML models and Java code described on the iArch-U IDE.

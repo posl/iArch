@@ -56,44 +56,46 @@ a.site-title {
     color: hsl($theme_hue, 20% * $theme_sat, 40%) !important;
 }
 
-// variables to float table of contents
-$toc_padding_left: 30px;
-$toc_padding_right: 10px;
-$toc_padding_tb: 10px;
-$toc_margin_right: 20px;
-$toc_width: 160px;
-$toc_margin_left: -($toc_padding_left + $toc_padding_right + $toc_margin_right + $toc_width);
-
 // style table of contents
 #markdown-toc {
     font-family: $sub_font;
-    background-color: hsl($theme_hue, 30% * $theme_sat, 95%);
+    background-color: hsl($theme_hue, 0% * $theme_sat, 95%);
     border-radius: 4px;
+    border: solid 1px hsl($theme_hue, 0% * $theme_sat, 85%);
     padding: 10px 30px;
-    margin-left: 0;
-    font-size: 85%;
+    margin: 0;
+    font-size: 80%;
     // li ul {
     //     list-style-type: disc;
     // }
 }
 
-// float table of contents for PC display
-@media screen and (min-width: 1024px) {
-    #markdown-toc {
-        float: left;
-        width: $toc_width;
-        margin-left: $toc_margin_left;
-        margin-right: $toc_margin_right;
-        padding-left: $toc_padding_left;
-        padding-right: $toc_padding_right;
-        padding-top: $toc_padding_tb;
-        padding-bottom: $toc_padding_tb;
-        li ul {
-            margin: 0 0 0 1em;
-            padding: 0;
-        }
-    }
+#markdown-toc:before {
+    content: "Table of Contents";
+    font-family: $sub_font;
+    font-weight: 600;
+    font-size: 125%;
+    color: hsl($theme_hue, 0% * $theme_sat, 40%);
 }
+
+// float table of contents for PC display
+// $toc_width: 120px;
+//
+// @media screen and (min-width: 1024px) {
+//     #markdown-toc {
+//         float: left;
+//         width: $toc_width;
+//         li ul {
+//             margin: 0 0 0 1em;
+//             padding: 0;
+//         }
+//     }
+//
+//     #body-text {
+//         float: right;
+//         width: (($content-width - $toc_width) - 150px);
+//     }
+// }
 
 // style titles
 $title_color: hsl($theme_hue, 30% * $theme_sat, 50%);
@@ -124,6 +126,14 @@ div.wrapper > h1:not(:first-of-type) {
 
 h2 {
     border-bottom: 1px dashed;
+}
+
+h1#page-title {
+    border: none;
+    // font-size: 200% * 0.75;
+    // text-transform: uppercase;
+    // font-weight: normal;
+    // border-bottom: 3px double;
 }
 
 // highlight download link
@@ -158,18 +168,26 @@ img {
     padding: 0;
 }
 
+
+
+$overview_stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
+$overview_color_alpha: 0.85;
+$overview_color: linear-gradient(
+    hsla($theme_hue, 25% * $theme_sat, 25%, $overview_color_alpha),
+    hsla($theme_hue, 25% * $theme_sat, 60%, $overview_color_alpha));
+$overview_color_fallback: hsla($theme_hue, 25% * $theme_sat, 50%, $overview_color_alpha);
+$overview_image: url("/images/ide_overview_2x.png");
+
 .index-page #overview-img-wrapper {
-    background: hsl($theme_hue, 25% * $theme_sat, 85%);
-    background:
-        url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC) repeat,
-        linear-gradient(
-            hsl($theme_hue, 25% * $theme_sat, 75%),
-            hsl($theme_hue, 25% * $theme_sat, 90%));
+    background: $overview_stripe, $overview_color_fallback, $overview_image;
+    background: $overview_stripe, $overview_color, $overview_image;
     margin: 0 auto 10px;
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-position: center, center, center;
 }
 
 .index-page img#overview-img {
-    width: $content-width;
+    width: $content-width * 0.75;
     margin: 0 auto;
-    padding: 20px 0 0;
+    padding: 20px 0 20px;
 }

@@ -20,6 +20,8 @@ iArch-U also has modelling and coding features which facilitate design and imple
 iArch-U is an [Eclipse](https://eclipse.org/) plug-in, so you can view and edit project assets within an environment tightly integrated with Eclipse.
 It also has testing support and model inspection features for testing the software with uncertainty.
 
+For detailed information, please refer to the [documentation](documentation/). For basic usage of iArch-U, please see the [tutorials](tutorials/). 
+
 # System requirements
 
 - Java SE 7~
