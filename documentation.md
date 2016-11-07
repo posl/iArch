@@ -42,7 +42,7 @@ We broadly classify features of iArch-U like below:
 
 ![ScreenShot](../images/ide_overview_2x.png)
 
-iArch is distributed as an Eclipse IDE. That provides graphical views to manage uncertainty.
+iArch is distributed as an Eclipse Plugin. That provides graphical views to manage uncertainty.
 Detailed information is in this documentation.
 
 
