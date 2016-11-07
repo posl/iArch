@@ -79,25 +79,6 @@ a.site-title {
     color: hsl($theme_hue, 0% * $theme_sat, 40%);
 }
 
-// float table of contents for PC display
-// $toc_width: 120px;
-//
-// @media screen and (min-width: 1024px) {
-//     #markdown-toc {
-//         float: left;
-//         width: $toc_width;
-//         li ul {
-//             margin: 0 0 0 1em;
-//             padding: 0;
-//         }
-//     }
-//
-//     #body-text {
-//         float: right;
-//         width: (($content-width - $toc_width) - 150px);
-//     }
-// }
-
 // style titles
 $title_color: hsl($theme_hue, 30% * $theme_sat, 50%);
 $title_color2: lighten($title_color, 5%);
@@ -156,6 +137,7 @@ pre, code {
 
 .highlighter-rouge .highlight {
     background-color: $code_bg_color;
+    line-height: 125%;
 }
 
 // image
@@ -168,8 +150,6 @@ img {
 .index-page {
     padding: 0;
 }
-
-
 
 $overview_stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
 $overview_color_alpha: 0.85;
