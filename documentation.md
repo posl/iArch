@@ -21,14 +21,14 @@ _iArch-U_ is the IDE, which supports uncertainty-aware software development.
 iArch-U has the interface component _Archface-U_ as the central mechanism to support development.
 The word "Archface-U" is coined from "Architecture", "Interface", and "Uncertainty".
 
-Archface-U express common restrictions among entire development process, especially in design and implementation.
-iArch-U continuously check model against Archface-U to keep consistency, or code against it.
-That enables consistent development throughout design and implementation.
+Archface-U express common restrictions among entire development process, especially design and implementation.
+iArch-U continuously check UML model against Archface-U to keep consistency, and code against it.
+That enables consistent development throughout design phase and implementation phase.
 
-Archface-U also contains descriptions of uncertainty occurred in development process.
-So that, Archface-U is easy way to manage uncertainty,
+Archface-U also contains a description of uncertainty occurred in development process.
+So that, Archface-U is the easy way to manage uncertainty,
 such as unfixed specifications or unfixed algorithms to realize specific functionality.
-iArch-U also assure consistency between model, code, and Archface-U by type checking.
+iArch-U also assure consistency between model, code, and Archface-U by type checking with uncertainty.
 We provide iArch-U as the sufficient solution for the "Uncertainty-aware software development".
 
 We broadly classify features of iArch-U like below:
@@ -42,7 +42,7 @@ We broadly classify features of iArch-U like below:
 
 ![ScreenShot](../images/ide_overview_2x.png)
 
-iArch is distributed as an Eclipse Plugin. That provides graphical views to manage uncertainty.
+iArch is distributed as an Eclipse plugin. That provides graphical views to manage uncertainty.
 Detailed information is in this documentation.
 
 
