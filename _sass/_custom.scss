@@ -176,7 +176,7 @@ $overview_color: linear-gradient(
     hsla($theme_hue, 25% * $theme_sat, 25%, $overview_color_alpha),
     hsla($theme_hue, 25% * $theme_sat, 60%, $overview_color_alpha));
 $overview_color_fallback: hsla($theme_hue, 25% * $theme_sat, 50%, $overview_color_alpha);
-$overview_image: url("/images/ide_overview_2x.png");
+$overview_image: url("../images/ide_overview_2x.png");
 
 .index-page #overview-img-wrapper {
     background: $overview_stripe, $overview_color_fallback, $overview_image;
