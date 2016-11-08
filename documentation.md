@@ -17,19 +17,26 @@ This is the documentation for iArch 1.0.
 
 ![OverView](../images/iArch_features.svg)
 
-_iArch-U_ is the IDE, which supports uncertainty-aware software development.
-iArch-U has the interface component _Archface-U_ as the central mechanism to support development.
+_iArch-U_ is the IDE, which supports the "uncertainty-aware software development".
+iArch-U has the interface component _Archface-U_ as the central mechanism to support uncertainty-aware software development.
 The word "Archface-U" is coined from "Architecture", "Interface", and "Uncertainty".
 
-Archface-U express common restrictions among entire development process, especially design and implementation.
-iArch-U continuously check UML model against Archface-U to keep consistency, and code against it.
-That enables consistent development throughout design phase and implementation phase.
+Archface-U express common restrictions among entire development process, especially at design and implementation.
+iArch-U continuously check UML model against Archface-U to keep consistency, and also code against it.
+That enables consistent development throughout design and implementation phase.
 
 Archface-U also contains a description of uncertainty occurred in development process.
-So that, Archface-U is the easy way to manage uncertainty,
-such as unfixed specifications or unfixed algorithms to realize specific functionality.
-iArch-U also assure consistency between model, code, and Archface-U by type checking with uncertainty.
-We provide iArch-U as the sufficient solution for the "Uncertainty-aware software development".
+In the context of Archface-U description, uncertainty is an unfixed design or an unfixed way to implementation. So that,
+
+* Unfixed specifications which are caused by ambiguous requirements
+* Unfixed algorithms to realize a functionality
+* Temporary alternative implementations you cannot judge which is the best yet
+
+should be described in Archface-U, for example.
+Describing uncertainty in Archface-U is the sufficient way to manage uncertainty.
+Additionally, iArch-U assure consistency between model, code, and Archface-U, considering uncertainty.
+That enables you to continue development process while involving uncertainty.
+We provide iArch-U as the sufficient solution for the "uncertainty-aware software development".
 
 We broadly classify features of iArch-U like below:
 
