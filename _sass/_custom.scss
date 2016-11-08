@@ -1,11 +1,10 @@
 $theme_hue: 230;
 $theme_sat: 1;
 
-$body_font: Georgia, serif;
-$sub_font: "Helvetica Neue", Helvetica, Arial, sans-serif;
-
-$accent_font: "Gill Sans", "Trebuchet MS", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$accent_font_weight: 600;
+$body_font: "PT Serif", Georgia, serif;
+$sub_font: "PT Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$accent_font: "PT Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+$mono_font: "PT Mono", "Osaka", monospace;
 
 // body font
 body {
@@ -49,7 +48,7 @@ ul li::after {
 
 .site-header a, a.site-title {
     font-family: $accent_font;
-    font-weight: $accent_font_weight;
+    font-weight: bold;
 }
 
 a.site-title {
@@ -81,16 +80,22 @@ a.site-title {
 
 // style titles
 $title_color: hsl($theme_hue, 30% * $theme_sat, 50%);
-$title_color2: lighten($title_color, 5%);
+$title_color2: $title_color;
 
 h1, h2, h3, h4, h5, h6 {
+    margin-top: 30px;
+    margin-bottom: 10px;
     font-family: $accent_font;
-    font-weight: $accent_font_weight;
 }
 
 h1 {
     color: $title_color;
     border-color: $title_color;
+    border-bottom: 1px solid;
+}
+
+div.wrapper > h1:first-of-type {
+    margin-top: 0px;
 }
 
 h2, h3, h4, h5, h6 {
@@ -98,12 +103,8 @@ h2, h3, h4, h5, h6 {
     border-color: $title_color2;
 }
 
-h1 {
-    border-bottom: 1px solid;
-}
-
-div.wrapper > h1:not(:first-of-type) {
-    margin-top: 25px;
+h1 + h2 {
+    margin-top: 10px;
 }
 
 h2 {
@@ -133,6 +134,8 @@ $code_border_color: hsl($theme_hue, 20% * $theme_sat, 80%);
 pre, code {
     border-color: $code_border_color;
     background-color: $code_bg_color;
+    font-family: $mono_font;
+    font-size: 90%;
 }
 
 .highlighter-rouge .highlight {
