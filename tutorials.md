@@ -94,6 +94,8 @@ In a component, the declaration of classes specifies the name, and that of metho
 
 # Programming and uncertainty management
 
+[![Programming and uncertainty management](http://img.youtube.com/vi/1KT7TTGAtQs/0.jpg)](http://www.youtube.com/watch?v=1KT7TTGAtQs)
+
 Suppose the request below: the teacher wants to see how it works if the list displays the attendees by coloring, along with showing students who do not attend.
 In this request, The uncertainty is whether the list will be fixed as 1. or 2.
 When the button is clicked,
@@ -156,6 +158,9 @@ We can also generate a model map and a sequence map.
 
 
 # Modelling
+
+[![Modeling](http://img.youtube.com/vi/V0yOCdouqd8/0.jpg)](http://www.youtube.com/watch?v=V0yOCdouqd8)
+
 Here shows an example of Modeling.
 At first, the class map and sequence map are expressed like this.
 
