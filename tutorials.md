@@ -92,9 +92,12 @@ A component declares a class and methods, and a connector describes call relatio
 In a component, the declaration of classes specifies the name, and that of methods does the name, the type of return value, the type of arguments, arguments' name and the class to be belonged.
 
 
-# Programming and uncertainty management
+# Programming and uncertainty management(video)
 
 [![Programming and uncertainty management](http://img.youtube.com/vi/1KT7TTGAtQs/0.jpg)](http://www.youtube.com/watch?v=1KT7TTGAtQs)
+
+
+# Programming and uncertainty management
 
 Suppose the request below: the teacher wants to see how it works if the list displays the attendees by coloring, along with showing students who do not attend.
 In this request, The uncertainty is whether the list will be fixed as 1. or 2.
@@ -157,9 +160,12 @@ We can also generate a model map and a sequence map.
 ![iArch-U sequence diagram editor](../images/sequence_diagram_tut_02.jpg)
 
 
-# Modelling
+# Modelling(video)
 
 [![Modeling](http://img.youtube.com/vi/V0yOCdouqd8/0.jpg)](http://www.youtube.com/watch?v=V0yOCdouqd8)
+
+
+# Modelling
 
 Here shows an example of Modeling.
 At first, the class map and sequence map are expressed like this.
