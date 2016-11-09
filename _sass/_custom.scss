@@ -1,23 +1,10 @@
-$theme_hue: 230;
-$theme_sat: 1;
-
-$body_font: "PT Serif", Georgia, serif;
-$sub_font: "PT Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$accent_font: "PT Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-$mono_font: "PT Mono", "Osaka", monospace;
-
-// body font
-body {
-    font-family: $body_font;
-}
-
 // define em / strong
 div.page-content em {
-    color: adjust-hue(hsl($theme_hue, 30% * $theme_sat, 55%), 30deg);
+    color: adjust-hue(hsl($theme-color-hue, 30% * $theme-color-sat, 55%), 30deg);
 }
 
 div.page-content strong {
-    font-family: $sub_font;
+    font-family: $sub-font-family;
 }
 
 // list marker
@@ -34,33 +21,33 @@ ul li::after {
     left: -0.75em;
     width: 5px;
     height: 5px;
-    background-color: hsl($theme_hue, 0% * $theme_sat, 50%);
+    background-color: hsl($theme-color-hue, 0% * $theme-color-sat, 50%);
     border-style: none;
     border-radius: 100%;
 }
 
-// color header and footer
+// color of header and footer
 .site-header, .site-footer {
-    font-family: $sub_font;
-    background-color: hsl($theme_hue, 30% * $theme_sat, 92%);
-    border-top: solid 2px hsl($theme_hue, 20% * $theme_sat, 50%);
+    font-family: $sub-font-family;
+    background-color: hsl($theme-color-hue, 30% * $theme-color-sat, 92%);
+    border-top: solid 2px hsl($theme-color-hue, 20% * $theme-color-sat, 50%);
 }
 
 .site-header a, a.site-title {
-    font-family: $accent_font;
+    font-family: $accent-font-family;
     font-weight: bold;
 }
 
 a.site-title {
-    color: hsl($theme_hue, 20% * $theme_sat, 40%) !important;
+    color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%) !important;
 }
 
-// style table of contents
+// table of contents
 #markdown-toc {
-    font-family: $sub_font;
-    background-color: hsl($theme_hue, 0% * $theme_sat, 95%);
+    font-family: $sub-font-family;
+    background-color: hsl($theme-color-hue, 0% * $theme-color-sat, 95%);
     border-radius: 4px;
-    border: solid 1px hsl($theme_hue, 0% * $theme_sat, 85%);
+    border: solid 1px hsl($theme-color-hue, 0% * $theme-color-sat, 85%);
     padding: 10px 30px;
     margin: 0 0;
     font-size: 80%;
@@ -72,25 +59,24 @@ a.site-title {
 
 #markdown-toc:before {
     content: "Table of Contents";
-    font-family: $sub_font;
+    font-family: $sub-font-family;
     font-weight: 600;
     font-size: 125%;
-    color: hsl($theme_hue, 0% * $theme_sat, 40%);
+    color: hsl($theme-color-hue, 0% * $theme-color-sat, 40%);
 }
 
-// style titles
-$title_color: hsl($theme_hue, 30% * $theme_sat, 50%);
-$title_color2: $title_color;
+// titles
+$title-color: hsl($theme-color-hue, 30% * $theme-color-sat, 50%);
 
 h1, h2, h3, h4, h5, h6 {
     margin-top: 30px;
     margin-bottom: 10px;
-    font-family: $accent_font;
+    color: $title-color;
+    border-color: $title-color;
+    font-family: $accent-font-family;
 }
 
 h1 {
-    color: $title_color;
-    border-color: $title_color;
     border-bottom: 1px solid;
 }
 
@@ -98,48 +84,39 @@ div.wrapper > h1:first-of-type {
     margin-top: 0px;
 }
 
-h2, h3, h4, h5, h6 {
-    color: $title_color2;
-    border-color: $title_color2;
+h2 {
+    border-bottom: 1px dashed;
 }
 
 h1 + h2 {
     margin-top: 10px;
 }
 
-h2 {
-    border-bottom: 1px dashed;
-}
-
 h1#page-title {
     border: none;
-    // font-size: 200% * 0.75;
-    // text-transform: uppercase;
-    // font-weight: normal;
-    // border-bottom: 3px double;
 }
 
 // highlight download link
 nav.site-nav > div.trigger > a.page-link:last-child {
-    background-color: hsl($theme_hue, 20% * $theme_sat, 40%);
+    background-color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%);
     color: hsl(0, 0%, 100%);
     padding: 8px 16px;
     border-radius: 8px;
 }
 
 // code
-$code_bg_color: hsl($theme_hue, 40% * $theme_sat, 95%);
-$code_border_color: hsl($theme_hue, 20% * $theme_sat, 80%);
+$code-bg-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
+$code-border-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
 
 pre, code {
-    border-color: $code_border_color;
-    background-color: $code_bg_color;
-    font-family: $mono_font;
+    border-color: $code-border-color;
+    background-color: $code-bg-color;
+    font-family: $mono-font-family;
     font-size: 90%;
 }
 
 .highlighter-rouge .highlight {
-    background-color: $code_bg_color;
+    background-color: $code-bg-color;
     line-height: 125%;
 }
 
@@ -149,29 +126,30 @@ img {
     margin: 20px auto;
 }
 
-// toppage image
-.index-page {
-    padding: 0;
+// index page banner
+.index-page-content {
+    padding-top: 0;
 }
 
-$overview_stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
-$overview_color_alpha: 0.85;
+$banner-stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
+$banner-color-alpha: 0.85;
 $overview_color: linear-gradient(
-    hsla($theme_hue, 25% * $theme_sat, 25%, $overview_color_alpha),
-    hsla($theme_hue, 25% * $theme_sat, 60%, $overview_color_alpha));
-$overview_color_fallback: hsla($theme_hue, 25% * $theme_sat, 50%, $overview_color_alpha);
-$overview_image: url("../images/ide_overview_2x.png");
+    hsla($theme-color-hue, 25% * $theme-color-sat, 25%, $banner-color-alpha),
+    hsla($theme-color-hue, 25% * $theme-color-sat, 60%, $banner-color-alpha));
+$banner-color-fallback: hsla($theme-color-hue, 25% * $theme-color-sat, 50%, $banner-color-alpha);
+$banner-image: url("../images/ide_overview_2x.png");
 
-.index-page #overview-img-wrapper {
-    background: $overview_stripe, $overview_color_fallback, $overview_image;
-    background: $overview_stripe, $overview_color, $overview_image;
+div#banner-wrapper {
+    background: $banner-stripe, $banner-color-fallback, $banner-image;
+    background: $banner-stripe, $overview_color, $banner-image;
     margin: 0 auto 10px;
     background-repeat: repeat, no-repeat, no-repeat;
     background-position: center, center, center;
 }
 
-.index-page img#overview-img {
-    width: $content-width * 0.75;
+img#banner {
+    max-height: $content-width * 0.6;
+    max-width: $content-width;
     margin: 0 auto;
-    padding: 20px 0 20px;
+    padding: 20px 20px 20px;
 }

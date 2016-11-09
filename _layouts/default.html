@@ -7,7 +7,15 @@
 
     {% include header.html %}
 
-    <div class="page-content">
+    {% if page.url == "/" %}
+    <div id="banner-wrapper">
+      <img id="banner"
+        src="images/iArch_absfigure.svg"
+        alt="iArch-U overview">
+    </div>
+    {% endif %}
+
+    <div class="page-content{% if page.url == "/" %} index-page-content{% endif %}">
       <div class="wrapper">
         {{ content }}
       </div>
