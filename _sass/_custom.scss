@@ -1,31 +1,3 @@
-// define em / strong
-div.page-content em {
-    color: adjust-hue(hsl($theme-color-hue, 30% * $theme-color-sat, 55%), 30deg);
-}
-
-div.page-content strong {
-    font-family: $sub-font-family;
-}
-
-// list marker
-ul li {
-    list-style-type: none;
-    position: relative;
-}
-
-ul li::after {
-    display: block;
-    content: '';
-    position: absolute;
-    top: 0.65em;
-    left: -0.75em;
-    width: 5px;
-    height: 5px;
-    background-color: hsl($theme-color-hue, 0% * $theme-color-sat, 50%);
-    border-style: none;
-    border-radius: 100%;
-}
-
 // color of header and footer
 .site-header, .site-footer {
     font-family: $sub-font-family;
@@ -41,6 +13,42 @@ ul li::after {
 a.site-title {
     font-family: "PT Sans Caption", $accent-font-family;
     color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%) !important;
+}
+
+// highlight download link
+nav.site-nav > div.trigger > a.page-link:last-child {
+    background-color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%);
+    color: hsl(0, 0%, 100%);
+    padding: 8px 16px;
+    border-radius: 8px;
+}
+
+// index page banner
+.index-page-content {
+    padding-top: 0;
+}
+
+$banner-stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
+$banner-color-alpha: 0.85;
+$overview_color: linear-gradient(
+    hsla($theme-color-hue, 25% * $theme-color-sat, 25%, $banner-color-alpha),
+    hsla($theme-color-hue, 25% * $theme-color-sat, 60%, $banner-color-alpha));
+$banner-color-fallback: hsla($theme-color-hue, 25% * $theme-color-sat, 50%, $banner-color-alpha);
+$banner-image: url("../images/ide_overview_2x.png");
+
+div#banner-wrapper {
+    background: $banner-stripe, $banner-color-fallback, $banner-image;
+    background: $banner-stripe, $overview_color, $banner-image;
+    margin: 0 auto 10px;
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-position: center, center, center;
+}
+
+img#banner {
+    display: block;
+    max-width: $content-width* 0.75;
+    margin: 0 auto;
+    padding: 20px 20px 20px;
 }
 
 // table of contents
@@ -66,106 +74,100 @@ a.site-title {
     color: hsl($theme-color-hue, 0% * $theme-color-sat, 40%);
 }
 
-// titles
-$title-color: hsl($theme-color-hue, 30% * $theme-color-sat, 50%);
+div.page-content {
+    // define em / strong
+    em {
+        color: adjust-hue(hsl($theme-color-hue, 30% * $theme-color-sat, 55%), 30deg);
+    }
 
-h1, h2, h3, h4, h5, h6 {
-    margin-top: 30px;
-    margin-bottom: 10px;
-    color: $title-color;
-    border-color: $title-color;
-    font-family: $accent-font-family;
-}
+    strong {
+        font-family: $sub-font-family;
+    }
 
-h1 {
-    border-bottom: 1px solid;
-}
+    // list marker
+    ul li {
+        list-style-type: none;
+        position: relative;
+    }
 
-div.wrapper > h1:first-of-type {
-    margin-top: 0px;
-}
+    ul li::after {
+        display: block;
+        content: '';
+        position: absolute;
+        top: 0.65em;
+        left: -0.75em;
+        width: 5px;
+        height: 5px;
+        background-color: hsl($theme-color-hue, 0% * $theme-color-sat, 50%);
+        border-style: none;
+        border-radius: 100%;
+    }
 
-h2 {
-    border-bottom: 1px dashed;
-}
+    // titles
+    $title-color: hsl($theme-color-hue, 30% * $theme-color-sat, 50%);
 
-h1 + h2 {
-    margin-top: 10px;
-}
+    h1, h2, h3, h4, h5, h6 {
+        margin-top: 30px;
+        margin-bottom: 10px;
+        color: $title-color;
+        border-color: $title-color;
+        font-family: $accent-font-family;
+    }
 
-h1#page-title {
-    border: none;
-}
+    h1 {
+        border-bottom: 1px solid;
+    }
 
-// highlight download link
-nav.site-nav > div.trigger > a.page-link:last-child {
-    background-color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%);
-    color: hsl(0, 0%, 100%);
-    padding: 8px 16px;
-    border-radius: 8px;
-}
+    div.wrapper > h1:first-of-type {
+        margin-top: 0px;
+    }
 
-// code
-$code-bg-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
-$code-border-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
+    h2 {
+        border-bottom: 1px dashed;
+    }
 
-pre, code {
-    border-color: $code-border-color;
-    background-color: $code-bg-color;
-    font-family: $mono-font-family;
-    font-size: 90%;
-}
+    h1 + h2 {
+        margin-top: 10px;
+    }
 
-.highlighter-rouge .highlight {
-    background-color: $code-bg-color;
-    line-height: 125%;
-}
+    h1#page-title {
+        border: none;
+    }
 
-// image
-img, iframe {
-    display: block;
-    margin: 20px auto;
-    width: 100%;
-}
+    // code
+    $code-bg-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
+    $code-border-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
 
-// video
-.video-wrapper{
-    position: relative;
-    width: 100%;
-    padding-top: percentage(9 / 16);
-    // margin: 20px auto;
-}
+    pre, code {
+        border-color: $code-border-color;
+        background-color: $code-bg-color;
+        font-family: $mono-font-family;
+        font-size: 90%;
+    }
 
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    width: 100% !important;
-    height: 100% !important
-}
+    .highlighter-rouge .highlight {
+        background-color: $code-bg-color;
+        line-height: 125%;
+    }
 
-// index page banner
-.index-page-content {
-    padding-top: 0;
-}
+    // image
+    img, iframe {
+        display: block;
+        margin: 20px auto;
+    }
 
-$banner-stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
-$banner-color-alpha: 0.85;
-$overview_color: linear-gradient(
-    hsla($theme-color-hue, 25% * $theme-color-sat, 25%, $banner-color-alpha),
-    hsla($theme-color-hue, 25% * $theme-color-sat, 60%, $banner-color-alpha));
-$banner-color-fallback: hsla($theme-color-hue, 25% * $theme-color-sat, 50%, $banner-color-alpha);
-$banner-image: url("../images/ide_overview_2x.png");
+    // video
+    .video-wrapper{
+        position: relative;
+        width: 100%;
+        padding-top: percentage(9 / 16);
+        // margin: 20px auto;
+    }
 
-div#banner-wrapper {
-    background: $banner-stripe, $banner-color-fallback, $banner-image;
-    background: $banner-stripe, $overview_color, $banner-image;
-    margin: 0 auto 10px;
-    background-repeat: repeat, no-repeat, no-repeat;
-    background-position: center, center, center;
-}
-
-img#banner {
-    max-width: $content-width* 0.75;
-    margin: 0 auto;
-    padding: 20px 20px 20px;
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        width: 100% !important;
+        height: 100% !important
+    }
 }
