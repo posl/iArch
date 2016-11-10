@@ -1,4 +1,4 @@
-﻿iArch
+iArch
 =====
 
 iArch is an integrated development environment for editing and verifying UML models, programs and archcode, which restricts both models and programs to conform to certain requirements.
@@ -25,10 +25,16 @@ Required middleware and libraries
 * Eclipse Mars.2~
 * Graphiti SDK Plus 0.12.2~
 * Xtext Complete SDK 2.9.1~
-* Libraries included in `jp.ac.kyushu.iarch.basefunction/lib`
+* Libraries included in `jp.ac.kyushu.iarch.basefunction/lib`.  
+You can also check the licenses in `jp.ac.kyushu.iarch.basefunction/lib/licenses`
     * [dom4j-1.6.1](http://dom4j.sourceforge.net/dom4j-1.6.1/index.html) | [Apache-style open source license](http://dom4j.sourceforge.net/dom4j-1.6.1/faq.html)
     * [jaxen-1.1.6](http://jaxen.org/) | [Apache-style open source license](http://jaxen.org/faq.html)
     * [logback-1.0.13](http://logback.qos.ch/) | [EPL v1.0 or LPGL 2.1](http://logback.qos.ch/license.html)
     * [jgit-4.4.1.201607150455](https://eclipse.org/jgit/) | [Eclipse Distribution License v 1.0](http://www.eclipse.org/org/documents/edl-v10.php)
     * [slf4j-api-1.7.9](http://www.slf4j.org/) | [MIT License](http://www.slf4j.org/license.html)
     * [freemarker-2.3.25](http://freemarker.org/) | [Apache License Version 2.0](http://freemarker.org/docs/app_license.html)
+
+License
+------
+Eclipse Public License - Version 1.0
+
