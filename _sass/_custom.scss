@@ -39,6 +39,7 @@ ul li::after {
 }
 
 a.site-title {
+    font-family: "PT Sans Caption", $accent-font-family;
     color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%) !important;
 }
 
