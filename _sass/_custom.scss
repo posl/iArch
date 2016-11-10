@@ -124,6 +124,22 @@ pre, code {
 img, iframe {
     display: block;
     margin: 20px auto;
+    width: 100%;
+}
+
+// video
+.video-wrapper{
+    position: relative;
+    width: 100%;
+    padding-top: percentage(9 / 16);
+    // margin: 20px auto;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    width: 100% !important;
+    height: 100% !important
 }
 
 // index page banner

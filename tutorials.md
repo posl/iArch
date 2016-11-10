@@ -94,8 +94,9 @@ In a component, the declaration of classes specifies the name, and that of metho
 
 # Programming and uncertainty management(video)
 
-<iframe markdown="0" width="640" height="360" src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
-
+<div markdown="0" class="video-wrapper">
+  <iframe src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
 
 # Programming and uncertainty management
 
@@ -162,7 +163,9 @@ We can also generate a model map and a sequence map.
 
 # Modelling(video)
 
-<iframe markdown="0" width="640" height="360" src="https://www.youtube.com/embed/V0yOCdouqd8?rel=0" frameborder="0" allowfullscreen></iframe>
+<div markdown="0" class="video-wrapper">
+  <iframe src="https://www.youtube.com/embed/V0yOCdouqd8?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
 
 
 # Modelling
