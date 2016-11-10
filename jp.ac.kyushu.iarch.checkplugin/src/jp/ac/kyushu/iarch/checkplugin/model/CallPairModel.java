@@ -3,6 +3,8 @@ package jp.ac.kyushu.iarch.checkplugin.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
+
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.OptCall;
@@ -48,7 +50,10 @@ public class CallPairModel{
 		this.archMethod = methodSuperCall.getName();
 		// tmp impl(finally, archMethod type will change Method from
 		// SuperMethod)
-		this.name = ((Method) this.archMethod).getName();
+		//this.name = ((Method) this.archMethod).getName();
+		// It is found that archMethod get a SuperMethod instance, which is not used normally,
+		// so ad-hoc treatment is applied temporally. we should correct afterwards.
+		this.name = (archMethod instanceof Method) ? ((Method) archMethod).getName() : "-";
 
 		this.methodModel = getMethodPairModelByArchMethod(archMethod);
 		if (methodSuperCall instanceof OptCall) {
@@ -110,26 +115,32 @@ public class CallPairModel{
 	ComponentMethodPairModel getMethodPairModelByArchMethod(
 			SuperMethod archMethod) {
 		ComponentClassPairModel callClass = null;
-		ComponentMethodPairModel callMethod = null;
-
 		for (ComponentClassPairModel classPair : componentClassPairModels) {
-			// in case of Call from Certain Component
-			if (archMethod.eContainer() instanceof InterfaceImpl) {
-				if (((InterfaceImpl) (archMethod.eContainer())).getName()
-						.equals(classPair.getName())) {
-					callClass = classPair;
-					break;
+			EObject container = archMethod.eContainer();
+			if (container != null) {
+				// in case of Call from Certain Component
+				if (container instanceof InterfaceImpl) {
+					if (((InterfaceImpl) container).getName().equals(classPair.getName())) {
+						callClass = classPair;
+						break;
+					}
 				}
 				// in case of Call from Uncertain Component
-			} else {
-				if (((UncertainInterface) (archMethod.eContainer().eContainer()))
-						.getSuperInterface().getName()
-						.equals(classPair.getName())) {
-					callClass = classPair;
-					break;
+				else if (container.eContainer() instanceof UncertainInterface) {
+					if (((UncertainInterface) (container.eContainer()))
+							.getSuperInterface().getName()
+							.equals(classPair.getName())) {
+						callClass = classPair;
+						break;
+					}
 				}
 			}
 		}
+		if (callClass == null) {
+			return null;
+		}
+
+		ComponentMethodPairModel callMethod = null;
 		for (ComponentMethodPairModel methodPair : callClass.methodPairsList) {
 			if (archMethod.eContainer() instanceof InterfaceImpl
 					|| archMethod.eContainer() instanceof OptMethodImpl) {

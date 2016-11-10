@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Project name="StudentList">
+  <Archfile>
+    <Path Attribute="/StudentList/arch/student.arch"/>
+  </Archfile>
+  <ClassDiagram>
+    <Path Attribute="/StudentList/diagrams/Class.diagram"/>
+  </ClassDiagram>
+  <SequenceDiagram>
+    <Path Attribute="/StudentList/diagrams/Sequence.diagram"/>
+  </SequenceDiagram>
+  <SourceCode>
+    <Path Attribute="/StudentList/src/StudentController.java"/>
+    <Path Attribute="/StudentList/src/Student.java"/>
+    <Path Attribute="/StudentList/src/Main.java"/>
+  </SourceCode>
+  <ARXML>
+    <Path Attribute="/StudentList/codeXML.xml"/>
+  </ARXML>
+</Project>

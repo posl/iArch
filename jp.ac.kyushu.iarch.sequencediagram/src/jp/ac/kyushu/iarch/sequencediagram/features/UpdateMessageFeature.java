@@ -84,17 +84,23 @@ public class UpdateMessageFeature extends AbstractUpdateFeature {
 			Object bo = getBusinessObjectForPictogramElement(shape);
 			if (bo instanceof MessageOccurrenceSpecification)
 			{
-				if(mos.size()==0){
+				MessageOccurrenceSpecification boMos = (MessageOccurrenceSpecification) bo;
+				if (boMos.getMessage() == null) {
+					continue;
+				}
+				String msgName = boMos.getMessage().getName();
+
+				if (mos.size() == 0) {
 					mos.add(shape);
-					MgCounted=((MessageOccurrenceSpecification)bo).getMessage().getName();
+					MgCounted = msgName;
 					continue;
 				}
 				//If a message have the same name,
 				//it has been add into the mos array. 
-				if(MgCounted == ((MessageOccurrenceSpecification)bo).getMessage().getName())
+				if (MgCounted.equals(msgName)) {
 					continue;
-				
-				
+				}
+
 				locationY = shape.getGraphicsAlgorithm().getY();
 				//locationX = shape.getGraphicsAlgorithm().getX();
 				//Check where to insert a shape into the mos[]
@@ -116,7 +122,7 @@ public class UpdateMessageFeature extends AbstractUpdateFeature {
 				//insert by the order information
 				mos.add(order, shape);
 				//mos=insert(mos,shape,order);
-				MgCounted=((MessageOccurrenceSpecification)bo).getMessage().getName();				
+				MgCounted = msgName;
 			}
 		}
     	i=0;

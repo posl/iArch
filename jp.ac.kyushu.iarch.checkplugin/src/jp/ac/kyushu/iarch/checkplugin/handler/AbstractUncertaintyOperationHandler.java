@@ -21,6 +21,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.CodeXMLUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.CodeXMLUtils.FindVisitor;
@@ -32,7 +33,6 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -138,11 +138,6 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		return -1;
 	}
 
-	// Get Archface model from the path given by Config.xml
-	private ArchModel getArchModel(IProject project) {
-		IResource archfile = new XMLreader(project).getArchfileResource();
-		return new ArchModel(archfile);
-	}
 	protected boolean saveArchModel(ArchModel archModel) {
 		boolean result = false;
 		try {
@@ -151,7 +146,15 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		} catch (IOException e) {
 			e.printStackTrace();
 			String className = this.getClass().getSimpleName();
+			MessageDialogUtils.showError(className, "Failed to save Archfile.");
 			System.out.println(className + ": failed to save Archfile.");
+		} catch (RuntimeException e) {
+			// Model error falls here.
+			String className = this.getClass().getSimpleName();
+			String m = e.getMessage();
+			StringBuilder sb = new StringBuilder("Model validation failed.\n");
+			sb.append(m != null ? m : "Unknown reason.");
+			MessageDialogUtils.showError(className, sb.toString());
 		}
 		return result;
 	}
@@ -310,7 +313,12 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		}
 
 		// Get Archface model from the path given by Config.xml
-		ArchModel archModel = getArchModel(file.getProject());
+		IResource archfile = new XMLreader(file.getProject()).getArchfileResource();
+		if (archfile == null) {
+			System.out.println(className + ": failed to get the archfile resource.");
+			return;
+		}
+		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
 		// Check if cursor line is on MethodDeclaration or MethodInvocation.
@@ -536,7 +544,7 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 			return callerClassName;
 		}
 		public String callerMethodName() {
-			return callerMessage.getName();
+			return callerMessage == null ? null : callerMessage.getName();
 		}
 		public String calleeTypeName() {
 			return calleeClassName;
@@ -572,7 +580,11 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 			}
 		}
 		public MethodEquality callerMethodEquality() {
-			return methodEquality(callerClassName, callerMessage);
+			if (callerClassName == null || callerMessage == null) {
+				return MethodEqualityUtils.nullMethod;
+			} else {
+				return methodEquality(callerClassName, callerMessage);
+			}
 		}
 		public MethodEquality calleeMethodEquality() {
 			return methodEquality(calleeClassName, calleeMessage);
@@ -590,7 +602,12 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 		}
 
 		// Get Archface model from the path given by Config.xml
-		ArchModel archModel = getArchModel(file.getProject());
+		IResource archfile = new XMLreader(file.getProject()).getArchfileResource();
+		if (archfile == null) {
+			System.out.println(className + ": failed to get the archfile resource.");
+			return;
+		}
+		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
 		// Get business object from selection.
@@ -630,27 +647,25 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 				System.out.println(className + ": failed to get callee Message.");
 
 			} else {
-				Message callerMessage = DiagramUtils.getCaller(calleeMessage);
-				if (callerMessage == null) {
-					System.out.println(className + ": failed to get caller Message.");
+				String calleeClassName = DiagramUtils.getMessageClassName(calleeMessage);
+				if (calleeClassName == null) {
+					System.out.println(className + ": failed to get callee class name.");
 
 				} else {
-					String calleeClassName = DiagramUtils.getMessageClassName(calleeMessage);
-					String callerClassName = DiagramUtils.getMessageClassName(callerMessage);
-					if (calleeClassName == null || callerClassName == null) {
-						System.out.println(className + ": failed to get caller/callee class name.");
+					// Find Interface by name.
+					Interface cInterface = ArchModelUtils.findInterfaceByName(model, calleeClassName);
+					if (cInterface == null) {
+						System.out.println(className + ": interface is not found in Archcode: " + calleeClassName);
 
 					} else {
-						// Find Interface by name.
-						Interface cInterface = ArchModelUtils.findInterfaceByName(model, calleeClassName);
-						if (cInterface == null) {
-							System.out.println(className + ": interface is not found in Archcode: " + calleeClassName);
+						// callerMessage/callerClassName can be null.
+						Message callerMessage = DiagramUtils.getCaller(calleeMessage);
+						String callerClassName = callerMessage == null ? null
+								: DiagramUtils.getMessageClassName(callerMessage);
 
-						} else {
-							MessageInfo messageInfo = new MessageInfo(callerClassName, callerMessage,
-									calleeClassName, calleeMessage, message.getName(), cInterface);
-							operateDiagramMessage(event, messageInfo, archModel);
-						}
+						MessageInfo messageInfo = new MessageInfo(callerClassName, callerMessage,
+								calleeClassName, calleeMessage, message.getName(), cInterface);
+						operateDiagramMessage(event, messageInfo, archModel);
 					}
 				}
 			}
@@ -664,28 +679,21 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 	protected abstract void operateDiagramMessage(ExecutionEvent event,
 			MessageInfo messageInfo, ArchModel archModel) throws ExecutionException;
 
-	private String getAutoUncertainClassName(String className) {
-		return "u" + className + "_auto";
-	}
-	private String getAutoUncertainConnectorName(String connectorName) {
-		return "u" + connectorName + "_auto";
-	}
-
 	protected UncertainInterface getAutoUncertainInterface(Model model, Interface cInterface) {
-		String uClassName = getAutoUncertainClassName(cInterface.getName());
+		String uClassName = ArchModelUtils.getAutoUncertainInterfaceName(cInterface.getName());
 		return ArchModelUtils.findUncertainInterfaceByName(model, uClassName);
 	}
 	protected UncertainConnector getAutoUncertainConnector(Model model, Connector connector) {
-		String uConnectorName = getAutoUncertainConnectorName(connector.getName());
+		String uConnectorName = ArchModelUtils.getAutoUncertainConnectorName(connector.getName());
 		return ArchModelUtils.findUncertainConnectorByName(model, uConnectorName);
 	}
 
 	private UncertainInterface createAutoUncertainInterface(Interface cInterface) {
-		String uClassName = getAutoUncertainClassName(cInterface.getName());
+		String uClassName = ArchModelUtils.getAutoUncertainInterfaceName(cInterface.getName());
 		return ArchModelUtils.createUncertainInterfaceElement(uClassName, cInterface);
 	}
 	private UncertainConnector createAutoUncertainConnector(Connector connector) {
-		String uConnectorName = getAutoUncertainConnectorName(connector.getName());
+		String uConnectorName = ArchModelUtils.getAutoUncertainConnectorName(connector.getName());
 		return ArchModelUtils.createUncertainConnectorElement(uConnectorName, connector);
 	}
 

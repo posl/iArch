@@ -35,6 +35,9 @@ public class Savehook extends AbstractUIPlugin implements IStartup {
 			public void resourceChanged(IResourceChangeEvent event) {
 
 				IResourceDelta rootDelta = event.getDelta();
+				if (rootDelta == null) {
+					return;
+				}
 
 				final ArrayList<IProject> changed = new ArrayList<IProject>();
 

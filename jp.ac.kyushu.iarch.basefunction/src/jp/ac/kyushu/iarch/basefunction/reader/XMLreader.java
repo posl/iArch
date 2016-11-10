@@ -21,6 +21,7 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * Read an arch configuration file in a Java project
@@ -57,9 +58,16 @@ public class XMLreader {
 	public void readXMLContent(IProject project) {
 		File file = new File(project.getProject().getLocation().toOSString()+File.separator+"Config.xml");
 		if (!file.exists()){
-			MessageDialog.open(MessageDialog.WARNING,
-					null, "Can't auto-check",
-					"Please check the Archface Configration.(Menu->iArch->Configration)", SWT.None);
+			// Use syncExec because this method can be called from non-UI thread.
+			Display.getDefault().syncExec(new Runnable() {
+				@Override
+				public void run() {
+					MessageDialog.open(MessageDialog.WARNING,
+							null, "Can't auto-check",
+							"Please check the Archface Configration.(Menu->iArch->Configration)",
+							SWT.None);
+				}
+			});
 		}else{
 			try{
 				SAXReader saxReader = new SAXReader();
@@ -124,6 +132,7 @@ public class XMLreader {
 	 * @return the aRXMLResource
 	 */
 	public IResource getARXMLResource() {
+		if (ARXMLPath == null) { return null; }
 		IPath path = new Path(ARXMLPath);
 		IResource ARXMLResource = readIResource(path);
 		return ARXMLResource;
@@ -140,8 +149,7 @@ public class XMLreader {
 	 * @return the classDiagramResource
 	 */
 	public IResource getClassDiagramResource() {
-		if(ClassDiagramPath == null)
-			return null;
+		if (ClassDiagramPath == null) { return null; }
 		IPath path = new Path(ClassDiagramPath);
 		IResource ClassDiagramResource = readIResource(path);
 		return ClassDiagramResource;
@@ -158,6 +166,7 @@ public class XMLreader {
 	 * @return the archfileResource
 	 */
 	public IResource getArchfileResource() {
+		if (ArchfilePath == null) { return null; }
 		IPath path = new Path(ArchfilePath);
 		IResource Archfile = readIResource(path);
 		return Archfile;
@@ -174,15 +183,12 @@ public class XMLreader {
 	 * @return the SequenceDiagramResources
 	 */
 	public List<IResource> getSequenceDiagramResource(){
-		if(SequenceDiagramPathes.size() == 0)
-			return new ArrayList<IResource>();
 		List<IResource> SequenceDiagramResources = new ArrayList<IResource>();
-		for(String SequenceDiagramPath:SequenceDiagramPathes){
+		for (String SequenceDiagramPath : SequenceDiagramPathes) {
 			IPath path = new Path(SequenceDiagramPath);
 			IResource SequenceDiagramResource = readIResource(path);
 			SequenceDiagramResources.add(SequenceDiagramResource);
 		}
-
 		return SequenceDiagramResources;
 	}
 
@@ -191,7 +197,7 @@ public class XMLreader {
 	 */
 	public List<IResource> getSourceCodeResource(){
 		List<IResource> SourceCodeResources = new ArrayList<IResource>();
-		for(String SourceCodePath:SourceCodePathes){
+		for (String SourceCodePath : SourceCodePathes) {
 			IPath path = new Path(SourceCodePath);
 			IResource SourceCodeResource = readIResource(path);
 			SourceCodeResources.add(SourceCodeResource);

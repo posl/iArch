@@ -34,6 +34,12 @@ public class ArchModelUtils {
 	// Interface
 	//
 
+	public static Interface createInterfaceElement(String name) {
+		Interface cInterface = ArchDSLFactory.eINSTANCE.createInterface();
+		cInterface.setName(name);
+		return cInterface;
+	}
+
 	public static Interface findInterfaceByName(Model model, String ifName) {
 		for (Interface cInterface: model.getInterfaces()) {
 			if (cInterface.getName().equals(ifName)) {
@@ -388,5 +394,16 @@ public class ArchModelUtils {
 	}
 	public static String getParameterName(SingleVariableDeclaration parameter) {
 		return parameter.getName().toString();
+	}
+
+	//
+	// Auto UncertainInterface/Connector name.
+	//
+
+	public static String getAutoUncertainInterfaceName(String interfaceName) {
+		return "u" + interfaceName + "_auto";
+	}
+	public static String getAutoUncertainConnectorName(String connectorName) {
+		return "u" + connectorName + "_auto";
 	}
 }

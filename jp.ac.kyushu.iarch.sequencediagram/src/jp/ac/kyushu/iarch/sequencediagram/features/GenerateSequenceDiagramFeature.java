@@ -90,13 +90,15 @@ public class GenerateSequenceDiagramFeature extends AbstractCustomFeature {
 		List<IResource> sequenceDiagramIResources = xmlreader
 				.getSequenceDiagramResource();
 		IResource archfile = xmlreader.getArchfileResource();
-		ArchModel archModel = new ArchModelController(archfile);
-		Model archfaceModel = archModel.getModel();
+		if (archfile != null) {
+			ArchModel archModel = new ArchModelController(archfile);
+			Model archfaceModel = archModel.getModel();
 
-		// Generate diagram by each Resource
-		for (IResource sequenceDiagramIResource : sequenceDiagramIResources) {
-			Resource sequenceResource = GraphitiModelManager.getGraphitiModel(sequenceDiagramIResource);
-			generateSequenceDiagram(sequenceResource, archfaceModel);
+			// Generate diagram by each Resource
+			for (IResource sequenceDiagramIResource : sequenceDiagramIResources) {
+				Resource sequenceResource = GraphitiModelManager.getGraphitiModel(sequenceDiagramIResource);
+				generateSequenceDiagram(sequenceResource, archfaceModel);
+			}
 		}
 	}
 

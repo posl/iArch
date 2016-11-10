@@ -1,30 +1,28 @@
 package jp.ac.kyushu.iarch.sequencediagram.features;
 
 import java.util.List;
-import java.util.TreeMap;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel.BehaviorModel;
 import jp.ac.kyushu.iarch.basefunction.model.ConnectorTypeCheckModel.CallModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
-import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.PlatformUtils;
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
+import jp.ac.kyushu.iarch.sequencediagram.utils.MessageUtils;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 
+import behavior.Actor;
 import behavior.AlternativeMessage;
-import behavior.BehavioredClassifier;
-import behavior.Lifeline;
 import behavior.Message;
-import behavior.MessageEnd;
-import behavior.MessageOccurrenceSpecification;
 import behavior.OptionalMessage;
 
 public class TypeCheckFeature extends AbstractCustomFeature {
@@ -49,32 +47,24 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
+		// Get file of class diagram.
+		IFile diagramFile = PlatformUtils.getActiveFile();
+
 		// Get Archface model within the project.
-		IProject project = ProjectReader.getProject();
+		IProject project = diagramFile != null ? diagramFile.getProject() : null;
 		if (project == null) {
 			System.out.println("TypeCheckFeature: failed to get active project.");
 			return;
 		}
 		IResource archfile = new XMLreader(project).getArchfileResource();
+		if (archfile == null) {
+			System.out.println("TypeCheckFeature: failed to get the archfile resource.");
+			return;
+		}
 		ArchModel archModel = new ArchModel(archfile);
 		Model model = archModel.getModel();
 
-		doTypeCheck(model, getDiagram());
-	}
-
-	private static behavior.Object getBehaviorObject(Message message) {
-		MessageEnd recvEvent = message.getReceiveEvent();
-		if (recvEvent instanceof MessageOccurrenceSpecification) {
-			Lifeline lifeline =
-					((MessageOccurrenceSpecification) recvEvent).getCovered().get(0);
-			if (lifeline != null) {
-				BehavioredClassifier actor = lifeline.getActor();
-				if (actor instanceof behavior.Object) {
-					return (behavior.Object) actor;
-				}
-			}
-		}
-		return null;
+		doTypeCheck(diagramFile, model, getDiagram());
 	}
 
 	private static class MessageCallModel extends CallModel {
@@ -104,7 +94,7 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			}
 		}
 		private boolean setMessage(Message message, boolean setClassName) {
-			behavior.Object bObj = getBehaviorObject(message);
+			behavior.Object bObj = MessageUtils.getReceivingObject(message);
 			if (bObj != null) {
 				methodNames.add(message.getName());
 				if (setClassName) {
@@ -130,43 +120,27 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		}
 	}
 
-	private void doTypeCheck(Model model, Diagram diagram) {
-		// Collect Messages from diagram.
-		// Note that Messages are assumed to:
-		// 1. be direct children of the root
-		// 2. have their order numbers based upon Y coordinates (if not AlternativeMessage)
-		TreeMap<Integer, Message> messageMap = new TreeMap<Integer, Message>();
-		for (EObject obj : diagram.eResource().getContents()) {
-			if (obj instanceof Message && !(obj instanceof AlternativeMessage)) {
-				Message message = (Message) obj;
-				messageMap.put(message.getMessageOrder(), message);
-			}
-		}
-		// Remove Messages which AlternativeMessage possesses.
-		for (EObject obj : diagram.eResource().getContents()) {
-			if (obj instanceof AlternativeMessage) {
-				AlternativeMessage altMessage = (AlternativeMessage) obj;
-				int altOrder = 0;
-				boolean first = true;
-				for (Message message : altMessage.getMessages()) {
-					int order = message.getMessageOrder();
-					altOrder = first ? order : Math.min(altOrder, order);
-					first = false;
-					messageMap.remove(order);
-				}
-				messageMap.put(altOrder, altMessage);
-			}
-		}
+	private void doTypeCheck(IFile diagramFile, Model model, Diagram diagram) {
+		// TODO: Change marker type to unique one so as not to remove by other checkers.
+		ProblemViewManager problemViewManager = ProblemViewManager.getInstance();
+		// Remove previously added markers.
+		problemViewManager.removeProblems(diagramFile, false);
+
+		// Collect ordered Messages from diagram.
+		List<Message> messages = MessageUtils.collectMessages(diagram);
 
 		// Create behavior model from Messages
 		BehaviorModel diagramBm = new BehaviorModel();
-		for (Message message : messageMap.values()) {
+		for (Message message : messages) {
 			// Check if message is not received by Actor.
 			if (checkMessage(message)) {
 				MessageCallModel mcm = new MessageCallModel(message);
 				diagramBm.add(mcm);
 //				System.out.println(mcm);
 			} else {
+				String msg = "Ignored a message received by Actor.";
+				problemViewManager.createWarningMarker(diagramFile, msg, message.getName());
+
 				System.out.println("WARNING: Message is ignored since it is received by Actor: " + message.getName());
 			}
 		}
@@ -184,6 +158,9 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 			}
 		}
 		if (!foundBehavior) {
+			String msg = "Sequence is not defined in Archcode.";
+			problemViewManager.createErrorMarker(diagramFile, msg, "-");
+
 			System.out.println("ERROR: Sequence is not defined in Archcode.");
 		}
 	}
@@ -191,7 +168,8 @@ public class TypeCheckFeature extends AbstractCustomFeature {
 		if (message instanceof AlternativeMessage) {
 			return checkMessage(((AlternativeMessage) message).getMessages().get(0));
 		}
-		return getBehaviorObject(message) != null;
+		behavior.Object bObj = MessageUtils.getReceivingObject(message);
+		return (bObj != null) && !(bObj instanceof Actor);
 	}
 
 	@Override

@@ -120,15 +120,14 @@ public class GenerateClassDiagramFeature extends AbstractCustomFeature{
 		XMLreader xmlreader = new XMLreader(ProjectReader.getProject());
 		IResource classDiagramIResource = xmlreader.getClassDiagramResource();
 		IResource archfile = xmlreader.getArchfileResource();
-		ArchModel archModel = new ArchModelController(archfile);
-		if(classDiagramIResource == null){
+		if (classDiagramIResource == null || archfile == null) {
 			MessageDialog.open(MessageDialog.WARNING,
 					null, "Can't slice",
 					"Please check the Archface Configration.(Menu->iArch->Configration)", SWT.None);
-    		return;
+			return;
 		}
-		
-		
+		ArchModel archModel = new ArchModelController(archfile);
+
 		Resource classResource = getDiagram().eResource();
 		initPosition(classResource);
 		ClassDiagramModel cdm = new ClassDiagramModel(classResource);
@@ -285,11 +284,11 @@ public class GenerateClassDiagramFeature extends AbstractCustomFeature{
 	 */
 	private boolean isReference(String className, String targetName){
 		HashMap<String, Boolean> referenceMap = classReferenceMap.get(className);
-		if(referenceMap.isEmpty())
+		if (referenceMap == null || referenceMap.isEmpty()) {
 			return false;
-		if(referenceMap.get(targetName) != null)
-			return true;
-		return false;
+		} else {
+			return referenceMap.get(targetName) != null;
+		}
 	}
 	/**
 	 * Check if an Reference from 'className' to 'targetName' is generated. <br>

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Basefunction
+Bundle-Name: iArch BaseFunction
 Bundle-SymbolicName: jp.ac.kyushu.iarch.basefunction
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: jp.ac.kyushu.iarch.basefunction.Activator
@@ -22,6 +22,7 @@ Export-Package: ch.qos.logback.classic,
  jp.ac.kyushu.iarch.basefunction.exception,
  jp.ac.kyushu.iarch.basefunction.model,
  jp.ac.kyushu.iarch.basefunction.reader,
+ jp.ac.kyushu.iarch.basefunction.utils,
  org.dom4j,
  org.dom4j.io,
  org.slf4j
@@ -31,7 +32,8 @@ Bundle-ClassPath: .,
  lib/logback-classic-1.0.13.jar,
  lib/logback-core-1.0.13.jar,
  lib/slf4j-api-1.7.9.jar,
- lib/jgit-4.1.1.201511131810-r.jar,
+ lib/org.eclipse.jgit-4.4.1.201607150455-r.jar,
  lib/freemarker.jar
 Import-Package: org.eclipse.graphiti.mm.pictograms,
  org.slf4j
+Bundle-Vendor: POSL Research Group

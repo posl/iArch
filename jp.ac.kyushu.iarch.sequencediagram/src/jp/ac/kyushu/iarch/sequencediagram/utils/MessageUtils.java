@@ -3,9 +3,12 @@ package jp.ac.kyushu.iarch.sequencediagram.utils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.graphiti.datatypes.ILocation;
 import org.eclipse.graphiti.mm.GraphicsAlgorithmContainer;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
@@ -26,8 +29,10 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
+import behavior.AlternativeMessage;
 import behavior.BehaviorExecutionSpecification;
 import behavior.BehaviorFactory;
+import behavior.BehavioredClassifier;
 import behavior.InteractionFragment;
 import behavior.Lifeline;
 import behavior.Message;
@@ -210,5 +215,67 @@ public class MessageUtils {
 				System.out.println("Message:" + String.valueOf(order - 1) + " " + mos.getMessage().getName());
 			}
 		}
+	}
+
+	/**
+	 * Collect ordered Messages from diagram.
+	 * Note that Messages are assumed to:<br>
+	 * 1. be direct children of the root<br>
+	 * 2. have their order numbers based upon Y coordinates (if not AlternativeMessage)
+	 * @param diagram
+	 * @return
+	 */
+	public static List<Message> collectMessages(Diagram diagram) {
+		return collectMessages(diagram.eResource());
+	}
+	public static List<Message> collectMessages(Resource diagramResource) {
+		// Collect all messages from diagram and sort them.
+		TreeMap<Integer, Message> messageMap = new TreeMap<Integer, Message>();
+		for (EObject obj : diagramResource.getContents()) {
+			if (obj instanceof Message && !(obj instanceof AlternativeMessage)) {
+				Message message = (Message) obj;
+				messageMap.put(message.getMessageOrder(), message);
+			}
+		}
+
+		// Remove Messages which are possessed by AlternativeMessage.
+		for (EObject obj : diagramResource.getContents()) {
+			if (obj instanceof AlternativeMessage) {
+				AlternativeMessage altMessage = (AlternativeMessage) obj;
+				int altOrder = 0;
+				boolean first = true;
+				for (Message message : altMessage.getMessages()) {
+					int order = message.getMessageOrder();
+					altOrder = first ? order : Math.min(altOrder, order);
+					first = false;
+					messageMap.remove(order);
+				}
+				messageMap.put(altOrder, altMessage);
+			}
+		}
+
+		// Convert to list.
+		ArrayList<Message> messages = new ArrayList<Message>();
+		messages.addAll(messageMap.values());
+		return messages;
+	}
+
+	/**
+	 * Get "Object" which receives the specified message.
+	 * @return Receiving Object(Class or Actor). it can be null.
+	 */
+	public static behavior.Object getReceivingObject(Message message) {
+		MessageEnd recvEvent = message.getReceiveEvent();
+		if (recvEvent instanceof MessageOccurrenceSpecification) {
+			Lifeline lifeline =
+					((MessageOccurrenceSpecification) recvEvent).getCovered().get(0);
+			if (lifeline != null) {
+				BehavioredClassifier actor = lifeline.getActor();
+				if (actor instanceof behavior.Object) {
+					return (behavior.Object) actor;
+				}
+			}
+		}
+		return null;
 	}
 }

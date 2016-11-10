@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: jp.ac.kyushu.iarch.archdsl
-Bundle-Vendor: My Company
+Bundle-Name: iArch ArchDSL
+Bundle-Vendor: POSL Research Group
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: jp.ac.kyushu.iarch.archdsl; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -22,7 +22,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.equinox.common;bundle-version="3.6.200"
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: jp.ac.kyushu.iarch.archdsl,
  jp.ac.kyushu.iarch.archdsl.services,
  jp.ac.kyushu.iarch.archdsl.archDSL,

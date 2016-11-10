@@ -16,6 +16,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
+import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
 import jp.ac.kyushu.iarch.checkplugin.model.AltMethodPairsContainer;
 import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.CallPairModel;
@@ -35,6 +36,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaModelException;
 
@@ -100,7 +102,13 @@ public class ASTSourceCodeChecker{
 		for (Behavior behavior: archface.getBehaviors()) {
 			String interfaceName = behavior.getInterface().getName();
 			//First LastClass is defined first Method's Class
-			String prevClassName = ((Interface) behavior.getCall().get(0).eContainer()).getName();
+			String prevClassName = null;
+			if (behavior.getCall().size() > 0) {
+				EObject methodContainer = behavior.getCall().get(0).eContainer();
+				if (methodContainer instanceof Interface) {
+					prevClassName = ((Interface) methodContainer).getName();
+				}
+			}
 			String prevMethodName = null;
 			String infoString = null;
 			for (Method method: behavior.getCall()) {
@@ -241,16 +249,30 @@ public class ASTSourceCodeChecker{
 				IResource currentResource =
 						currentCallModel.getMethodModel().getParentModel().getClassPath(project);
 				String currentResourcePath = currentResource.getLocationURI().getPath();
-				int lineNumber = Integer.parseInt(((Element) currentCallModel.getMethodModel().getJavaMethodNode()).attributeValue("lineNumber"));
+
+				// TODO: We should confirm whether a method model can lack a Java node or cannot.
+				Integer lineNumber = null;
+				Node currentMethodNode = currentCallModel.getMethodModel().getJavaMethodNode();
+				if (currentMethodNode instanceof Element) {
+					lineNumber = Integer.parseInt(((Element) currentMethodNode).attributeValue("lineNumber"));
+				}
 
 				if (currentCallModel.getMethodModel().hasInvocation(nextCallModel.getName())) {
-					ProblemViewManager.addInfo1(currentResource,
-							"Behavior - " + currentCallModel.getName() + " -> " + nextCallModel.getName() + " is defined",
-							currentResourcePath, lineNumber);
+					String msg = "Behavior - " + currentCallModel.getName()
+							+ " -> " + nextCallModel.getName() + " is defined";
+					if (lineNumber != null) {
+						ProblemViewManager.addInfo1(currentResource, msg, currentResourcePath, lineNumber);
+					} else {
+						ProblemViewManager.addInfo(currentResource, msg, currentResourcePath);
+					}
 				} else {
-					ProblemViewManager.addError1(currentResource,
-							"Behavior - " + currentCallModel.getName() + " -> " + nextCallModel.getName() + " is not defined",
-							currentResourcePath, lineNumber);
+					String msg = "Behavior - " + currentCallModel.getName()
+							+ " -> " + nextCallModel.getName() + " is not defined";
+					if (lineNumber != null) {
+						ProblemViewManager.addError1(currentResource, msg, currentResourcePath, lineNumber);
+					} else {
+						ProblemViewManager.addError(currentResource, msg, currentResourcePath);
+					}
 				}
 			}
 		}

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: jp.ac.kyushu.iarch.archdsl.ui
-Bundle-Vendor: My Company
+Bundle-Name: iArch ArchDSL UI
+Bundle-Vendor: POSL Research Group
 Bundle-Version: 1.0.0.qualifier
 Bundle-SymbolicName: jp.ac.kyushu.iarch.archdsl.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
