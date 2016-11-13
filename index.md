@@ -52,8 +52,6 @@ If you have any questions or comments, please email us: [iarch@posl.ait.kyushu-u
 
 iArch-U is distributed under EPL - [Eclipse Public License v 1.0](https://eclipse.org/org/documents/epl-v10.php)
 
-EPL is compatible with the MIT license.
-
 
 # Acknowledgements
 
