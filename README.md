@@ -4,7 +4,9 @@ iArch
 iArch is an integrated development environment for editing and verifying UML models, programs and archcode, which restricts both models and programs to conform to certain requirements.
 iArch is an Eclipse plug-in and developed by the members of Kyushu University Ubayashi lab, Archface project.
 
-How to install
+For detailed information, please refer to the [Website](http://posl.github.io/iArch/).
+
+How to build
 ------
 ### Git clone ###
 1. Clone this project.
@@ -19,7 +21,7 @@ How to run
 ------
 Select `Run` -> `Launch Runtime Eclipse`.
 
-Required middleware and libraries
+Included middleware and libraries
 ------
 * Java SE 7~
 * Eclipse Mars.2~
