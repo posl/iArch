@@ -59,7 +59,8 @@ img#banner {
     border: solid 1px hsl($theme-color-hue, 0% * $theme-color-sat, 85%);
     padding: 10px 30px;
     margin: 0 0;
-    font-size: 80%;
+    font-size: 85%;
+    line-height: 125%;
     display: inline-block;
     // li ul {
     //     list-style-type: disc;
@@ -68,6 +69,8 @@ img#banner {
 
 #markdown-toc:before {
     content: "Table of Contents";
+    display: block;
+    margin-bottom: 5px;
     font-family: $sub-font-family;
     font-weight: 600;
     font-size: 125%;
