@@ -143,6 +143,8 @@ div.page-content {
         background-color: $code-bg-color;
         font-family: $mono-font-family;
         font-size: 90%;
+        -moz-tab-size: 4;
+        tab-size: 4;
     }
 
     .highlighter-rouge .highlight {
@@ -161,7 +163,7 @@ div.page-content {
         position: relative;
         width: 100%;
         padding-top: percentage(9 / 16);
-        // margin: 20px auto;
+        margin: 0px auto 40px;
     }
 
     .video-wrapper iframe {

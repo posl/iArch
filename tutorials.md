@@ -92,13 +92,50 @@ A component declares a class and methods, and a connector describes call relatio
 In a component, the declaration of classes specifies the name, and that of methods does the name, the type of return value, the type of arguments, arguments' name and the class to be belonged.
 
 
-# Programming and uncertainty management(video)
+# Programming
 
 <div markdown="0" class="video-wrapper">
   <iframe src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
 </div>
 
-# Programming and uncertainty management
+With the sample project, we show examples of uncertainty at implementation process, and how manage them with Archface-U.
+
+
+## Uncertainty at component interface
+
+First, we show one of the simplest example of uncertainty.
+Suppose the situation that It is unfixed whether to show a welcome message on launching of the application.
+
+In Archface-U, we describe alternative uncertainty with bracketing by **"{}"** like **"{ A, B }"**.
+Optional uncertainty is described with bracketing by **"[ ]"** like **"[ C ]"**.
+Then this uncertainty is expressed as below.
+
+```
+interface component Main{
+	void actionPerformed(ActionEvent e);
+}
+uncertain component uMain extends Main{
+	[ void showWelcomeMessage(); ]
+}
+
+interface component StudentController{
+	void filterStudent(JTable table);
+}
+
+interface connector cStudent{
+	Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
+}
+```
+
+In this code above, the changes from the original are the interface *uMain*.
+Like these, classes and methods which are uncertain whether will be implemented are declared with **"uncertain"** instead of **"interface"**.
+It should be good that the classes uncertain about implementation are named with prefix **"u"**.
+In *uMain* , *showWelcomeMessage* method has uncertainty whether will be implemented finally, so bracketing with **"[ ]"** presents the method is optional.
+
+In the next section, we show the more advanced example of uncertainty.
+
+
+## Uncertainty at connector interface
 
 Suppose the request below: the teacher wants to see how it works if the list displays the attendees by coloring, along with showing students who do not attend.
 In this request, The uncertainty is whether the list will be fixed as 1. or 2.
@@ -107,25 +144,22 @@ When the button is clicked,
 1. the list will be switched to show only attendees.
 2. the list will change the color of the attendees, along with showing those who do not attend.
 
-We define that, in *StudentController* class, the method which change to show only attendees is named as *"filterStudent"* and the method which display the attendees by coloring as *"colorStudent"*.
+We define that, in *StudentController* class, the method which change to show only attendees is named as *filterStudent* and the method which display the attendees by coloring as *colorStudent*.
 
-To manage the uncertainty caused from this request, we express this uncertainty, whether this system will be implemented with using *colorStudent* method.
-
-In Archface-U, we describe alternative uncertainty with bracketing by **"{}"** like **"{ A, B }"**.
-Optional uncertainty is described with bracketing by **"[ ]"** like **"[ C ]"**.
-So we can express the code as below.
+It is uncertain whether the method *filterStudent* or *colorStudent* to be implemented finally,
+so we can express the uncertainty as below.
 
 ```
 interface component Main{
 	void actionPerformed(ActionEvent e);
 }
 
-interface component StudentController{
-	void filterStudent(JTable table);
-}
-uncertain component uStudentController
-	extends StudentController{
-		[void colorStudent(JTable table);]
+interface component StudentController{}
+uncertain component uStudentController extends StudentController{
+	{
+		void filterStudent(JTable table);,
+		void colorStudent(JTable table);
+	}
 }
 
 interface connector cStudent{
@@ -133,26 +167,25 @@ interface connector cStudent{
 }
 uncertain connector ucStudent extends cStudent{
 	Main = (Main.actionPerformed ->
-		{uStudentController.colorStudent,
-		StudentController.filterStudent}  -> Main);
+		{
+			uStudentController.filterStudent,
+			uStudentController.colorStudent
+		} -> Main);
 }
 ```
 
-See the StudentController class.
-Add the coloring function.
+In the StudentController class, add the coloring function as below.
 
 ```
 public static void colorStudent(JTable table){
-  table.setDefaultRenderer(Object.class, new StudentTableCellRender());
-  table.repaint();
+	table.setDefaultRenderer(Object.class, new StudentTableCellRender());
+	table.repaint();
 }
 ```
 
 In this code above, the changes from the original are two sections: *uStudentController* and *ucStudent*.
-Like these, classes and methods which are uncertain whether will be implemented are declared with **"uncertain"** instead of **"interface"**.
-It should be good that the classes uncertain about implementation are named with prefix **"u"**.
-In *uStudentController* , *colorStudent* method has uncertainty whether will be implemented finally, so bracketing with **"[ ]"** presents the method is optional.
-Also in *ucStudent*, currently we can't decide which to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
+In *uStudentController*, currently we don't decide which the method *filterStudent* or *colorStudent* to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
+Also in *ucStudent*, It is unfixed whether method is called at the method *actionPerformed*, so bracketing with **"{ }"**.
 
 We can also generate a model map and a sequence map.
 
@@ -161,14 +194,11 @@ We can also generate a model map and a sequence map.
 ![iArch-U sequence diagram editor](../images/sequence_diagram_tut_02.jpg)
 
 
-# Modelling(video)
+# Modelling
 
 <div markdown="0" class="video-wrapper">
   <iframe src="https://www.youtube.com/embed/V0yOCdouqd8?rel=0" frameborder="0" allowfullscreen></iframe>
 </div>
-
-
-# Modelling
 
 Here shows an example of Modeling.
 At first, the class map and sequence map are expressed like this.
@@ -181,15 +211,15 @@ The code is written as below.
 
 ```
 interface component Main{
- void actionPerformed(ActionEvent e);
+	void actionPerformed(ActionEvent e);
 }
 
 interface component StudentController{
- void filterStudent(JTable table);
+	void filterStudent(JTable table);
 }
 
 interface connector cStudent{
- Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
+	Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
 }
 ```
 
