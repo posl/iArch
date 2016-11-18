@@ -123,7 +123,7 @@ interface component StudentController{
 }
 uncertain component uStudentController
 	extends StudentController{
-		[void colorStudent(JTable table);]
+		[ void colorStudent(JTable table); ]
 }
 
 interface connector cStudent{
@@ -131,8 +131,8 @@ interface connector cStudent{
 }
 uncertain connector ucStudent extends cStudent{
 	Main = (Main.actionPerformed ->
-		{uStudentController.colorStudent,
-		StudentController.filterStudent}  -> Main);
+		{ uStudentController.colorStudent,
+		  StudentController.filterStudent }  -> Main);
 }
 ```
 
@@ -141,8 +141,8 @@ Add the coloring function.
 
 ```
 public static void colorStudent(JTable table){
-  table.setDefaultRenderer(Object.class, new StudentTableCellRender());
-  table.repaint();
+	table.setDefaultRenderer(Object.class, new StudentTableCellRender());
+	table.repaint();
 }
 ```
 
@@ -176,15 +176,15 @@ The code is written as below.
 
 ```
 interface component Main{
- void actionPerformed(ActionEvent e);
+	void actionPerformed(ActionEvent e);
 }
 
 interface component StudentController{
- void filterStudent(JTable table);
+	void filterStudent(JTable table);
 }
 
 interface connector cStudent{
- Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
+	Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
 }
 ```
 
@@ -214,7 +214,9 @@ uncertain component uStudentController_auto extends StudentController {
 	{ void filterStudent();, void colorStudent(); }
 }
 uncertain connector ucStudent_auto extends cStudent {
-	ucStudent_auto_ub_0 = (Main.actionPerformed -> { uStudentController_auto.filterStudent, uStudentController_auto.colorStudent } -> Main);
+	ucStudent_auto_ub_0 = (Main.actionPerformed ->
+		{ uStudentController_auto.filterStudent,
+		  uStudentController_auto.colorStudent } -> Main);
 }
 ```
 
