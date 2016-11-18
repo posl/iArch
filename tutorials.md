@@ -93,8 +93,10 @@ In a component, the declaration of classes specifies the name, and that of metho
 
 # Programming
 
-<div markdown="0" class="video-wrapper">
-  <iframe src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
+<div markdown="0" class="tutorial-video">
+  <div markdown="0" class="video-wrapper tutorial-video-wrapper">
+    <iframe src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
+  </div>
 </div>
 
 Suppose the request below: the teacher want you to consider the idea that the list displays the attendees by coloring.
@@ -182,8 +184,10 @@ Also, you can generate a model map and a sequence map.
 
 # Modeling
 
-<div markdown="0" class="video-wrapper">
+<div markdown="0" class="tutorial-video">
+  <div markdown="0" class="video-wrapper">
   <iframe src="https://www.youtube.com/embed/V0yOCdouqd8?rel=0" frameborder="0" allowfullscreen></iframe>
+  </div>
 </div>
 
 Here shows an example of Modeling.

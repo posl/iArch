@@ -80,7 +80,7 @@ img#banner {
 div.page-content {
     // define em / strong
     em {
-        color: adjust-hue(hsl($theme-color-hue, 30% * $theme-color-sat, 55%), 30deg);
+        color: hsl($sub-color-hue, 30% * $theme-color-sat, 55%);
     }
 
     strong {
@@ -164,23 +164,49 @@ div.page-content {
     }
 
     // image
-    img, iframe {
+    img {
         display: block;
         margin: 20px auto;
     }
 
     // video
-    .video-wrapper{
+    .video-wrapper {
         position: relative;
+        float: none;
+        clear: both;
         width: 100%;
-        padding-top: percentage(9 / 16);
-        margin: 0px auto 40px;
+        padding-bottom: percentage(9 / 16);
+        padding-top: 0px;
+        height: 0;
     }
 
     .video-wrapper iframe {
         position: absolute;
         top: 0;
+        left: 0;
         width: 100% !important;
-        height: 100% !important
+        height: 100% !important;
+    }
+
+    .tutorial-video {
+        background-color: hsl($sub-color-hue, 20% * $theme-color-sat, 90%);
+        padding: 8px 15px 15px;
+        margin: 20px auto;
+        text-align: center;
+        // border-radius: 4px;
+    }
+
+    .tutorial-video:before {
+        content: 'Tutorial Video';
+        display: block;
+        margin-bottom: 8px;
+        font-family: $sub-font-family;
+        font-size: 100%;
+        font-weight: bold;
+        padding: 0px 20px;
+        border-bottom: dashed;
+        border-width: 1px;
+        border-color: hsl($sub-color-hue, 20% * $theme-color-sat, 20%);
+        color: hsl($sub-color-hue, 20% * $theme-color-sat, 40%);
     }
 }
