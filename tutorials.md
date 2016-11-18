@@ -102,7 +102,7 @@ In a component, the declaration of classes specifies the name, and that of metho
 Suppose the request below: the teacher want you to consider the idea that the list displays the attendees by coloring.
 
 In *StudentController* class, we defined the method *filterStudent* which shows only attendees, and also the method *colorStudent* which display the attendees by coloring.
-The implementation of the method *colorStudent* is tentative now, it is uncertain whether it will be implemented at last.
+For the implementation of the method *colorStudent* is tentative now, It is uncertain whether it is used in final product.
 To manage this uncertainty, you can express the uncertainty whether this system will be implemented with using *colorStudent* method.
 
 In Archface-U, we describe alternative uncertainty with bracketing by **"{ }"** like **"{ A, B }"**.
@@ -136,8 +136,8 @@ public static void colorStudent(JTable table){
 ```
 
 In this code above, the changes from the original is the section *uStudentController*.
-Like these, classes and methods which are uncertain whether will be implemented are declared with **"uncertain"** instead of **"interface"**.
-It should be a good habit that the classes uncertain about implementation are named with prefix **"u"**.
+Like these, classes and methods which has uncertainty are declared with **"uncertain"** instead of **"interface"**.
+It is a good habit that the classes uncertain about implementation are named with prefix **"u"**.
 In *uStudentController* , *colorStudent* method has uncertainty whether will be implemented finally, so bracketing with **"[ ]"** presents the method is optional.
 
 ---
@@ -173,9 +173,10 @@ uncertain connector ucStudent extends cStudent{
 }
 ```
 
-In *ucStudent*, currently we can't decide which to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
+In *uStudentController*, currently we can't decide which to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
+In *ucStudent*, there is also the bracket that means it is uncertain which method is called in the method *actionPerformed*.
 
-Also, you can generate a model map and a sequence map.
+Additionally, you can generate a model map and a sequence map.
 
 ![iArch-U class diagram editor](../images/class_diagram_tut_02.jpg)
 
