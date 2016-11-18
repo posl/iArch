@@ -137,6 +137,14 @@ div.page-content {
         border: none;
     }
 
+    // horizontal line
+    hr {
+        border: none;
+        border-color: $title-color;
+        border-bottom: 2px dotted $title-color;
+        margin: 40px auto 40px;
+    }
+
     // code
     $code-bg-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
     $code-border-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
