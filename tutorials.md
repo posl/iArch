@@ -84,8 +84,7 @@ interface connector cStudent{
 }
 ```
 
-Archface-U is the interface system.
-So we describe interfaces in Archfile.
+Archface-U is the interface system, so you are to describe interfaces in Archface-U.
 
 Let's take a look at the code above.
 A component declares a class and methods, and a connector describes call relationships between methods.
@@ -98,20 +97,15 @@ In a component, the declaration of classes specifies the name, and that of metho
   <iframe src="https://www.youtube.com/embed/1KT7TTGAtQs?rel=0" frameborder="0" allowfullscreen></iframe>
 </div>
 
-Suppose the request below: the teacher wants to see how it works if the list displays the attendees by coloring, along with showing students who do not attend.
-In this request, The uncertainty is whether the list will be fixed as 1. or 2.
-When the button is clicked,
+Suppose the request below: the teacher want you to consider the idea that the list displays the attendees by coloring.
 
-1. the list will be switched to show only attendees.
-2. the list will change the color of the attendees, along with showing those who do not attend.
-
-We define that, in *StudentController* class, the method which change to show only attendees is named as *"filterStudent"* and the method which display the attendees by coloring as *"colorStudent"*.
-
-To manage the uncertainty caused from this request, we express this uncertainty, whether this system will be implemented with using *colorStudent* method.
+In *StudentController* class, we defined the method *filterStudent* which shows only attendees, and also the method *colorStudent* which display the attendees by coloring.
+The implementation of the method *colorStudent* is tentative now, it is uncertain whether it will be implemented at last.
+To manage this uncertainty, you can express the uncertainty whether this system will be implemented with using *colorStudent* method.
 
 In Archface-U, we describe alternative uncertainty with bracketing by **"{ }"** like **"{ A, B }"**.
 Optional uncertainty is described with bracketing by **"[ ]"** like **"[ C ]"**.
-So we can express the code as below.
+So you would express the code as below.
 
 ```
 interface component Main{
@@ -121,23 +115,16 @@ interface component Main{
 interface component StudentController{
 	void filterStudent(JTable table);
 }
-uncertain component uStudentController
-	extends StudentController{
-		[ void colorStudent(JTable table); ]
+uncertain component uStudentController extends StudentController{
+	[ void colorStudent(JTable table); ]
 }
 
 interface connector cStudent{
-	Main = (Main.actionPerformed -> Main);
-}
-uncertain connector ucStudent extends cStudent{
-	Main = (Main.actionPerformed ->
-		{ uStudentController.colorStudent,
-		  StudentController.filterStudent }  -> Main);
+	Main = (Main.actionPerformed -> StudentController.filterStudent -> Main);
 }
 ```
 
-See the StudentController class.
-Add the coloring function.
+Then you can implement the method *colorStudent* as below.
 
 ```
 public static void colorStudent(JTable table){
@@ -146,13 +133,47 @@ public static void colorStudent(JTable table){
 }
 ```
 
-In this code above, the changes from the original are two sections: *uStudentController* and *ucStudent*.
+In this code above, the changes from the original is the section *uStudentController*.
 Like these, classes and methods which are uncertain whether will be implemented are declared with **"uncertain"** instead of **"interface"**.
-It should be good that the classes uncertain about implementation are named with prefix **"u"**.
+It should be a good habit that the classes uncertain about implementation are named with prefix **"u"**.
 In *uStudentController* , *colorStudent* method has uncertainty whether will be implemented finally, so bracketing with **"[ ]"** presents the method is optional.
-Also in *ucStudent*, currently we can't decide which to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
 
-We can also generate a model map and a sequence map.
+---
+
+Afterwards, the teacher wants to see how both of the methods work, in order to decide which implementation to adopt.
+Now there is an another uncertainty, so that, whether the implementation will be fixed as 1. or 2.
+
+when the button is clicked,
+
+1. the list will be switched to show only attendees.
+2. the list will change the color of the attendees, along with showing those who do not attend.
+
+So you would edit Archface-U as below.
+
+```
+interface component Main{
+	void actionPerformed(ActionEvent e);
+}
+
+interface component StudentController{}
+uncertain component uStudentController extends StudentController{
+	{ void filterStudent(JTable table);,
+	  void colorStudent(JTable table); }
+}
+
+interface connector cStudent{
+	Main = (Main.actionPerformed -> Main);
+}
+uncertain connector ucStudent extends cStudent{
+	Main = (Main.actionPerformed ->
+		{ uStudentController.colorStudent,
+		  uStudentController.filterStudent }  -> Main);
+}
+```
+
+In *ucStudent*, currently we can't decide which to be implemented at last, so bracketing with **"{ }"** presents the methods are alternative.
+
+Also, you can generate a model map and a sequence map.
 
 ![iArch-U class diagram editor](../images/class_diagram_tut_02.jpg)
 
