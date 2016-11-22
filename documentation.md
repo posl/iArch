@@ -186,7 +186,7 @@ The name of some types of elements can be changed from the `Properties` view.
   - In case of _alternative_, list method names with separating spaces.
 
 
-### Slicing from the model editor
+### Editing uncertainty in the model editor
 
 In the model editor, you can choose one of the following four operations from the context menu where you want to edit uncertainty.
 
@@ -251,10 +251,10 @@ The Archface-U compiler will compile Archcode at the same time as Java code comp
 If your implementation violates the interface description, the Archface-U compiler will return compilation error as a result of type checking.
 
 
-### Slicing from the program editor
+### Editing uncertainty in the program editor
 
 You can manage uncertainty in the program editor, as you can in the model editor.
-In the program editor, if the cursor is at a method signature line when you invoke the slicing functionality, the corresponding component description in Archcode will be changed accordingly.
+In the program editor, if the cursor is at a method signature line when you invoke the uncertainty editing operation from the context menu, the corresponding component description in Archcode will be changed accordingly.
 On the other hand, if the cursor is at a method call line, the corresponding connector description will be changed.
 
 
@@ -334,8 +334,8 @@ iArch-U provides its functionalities through these Eclipse extension points.
 iArch-U consists of these Java packages.
 
 - archdsl: defines the Archface-U language using Xtext.
-- basefunction: defines functions which are used by model editors and plug-in functionalities.
-- checkplugin: provides functionalities such as slicing, testing support and so on.
+- basefunction: defines functions which are used by model editors and other plug-in functionalities.
+- checkplugin: provides functionalities such as type checking, testing support and so on.
 - model: defines models for model editors.
 - classdiagram: provides class diagram editor using Graphiti.
 - sequencediagram: provides sequence diagram editor using Graphiti.
