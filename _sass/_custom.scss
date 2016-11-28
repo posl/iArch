@@ -15,12 +15,18 @@ a.site-title {
     color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%) !important;
 }
 
+// header link
+nav.site-nav > div.trigger > a.page-link {
+  background-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin: auto 4px;
+}
+
 // highlight download link
 nav.site-nav > div.trigger > a.page-link:last-child {
     background-color: hsl($theme-color-hue, 20% * $theme-color-sat, 40%);
     color: hsl(0, 0%, 100%);
-    padding: 8px 16px;
-    border-radius: 8px;
 }
 
 // index page banner
@@ -54,9 +60,9 @@ img#banner {
 // table of contents
 #markdown-toc {
     font-family: $sub-font-family;
-    background-color: hsl($theme-color-hue, 0% * $theme-color-sat, 95%);
+    background-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
     border-radius: 4px;
-    border: solid 1px hsl($theme-color-hue, 0% * $theme-color-sat, 85%);
+    border: solid 1px hsl($theme-color-hue, 20% * $theme-color-sat, 85%);
     padding: 10px 30px;
     margin: 0 0;
     font-size: 85%;
@@ -146,8 +152,8 @@ div.page-content {
     }
 
     // code
-    $code-bg-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
-    $code-border-color: hsl($theme-color-hue, 20% * $theme-color-sat, 80%);
+    $code-bg-color: hsl($theme-color-hue, 0% * $theme-color-sat, 95%);
+    $code-border-color: hsl($theme-color-hue, 0% * $theme-color-sat, 80%);
 
     pre, code {
         border-color: $code-border-color;
