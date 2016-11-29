@@ -35,7 +35,7 @@ You might be able to run iArch-U with older versions of middleware and/or librar
 
 # Installation
 
-1. Download the iArch-U package archive.
+1. [Download](https://github.com/posl/iArch/releases) the iArch-U package archive.
 1. Expand the archive and copy expanded `plugins` directory into your Eclipse application directory.
 1. Start Eclipse.
 1. Select `Help` -> `Install New Software`
