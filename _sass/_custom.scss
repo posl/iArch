@@ -113,6 +113,10 @@ div.page-content {
         border-radius: 100%;
     }
 
+    ul#markdown-toc li::after, #markdown-toc ul li::after {
+        top: 0.35em;
+    }
+
     // titles
     $title-color: hsl($theme-color-hue, 30% * $theme-color-sat, 50%);
 
