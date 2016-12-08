@@ -2,6 +2,7 @@
 layout: default
 title: Documentation
 permalink: /documentation/
+priority: 20
 ---
 
 <h1 markdown="0" id="page-title">Documentation</h1>

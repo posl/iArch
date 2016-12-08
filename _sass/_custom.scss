@@ -1,3 +1,12 @@
+// color of body
+body {
+    background-color: hsl($theme-color-hue, 30% * $theme-color-sat, 92%);
+}
+
+div.page-content {
+    background-color: $background-color;
+}
+
 // color of header and footer
 .site-header, .site-footer {
     font-family: $sub-font-family;
@@ -32,7 +41,7 @@ nav.site-nav > div.trigger > a.page-link:last-child {
 
 // index page banner
 .index-page-content {
-    padding-top: 0;
+    padding-top: 10px;
 }
 
 $banner-stripe: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAD0lEQVQImWNgwARStBAAABpPAIPQzAGMAAAAAElFTkSuQmCC);
@@ -46,7 +55,7 @@ $banner-image: url("../images/ide_overview_2x.png");
 div#banner-wrapper {
     background: $banner-stripe, $banner-color-fallback, $banner-image;
     background: $banner-stripe, $overview_color, $banner-image;
-    margin: 0 auto 10px;
+    margin: 0 auto 0px;
     background-repeat: repeat, no-repeat, no-repeat;
     background-position: center, center, center;
 }

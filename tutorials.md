@@ -2,6 +2,7 @@
 layout: default
 title: Tutorials
 permalink: /tutorials/
+priority: 10
 ---
 
 <h1 markdown="0" id="page-title">Tutorials</h1>
