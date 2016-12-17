@@ -10,6 +10,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -58,16 +59,15 @@ public class XMLreader {
 	public void readXMLContent(IProject project) {
 		IFile file = project.getFile(CONFIG_FILEPATH);
 		if (!file.exists()){
-			// Use syncExec because this method can be called from non-UI thread.
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					MessageDialog.open(MessageDialog.WARNING,
-							null, "Can't auto-check",
-							"Please check the Archface Configration.(Menu->iArch->Configration)",
-							SWT.None);
-				}
-			});
+			try {
+				IMarker marker = project.createMarker(IMarker.PROBLEM);
+				marker.setAttribute(IMarker.MESSAGE, "Auto-Check failed: Please check the Archface Configration.(Menu->iArch->Configration)");
+				marker.setAttribute(IMarker.DONE, false);
+				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
+			} catch (CoreException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}else{
 			try{
 				SAXReader saxReader = new SAXReader();
