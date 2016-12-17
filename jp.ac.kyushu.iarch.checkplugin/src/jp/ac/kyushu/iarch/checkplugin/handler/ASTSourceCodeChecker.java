@@ -163,7 +163,9 @@ public class ASTSourceCodeChecker{
 		// tmp compile error output
 		for (ComponentClassPairModel pairModel: componentClassPairModels) {
 			String classPath = null;
-			if (pairModel.getPackageNode().attributeValue("name").equals("")) { // Is it appropriate?
+			if (pairModel.getPackageNode() == null) { // When the class is not defined in code
+				continue;
+			} else if (pairModel.getPackageNode().attributeValue("name").equals("")) { // Is it appropriate?
 				classPath = "src/" + pairModel.getName() + ".java";
 			}else{
 				classPath = "src/" + pairModel.getPackageNode().attributeValue("name") + "/" + pairModel.getName() + ".java";
