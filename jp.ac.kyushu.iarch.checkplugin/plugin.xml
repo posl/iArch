@@ -21,7 +21,7 @@
       <command
             categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
             id="jp.ac.kyushu.iarch.checkPlugin.generateAspect"
-            name="Generate Aspect">
+            name="Generate Aspect from Archface-U">
       </command>
       <command
             categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
