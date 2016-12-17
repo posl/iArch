@@ -6,6 +6,7 @@ import java.util.List;
 
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.handler.ASTSourceCodeChecker;
 
 import org.eclipse.core.resources.IFile;
@@ -65,7 +66,7 @@ public class SelectAllFileDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText("Select All Files");
+		newShell.setText("Select Files");
 	}
 	
 	@Override
@@ -131,6 +132,11 @@ public class SelectAllFileDialog extends Dialog {
 	 */
 	@Override
 	protected void okPressed() {
+		if (!isCorrectlySelected()) {
+			MessageDialogUtils.showWarning("Select Files", "Select files as many times as indicated");
+			return;
+		}
+		
 		for(TableItem item : archiTable.getItems()){
 			if(item.getChecked()){
 				archiface = (IResource)item.getData();
@@ -141,7 +147,6 @@ public class SelectAllFileDialog extends Dialog {
 				classDiagram = (IResource)item.getData();
 			}
 		}
-
 		for(TableItem item : sequenceTable.getItems()){
 			if(item.getChecked()){
 				sequenceDiagrams.add((IResource)item.getData());
@@ -168,28 +173,7 @@ public class SelectAllFileDialog extends Dialog {
 	class CheckCheckedStateListener implements SelectionListener{
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			int cntArchiFiles = 0;
-			int cntClassDiagrams = 0;
-			int cntSequenceDiagrams = 0;
-			int cntSourceCode = 0;
-			int cnxml = 0;
-			for(TableItem item : archiTable.getItems()){
-				if(item.getChecked()) cntArchiFiles++;
-			}
-			for(TableItem item : classTable.getItems()){
-				if(item.getChecked()) cntClassDiagrams++;
-			}
-			for(TableItem item : sequenceTable.getItems()){
-				if(item.getChecked()) cntSequenceDiagrams++;
-			}
-			for(TableItem item : sourceTable.getItems()){
-				if(item.getChecked()) cntSourceCode++;
-			}
-			for(TableItem item : xmlTable.getItems()){
-				if(item.getChecked()) cnxml++;
-			}
-
-			if(cntArchiFiles==1&&cntClassDiagrams>=0&&cntSequenceDiagrams>=0&&cntSourceCode>0&&cnxml==1){
+			if(isCorrectlySelected()){
 				okButton.setEnabled(true);
 			}else{
 				okButton.setEnabled(false);
@@ -197,6 +181,34 @@ public class SelectAllFileDialog extends Dialog {
 		}
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {	}
+	}
+	
+	private boolean isCorrectlySelected() {
+		int cntArchiFiles = 0;
+		int cntClassDiagrams = 0;
+		int cntSequenceDiagrams = 0;
+		int cntSourceCode = 0;
+		int cnxml = 0;
+		for(TableItem item : archiTable.getItems()){
+			if(item.getChecked()) cntArchiFiles++;
+		}
+		for(TableItem item : classTable.getItems()){
+			if(item.getChecked()) cntClassDiagrams++;
+		}
+		for(TableItem item : sequenceTable.getItems()){
+			if(item.getChecked()) cntSequenceDiagrams++;
+		}
+		for(TableItem item : sourceTable.getItems()){
+			if(item.getChecked()) cntSourceCode++;
+		}
+		for(TableItem item : xmlTable.getItems()){
+			if(item.getChecked()) cnxml++;
+		}
+		return cntArchiFiles == 1 &&
+				cntClassDiagrams >= 0 &&
+				cntSequenceDiagrams >= 0 &&
+				cntSourceCode > 0 &&
+				cnxml==1;
 	}
 
 	/**
