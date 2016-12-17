@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
+import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.checkplugin.handler.ASTSourceCodeChecker;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -202,7 +204,7 @@ public class SelectAllFileDialog extends Dialog {
 	 */
 	private void setInitialItems() {
 		// automatically create codeXML
-		IFile xmlFile = project.getFile("codeXML.xml");
+		IFile xmlFile = project.getFile(ASTSourceCodeChecker.CODEXML_FILEPATH);
 		if (!xmlFile.exists()) {
 			try {
 				xmlFile.create(new ByteArrayInputStream("".getBytes()), false, new NullProgressMonitor());
@@ -251,7 +253,7 @@ public class SelectAllFileDialog extends Dialog {
 
 						break;
 					case "xml":
-						if(resource.getName().equals("Config.xml")){
+						if(resource.getName().equals(XMLreader.CONFIG_FILEPATH)){
 							break;
 						}
 						TableItem XMLitem = new TableItem(xmlTable,SWT.CHECK);

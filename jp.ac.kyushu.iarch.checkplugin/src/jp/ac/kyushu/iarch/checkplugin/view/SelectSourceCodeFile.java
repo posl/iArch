@@ -21,6 +21,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
+import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+
 public class SelectSourceCodeFile extends Dialog {
 	private Table classTable;
 	private Table sourceTable;
@@ -157,7 +159,7 @@ public class SelectSourceCodeFile extends Dialog {
 
 						break;
 					case "xml":
-						if(resource.getName().equals("Config.xml")){
+						if(resource.getName().equals(XMLreader.CONFIG_FILEPATH)){
 							break;
 						}
 						TableItem XMLitem = new TableItem(xmlTable,SWT.CHECK);

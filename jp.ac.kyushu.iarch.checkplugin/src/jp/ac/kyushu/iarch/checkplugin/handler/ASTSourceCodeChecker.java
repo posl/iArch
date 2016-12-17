@@ -16,6 +16,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
+import jp.ac.kyushu.iarch.basefunction.utils.FileIOUtils;
 import jp.ac.kyushu.iarch.basefunction.utils.ProblemViewManager;
 import jp.ac.kyushu.iarch.checkplugin.model.AltMethodPairsContainer;
 import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
@@ -34,6 +35,7 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -51,6 +53,8 @@ public class ASTSourceCodeChecker{
 	public static String InsertMethod;
 	public static String InsertJavaCode;
 	public static IJavaProject project;
+	
+	public static final String CODEXML_FILEPATH = "codeXML.xml";
 
 	public void SourceCodeArchifileChecker(Model archface,	IJavaProject javaProject){
 		ASTSourceCodeChecker.project = javaProject;
@@ -61,19 +65,8 @@ public class ASTSourceCodeChecker{
 		// read javafiles and write its info on codeXML.xml
 		try {
 			CodeXMLUtils.generateProjectXML(javaProject, codeXmlDocument);
-
-			try {
-				OutputFormat format = OutputFormat.createPrettyPrint();
-				String projectPath = project.getLocation().toOSString();
-				XMLWriter output = new XMLWriter(new FileWriter(new File(projectPath + "/codeXML.xml")), format);
-				codeXmlDocument.setXMLEncoding("utf-8");
-				output.write(codeXmlDocument);
-				output.close();
-			} catch (IOException e) {
-				System.out.println(e.getMessage());
-			}
-
-		} catch (JavaModelException e) {
+			FileIOUtils.xmlWriteFile(project.getFile(CODEXML_FILEPATH), codeXmlDocument);
+		} catch (CoreException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

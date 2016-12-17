@@ -1,8 +1,5 @@
 package jp.ac.kyushu.iarch.basefunction.reader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,9 +9,11 @@ import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IJavaProject;
@@ -34,20 +33,21 @@ public class XMLreader {
 	private List<String> SourceCodePathes = new ArrayList<String>();
 	private String ARXMLPath = null;
 	private IJavaProject JavaProject = null;
+	
+	public static final String CONFIG_FILEPATH = "Config.xml";
+
 
 	public XMLreader(IProject project){
 		readXMLContent(project);
 		setJavaProject(JavaCore.create(project));
 	}
 
-	public boolean isConfigFileExist(IProject project){
-		String ConfigFile=project.getProject().getLocation().toOSString()+File.separator+"Config.xml";
-		File myFilePath = new File(ConfigFile);
-
-		if (myFilePath.exists()) {
-			return true;
-		}
-		return false;
+	public static boolean isConfigFileExist(IProject project){
+		return project.getFile(XMLreader.CONFIG_FILEPATH).exists();
+	}
+	
+	public static IFile getConfigFile(IProject project){
+		return project.getFile(XMLreader.CONFIG_FILEPATH);
 	}
 
 	public static IResource readIResource(IPath path){
@@ -56,7 +56,7 @@ public class XMLreader {
 	}
 
 	public void readXMLContent(IProject project) {
-		File file = new File(project.getProject().getLocation().toOSString()+File.separator+"Config.xml");
+		IFile file = project.getFile(CONFIG_FILEPATH);
 		if (!file.exists()){
 			// Use syncExec because this method can be called from non-UI thread.
 			Display.getDefault().syncExec(new Runnable() {
@@ -71,8 +71,7 @@ public class XMLreader {
 		}else{
 			try{
 				SAXReader saxReader = new SAXReader();
-				FileInputStream fis = new FileInputStream(project.getProject().getLocation().toOSString()+File.separator+"Config.xml");
-				Document document = saxReader.read(fis);
+				Document document = saxReader.read(file.getContents());
 				{
 					@SuppressWarnings("unchecked")
 					List<Node> Archfilelist = document.selectNodes("//Archfile/Path/@Attribute");
@@ -122,7 +121,8 @@ public class XMLreader {
 			catch(DocumentException e){
 				System.out.println(e.getMessage());
 			}
-			catch (FileNotFoundException e) {
+			catch (CoreException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -1,14 +1,12 @@
 package jp.ac.kyushu.iarch.checkplugin.handler;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
+import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.basefunction.utils.FileIOUtils;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectAllFileDialog;
 
 import org.dom4j.DocumentHelper;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -17,6 +15,7 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -72,14 +71,8 @@ public class ConfigurationXMLHandler implements IHandler{
 
 
 		try {
-			OutputFormat format = OutputFormat.createPrettyPrint();
-			String projectPath = project.getProject().getLocation().toOSString();
-			System.out.println(projectPath);
-			XMLWriter output = new XMLWriter(new FileWriter(new File(projectPath + File.separator + "Config.xml")), format);
-			codeXmlDocument.setXMLEncoding("utf-8");
-			output.write(codeXmlDocument);
-			output.close();
-		} catch (IOException e) {
+            FileIOUtils.xmlWriteFile(XMLreader.getConfigFile(project), codeXmlDocument);
+		} catch (IOException | CoreException e) {
 			System.out.println(e.getMessage());
 		}
 	}
@@ -87,13 +80,7 @@ public class ConfigurationXMLHandler implements IHandler{
 
 
 	public boolean isConfigFileExist(IProject project){
-		String ConfigFile=project.getProject().getLocation().toOSString()+ File.separator +"Config.xml";
-		File myFilePath = new File(ConfigFile);
-
-		if (myFilePath.exists()) {
-			return true;
-		}
-		return false;
+		return XMLreader.isConfigFileExist(project);
 	}
 	@Override
 	public void addHandlerListener(IHandlerListener arg0) {
@@ -117,12 +104,10 @@ public class ConfigurationXMLHandler implements IHandler{
 			if(project == null){
 				return null;
 			}
-			if(isConfigFileExist(project)){
-				CreateConfigFile(project,dialog);
-			}else{
+			if(!isConfigFileExist(project)){
 				System.out.println("config file does not exist.");
-				CreateConfigFile(project,dialog);
 			}
+			CreateConfigFile(project,dialog);
 			//ArchfaceChecker archfaceChecker = new ArchfaceChecker(project);
 		}
 
