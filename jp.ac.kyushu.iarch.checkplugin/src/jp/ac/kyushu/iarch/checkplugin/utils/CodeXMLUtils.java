@@ -190,7 +190,7 @@ public class CodeXMLUtils {
 				// Modifiers of MethodDeclaration
 				Element modifiersElement = methodElement.addElement("MethodModifiers");
 				List<String> modifiers = convertModifiers(node.modifiers());
-				if (methodReturnType.equals("void") && !(modifiers.get(0).toString().equals("void"))) {
+				if (methodReturnType.equals("void") && !modifiers.isEmpty() && !(modifiers.get(0).toString().equals("void"))) {
 					modifiers.add("void");
 				}
 				for (String modifier : modifiers) {
