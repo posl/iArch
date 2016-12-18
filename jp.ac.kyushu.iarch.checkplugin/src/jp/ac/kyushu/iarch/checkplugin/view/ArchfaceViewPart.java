@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
@@ -395,11 +396,8 @@ public class ArchfaceViewPart extends ViewPart {
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		// TODO Auto-generated method stub
-		GridLayout parentGridLayout = new GridLayout(1, true);
-		parent.setLayout(parentGridLayout);
-		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-		final Tree componentTree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER_SOLID | SWT.FULL_SELECTION);
+		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		final Tree componentTree = new Tree(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER_SOLID | SWT.FULL_SELECTION);
 		componentTree.setHeaderVisible(true);
 		componentTree.setLinesVisible(true);
 		componentTree.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -449,11 +447,9 @@ public class ArchfaceViewPart extends ViewPart {
 		componentTreeViewer.setContentProvider(new ComponentTreeContentProvider());
 		componentTreeViewer.setLabelProvider(new ComponentTableLabelProvider());
 
-		Tree behaviorTree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER_SOLID | SWT.FULL_SELECTION);
+		Tree behaviorTree = new Tree(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER_SOLID | SWT.FULL_SELECTION);
 		behaviorTree.setHeaderVisible(true);
 		behaviorTree.setLinesVisible(true);
-		behaviorTree.setLayout(parentGridLayout);
-		behaviorTree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TreeColumn behaviorNameColumn = new TreeColumn(behaviorTree, SWT.LEFT);
 		behaviorNameColumn.setText("Behavior Name");
 		behaviorNameColumn.setWidth(300);
