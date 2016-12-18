@@ -66,7 +66,7 @@ public class ArchfaceChecker extends XMLreader {
 		ASTSourceCodeChecker astchecker = new ASTSourceCodeChecker();
 		astchecker.SourceCodeArchifileChecker(archModel, getJavaProject());
 		classPairs = astchecker.getComponentClassPairModels();
-		behaviorPairs = astchecker.getUncertainBehaviorContainers();
+		behaviorPairs = astchecker.getBehaviorContainers();
 
 		// Check AR
 		// ARChecker archecker = new ARChecker();

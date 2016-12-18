@@ -493,6 +493,14 @@ public class ASTSourceCodeChecker{
 		return uncertainBehaviorContainers;
 	}
 
+	public List<UncertainBehaviorContainer> getBehaviorContainers() {
+		ArrayList<UncertainBehaviorContainer> behaviorContainers = new ArrayList<>();
+		for (BehaviorPairModel behaviorPairModel : behaviorPairModels) {
+			behaviorContainers.add(new UncertainBehaviorContainer(behaviorPairModel));
+		}
+		behaviorContainers.addAll(uncertainBehaviorContainers);
+		return behaviorContainers;
+	}
 
 	public void setBehaviorModels(ArrayList<BehaviorPairModel> pairModels){
 		behaviorPairModels = pairModels;
