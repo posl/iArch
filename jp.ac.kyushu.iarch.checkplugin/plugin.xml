@@ -28,6 +28,11 @@
             id="jp.ac.kyushu.iarch.checkPlugin.removeAspect"
             name="Remove Aspect">
       </command>
+      <command
+            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+            id="jp.ac.kyushu.iarch.checkPlugin.autoCheck"
+            name="Check">
+      </command>
    
    
        <command
@@ -60,7 +65,7 @@
             <command
                   label="iArch"
                   id="jp.ac.kyushu.iarch.checkplugin.pulldown"
-                  commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand"
+                  commandId="jp.ac.kyushu.iarch.checkPlugin.autoCheck"
                   style="pulldown">
             </command>
          </toolbar>
@@ -152,6 +157,10 @@
       <handler
             class="jp.ac.kyushu.iarch.checkplugin.handler.RemoveAspectCode"
             commandId="jp.ac.kyushu.iarch.checkPlugin.removeAspect">
+      </handler>
+      <handler
+            class="jp.ac.kyushu.iarch.checkplugin.handler.AutoCheckHandler"
+            commandId="jp.ac.kyushu.iarch.checkPlugin.autoCheck">
       </handler>
       
       
