@@ -53,7 +53,7 @@ public class ConnectorToFSP{
 			ucode = "";
 		}
 		System.out.println(ucode);
-		if(code == "" && ucode == ""){
+		if(code.isEmpty() && ucode.isEmpty()){
 			return null;
 		}
 		String fspcode = code + ucode;
@@ -99,18 +99,19 @@ public class ConnectorToFSP{
 				while(roop>0){
 					int i=0;
 					for(SuperCall supercall : ubehavior.getCall()){
-						if(supercall.eClass().getName() != "OptCall" &&
-						   supercall.eClass().getName() != "AltCall"){
+						String supercallType = supercall.eClass().getName();
+						if(!"OptCall".equals(supercallType) &&
+						   !"AltCall".equals(supercallType)){
 							//元々のコード
 							//uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-							uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName() + " -> ";
-						}else if(supercall.eClass().getName() == "OptCall"){
+							uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
+						}else if("OptCall".equals(supercallType)){
 							if(optbit[i]==1){
 								//元々のコード
 								//uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-								uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName() + " -> ";
+								uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
 							}i++;
-						}else if(supercall.eClass().getName() == "AltCall"){
+						}else if("AltCall".equals(supercallType)){
 							System.out.println("ERROE ALTMETHODPRINTL");
 						}
 					}
@@ -162,8 +163,9 @@ public class ConnectorToFSP{
 				//元々のコード
 				//subalt.add(a_method.getName());
 				//subalt.addAll(a_method.getA_name());
-				subalt.add(a_method.getMethods().toString());
-				subalt.add(a_method.getMethods().toString());
+				for (Method m : a_method.getMethods()) {
+					subalt.add(m.toString());
+				}
 				altlist.add((ArrayList<String>) subalt.clone());
 				subalt.clear();
 			}
@@ -183,9 +185,14 @@ public class ConnectorToFSP{
 		}
 		int[] optbit = new int[numopt];
 		for(int i=0;i<altmethods.size();i++){
+			String altMethodName = altmethods.get(i);
 			for(int j=0;j<altlist.size();j++){
-				if(altmethods.get(i) == altlist.get(j).get(0)){
-					altlist_used.add(altlist.get(j));
+				ArrayList<String> altNames = altlist.get(j);
+				for (String name : altNames) {
+					if (altMethodName.equals(name)) {
+						altlist_used.add(altNames);
+						break;
+					}
 				}
 			}
 		}
@@ -199,21 +206,25 @@ public class ConnectorToFSP{
 				int altset = 0;
 				int optelement=0;
 				for(SuperCall supercall : ubehavior.getCall()){
-					if(supercall.eClass().getName() != "OptCall" &&
-					   supercall.eClass().getName() != "AltCall"){
+					String supercallType = supercall.eClass().getName();
+					if(!"OptCall".equals(supercallType) &&
+					   !"AltCall".equals(supercallType)){
 						//今まではsupercall.getName().getName()でメソッド名が取れていたけど、取れなくなった
 						
 						//元々のコード
 						//uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-						uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName() + " -> ";
-					}else if(supercall.eClass().getName() == "OptCall"){
+						uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
+					}else if("OptCall".equals(supercallType)){
 						if(optbit[optelement]==1){
 							//元々のコード
 							//uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-							uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName() + " -> ";
+							uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
 						}optelement++;
-					}else if(supercall.eClass().getName() == "AltCall"){
-						uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + altlist_used.get(altset).get(selectAlt[altset]) + " -> ";
+					}else if("AltCall".equals(supercallType)){
+						String methodName = selectAlt[altset] == 0 ?
+								((Method) supercall.getName()).getName() :
+									((Method) ((AltCall) supercall).getA_name().get(selectAlt[altset] - 1)).getName();
+						uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + methodName + " -> ";
 						altset++;
 					}
 				}
