@@ -52,6 +52,11 @@
              name="Remove Uncertainty as Unnecessary">
        </command>
    
+       <command
+             categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
+             id="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
+             name="GenerateLTSfile">
+       </command>
    
    </extension>
    <extension
@@ -86,6 +91,10 @@
          </command>
          <command
                commandId="jp.ac.kyushu.iarch.checkPlugin.removeAspect"
+               style="push">
+         </command>
+         <command
+               commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
                style="push">
          </command>
       </menuContribution>
@@ -179,6 +188,10 @@
        <handler
              class="jp.ac.kyushu.iarch.checkplugin.handler.RemoveUncertaintyAsUnnecessaryHandler"
              commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsUnnecessaryCommand">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateLTSfile"
+             commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile">
        </handler>
       
    </extension>
