@@ -12,6 +12,7 @@ import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
@@ -20,6 +21,7 @@ import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectArchfile;
+import jp.ac.kyushu.iarch.checkplugin.view.ShowFSPDialog;
 
 public class GenerateLTSfile implements IHandler {
 
@@ -41,20 +43,25 @@ public class GenerateLTSfile implements IHandler {
 			return null;
 		}
 
-		SelectArchfile archfile = new SelectArchfile(HandlerUtil.getActiveShell(event), project);
+		Shell shell = HandlerUtil.getActiveShell(event);
+		SelectArchfile archfile = new SelectArchfile(shell, project);
 		if (archfile.open() == MessageDialog.OK) {
-			GenerateLTSCode(archfile.getArchiface());
+			String code = getSequenceCode(archfile.getArchiface());
+			if (code == null) {
+				code = "null"; // backward compatibility
+			}
+
+			writeLTSCode(project, code);
+
+			ShowFSPDialog dialog = new ShowFSPDialog(shell);
+			dialog.setCode(code);
+			dialog.open();
 		}
 		return null;
 	}
 
-	void GenerateLTSCode(IResource archcode) {
-		String code = getSequenceCode(archcode);
-		if (code == null) {
-			code = "null"; // backward compatibility
-		}
-
-		String projectPath = archcode.getProject().getLocation().toOSString();
+	private void writeLTSCode(IProject project, String code) {
+		String projectPath = project.getLocation().toOSString();
 		String ltsCodeFile = projectPath + "/Gen-LTS.lts";
 		File myFilePath = new File(ltsCodeFile);
 		FileWriter resultFile = null;
