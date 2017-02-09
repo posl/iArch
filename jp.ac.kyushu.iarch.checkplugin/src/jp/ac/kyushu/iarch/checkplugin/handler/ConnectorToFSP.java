@@ -1,14 +1,7 @@
 package jp.ac.kyushu.iarch.checkplugin.handler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.ENamedElement;
-import org.eclipse.emf.ecore.EObject;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltMethod;
@@ -19,253 +12,243 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.archdsl.archDSL.OptCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
-import jp.ac.kyushu.iarch.archdsl.archDSL.SuperMethod;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
-import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
-import jp.ac.kyushu.iarch.checkplugin.model.CallPairModel;
-import jp.ac.kyushu.iarch.checkplugin.model.ComponentClassPairModel;
 
-public class ConnectorToFSP{
+public class ConnectorToFSP {
 	
-	public String convert(Model archface){
-		if(archface.getConnectors().isEmpty()){
-			if(archface.getU_connectors().isEmpty()){
-				return null;
-			}
-			else{
-			}
-		}
+	public String convert(Model archface) {
 		//certain connectorをFSPに変換したものをcodeに入れていく
 		//uncertain connectorをFSPに変換したものをucodeに入れていく
 		String code = "";
-		String ucode  = "";
-		if(!archface.getConnectors().isEmpty()){
+		if (!archface.getConnectors().isEmpty()) {
 			code = certainBehaviorFSP(archface);
-		}else{
-			code = "";
 		}
-		
-		if(!archface.getU_connectors().isEmpty()){
+		String ucode  = "";
+		if (!archface.getU_connectors().isEmpty()) {
 			ucode = uncertainBehaviorFSP(archface);
-		}else{
-			ucode = "";
 		}
 		System.out.println(ucode);
-		if(code.isEmpty() && ucode.isEmpty()){
+		if (code.isEmpty() && ucode.isEmpty()) {
 			return null;
 		}
+
 		String fspcode = code + ucode;
-		
-		fspcode = fspcode.substring(0,fspcode.length()-2);
-		fspcode += ".";
+		fspcode = fspcode.substring(0, fspcode.length() - 2) + ".";
 		System.out.println(fspcode);
 		return fspcode;
 	}
-	
+
 	//certain connectorをFSPに変換
-	public String certainBehaviorFSP(Model archface){
-		String certainCode = "";
-		for(Connector connector: archface.getConnectors()){
-			for(Behavior behavior: connector.getBehaviors()){
-				certainCode += "property " + behavior.getInterface().getName() + " = (";
-					for(Method methodcall : behavior.getCall()){
-						certainCode +=   "_" +  ((Interface) methodcall.eContainer()).getName() + "." + methodcall.getName() + " -> ";
-					}
-					certainCode += behavior.getEnd().getName() + ").\n";
+	public String certainBehaviorFSP(Model archface) {
+		StringBuffer certainCode = new StringBuffer();
+		for (Connector connector : archface.getConnectors()) {
+			for (Behavior behavior : connector.getBehaviors()) {
+				certainCode.append("property ")
+					.append(behavior.getInterface().getName())
+					.append(" = (");
+				for (Method methodcall : behavior.getCall()) {
+					certainCode.append("_")
+						.append(((Interface) methodcall.eContainer()).getName())
+						.append(".")
+						.append(methodcall.getName())
+						.append(" -> ");
 				}
+				certainCode.append(behavior.getEnd().getName())
+					.append(").\n");
+			}
 		}
-		return certainCode;
+		return certainCode.toString();
 	}
-	
+
 	//uncertain connectorをFSPに変換
-	public String uncertainBehaviorFSP(Model archface){
-		String uncertainCode = "";
-		for(UncertainConnector uconnector : archface.getU_connectors()){
-			for(UncertainBehavior ubehavior : uconnector.getU_behaviors()){
-				uncertainCode += "U" + ubehavior.getName() + " = (";
-				ArrayList<String> altmethods = countaltmethod(ubehavior);
-				if(altmethods.size() != 0){
-					uncertainCode += printwithAltMethod(altmethods,ubehavior,archface);
+	public String uncertainBehaviorFSP(Model archface) {
+		StringBuffer uncertainCode = new StringBuffer();
+		for (UncertainConnector uconnector : archface.getU_connectors()) {
+			for (UncertainBehavior ubehavior : uconnector.getU_behaviors()) {
+				uncertainCode.append("U").append(ubehavior.getName())
+					.append(" = (");
+
+				List<String> altmethods = countaltmethod(ubehavior);
+				if (!altmethods.isEmpty()) {
+					uncertainCode.append(printwithAltMethod(altmethods, ubehavior, archface));
 					continue;
 				}
-				int numopt = countoptmethod(ubehavior,archface);
-				int roop=1;
-				for(int i=0;i<numopt;i++){
-					roop=roop*2;
+
+				int numopt = countoptmethod(ubehavior, archface);
+				int roop = 1;
+				for (int i = 0; i < numopt; i++) {
+					roop = roop * 2;
 				}
 				int[] optbit = new int[numopt];
-				while(roop>0){
-					int i=0;
-					for(SuperCall supercall : ubehavior.getCall()){
-						String supercallType = supercall.eClass().getName();
-						if(!"OptCall".equals(supercallType) &&
-						   !"AltCall".equals(supercallType)){
-							//元々のコード
-							//uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-							uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
-						}else if("OptCall".equals(supercallType)){
-							if(optbit[i]==1){
-								//元々のコード
-								//uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-								uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
-							}i++;
-						}else if("AltCall".equals(supercallType)){
+				while (roop > 0) {
+					int i = 0;
+					for (SuperCall supercall : ubehavior.getCall()) {
+						if (supercall instanceof OptCall) {
+							if (optbit[i] == 1) {
+								uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
+									.append(".")
+									.append(((Method) supercall.getName()).getName())
+									.append(" -> ");
+							}
+							i++;
+						} else if (supercall instanceof AltCall) {
 							System.out.println("ERROE ALTMETHODPRINTL");
+						} else {
+							uncertainCode.append("_").append(((Interface) supercall.getName().eContainer()).getName())
+								.append(".")
+								.append(((Method) supercall.getName()).getName())
+								.append(" -> ");
 						}
 					}
-					uncertainCode += "U" + ubehavior.getEnd().getName() + " |\n	";	
+					uncertainCode.append("U").append(ubehavior.getEnd().getName())
+						.append(" |\n\t");
 					roop--;
 					createbit(optbit);
 				}
-			uncertainCode = uncertainCode.substring(0,uncertainCode.length()-3);
-			uncertainCode += ").\n";
+				uncertainCode.delete(uncertainCode.length() - 3, uncertainCode.length());
+				uncertainCode.append(").\n");
 			}
 		}
-		return uncertainCode;
+		return uncertainCode.toString();
 	}
-	
+
 	//optionalなメソッドの数を数える
-	public int countoptmethod(UncertainBehavior ubehavior,Model archface){
-		int numopt=0;
-		int roop=0;
-			for(SuperCall supercall : ubehavior.getCall()){
-					roop++;
-					if("OptCall".equals(supercall.eClass().getName())){
-						numopt++;
-					}
+	public int countoptmethod(UncertainBehavior ubehavior, Model archface) {
+		int numopt = 0;
+		for (SuperCall supercall : ubehavior.getCall()) {
+			if (supercall instanceof OptCall) {
+				numopt++;
 			}
-			return numopt;
+		}
+		return numopt;
 	}
 	
 	//alternativeなメソッドの数を数える
-	public ArrayList<String> countaltmethod(UncertainBehavior ubehavior){
-		ArrayList<String> altmethods = new ArrayList<String>();
-		for(SuperCall supercall : ubehavior.getCall()){
-			if("AltCall".equals(supercall.eClass().getName())){
-				//元々のコード
-				//altmethods.add(supercall.getName().getName());
+	public List<String> countaltmethod(UncertainBehavior ubehavior) {
+		List<String> altmethods = new ArrayList<String>();
+		for (SuperCall supercall : ubehavior.getCall()) {
+			if (supercall instanceof AltCall) {
+				// Store string representation of the first alternative.
 				altmethods.add(supercall.getName().toString());
 			}
 		}
 		return altmethods;
 	}
-	
+
 	//alternativeなメソッドにあるメソッドをリストにする
 	//{void a(),void b(),void c()}というalternativeなメソッドがあればa(),b(),c()をリストにする
-	public ArrayList<ArrayList<String>> createAltMethod(Model archface){
-		ArrayList<ArrayList<String>> altlist = new ArrayList<ArrayList<String>>();
-		ArrayList<String> subalt = new ArrayList<String>();
-		
-		for(UncertainInterface u_interface : archface.getU_interfaces()){
-			for(AltMethod a_method:u_interface.getAltmethods()){
-				//元々のコード
-				//subalt.add(a_method.getName());
-				//subalt.addAll(a_method.getA_name());
+	public List<List<String>> createAltMethod(Model archface) {
+		List<List<String>> altlist = new ArrayList<List<String>>();
+
+		for (UncertainInterface u_interface : archface.getU_interfaces()) {
+			for (AltMethod a_method : u_interface.getAltmethods()) {
+				List<String> subalt = new ArrayList<String>();
 				for (Method m : a_method.getMethods()) {
+					// Store string representation of each alternative.
 					subalt.add(m.toString());
 				}
-				altlist.add((ArrayList<String>) subalt.clone());
-				subalt.clear();
+				altlist.add(subalt);
 			}
 		}
 		return altlist;
 	}
-	
+
 	//alternativeなメソッドがconnectorに存在する場合の処理
-	public String printwithAltMethod(ArrayList<String> altmethods,UncertainBehavior ubehavior,Model archface){
-		String uncertainCode = "";
-		ArrayList<ArrayList<String>> altlist = createAltMethod(archface);
-		ArrayList<ArrayList<String>> altlist_used = new ArrayList<ArrayList<String>>();
-		int optroop=1;
-		int numopt = countoptmethod(ubehavior,archface);
-		for(int i=0;i<numopt;i++){
-			optroop=optroop*2;
+	public String printwithAltMethod(List<String> altmethods, UncertainBehavior ubehavior, Model archface) {
+		StringBuffer uncertainCode = new StringBuffer();
+
+		int numopt = countoptmethod(ubehavior, archface);
+		int optroop = 1;
+		for (int i = 0; i < numopt; i++) {
+			optroop = optroop * 2;
 		}
 		int[] optbit = new int[numopt];
-		for(int i=0;i<altmethods.size();i++){
-			String altMethodName = altmethods.get(i);
-			for(int j=0;j<altlist.size();j++){
-				ArrayList<String> altNames = altlist.get(j);
-				for (String name : altNames) {
-					if (altMethodName.equals(name)) {
-						altlist_used.add(altNames);
+
+		List<List<String>> altlist_used = new ArrayList<List<String>>();
+		List<List<String>> altlist = createAltMethod(archface);
+		for (String firstAltMethod : altmethods) {
+			for (List<String> altMethods : altlist){
+				for (String name : altMethods) {
+					if (firstAltMethod.equals(name)) {
+						altlist_used.add(altMethods);
 						break;
 					}
 				}
 			}
 		}
-		while(optroop>0){
-			int altroop=1;
+
+		while (optroop > 0) {
+			int altroop = 1;
 			int[] selectAlt = new int[altlist_used.size()];
-			for(int k=0;k<altlist_used.size();k++){
+			for (int k = 0; k < altlist_used.size(); k++) {
 				altroop *= altlist_used.get(k).size();
 			}
-			while(altroop>0){
+
+			while (altroop > 0) {
 				int altset = 0;
-				int optelement=0;
-				for(SuperCall supercall : ubehavior.getCall()){
-					String supercallType = supercall.eClass().getName();
-					if(!"OptCall".equals(supercallType) &&
-					   !"AltCall".equals(supercallType)){
-						//今まではsupercall.getName().getName()でメソッド名が取れていたけど、取れなくなった
-						
-						//元々のコード
-						//uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-						uncertainCode += "_" + ((Interface) supercall.getName().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
-					}else if("OptCall".equals(supercallType)){
-						if(optbit[optelement]==1){
-							//元々のコード
-							//uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer()).getName() + "." + supercall.getName().getName() + " -> ";
-							uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + ((Method) supercall.getName()).getName() + " -> ";
-						}optelement++;
-					}else if("AltCall".equals(supercallType)){
+				int optelement = 0;
+				for (SuperCall supercall : ubehavior.getCall()) {
+					if (supercall instanceof OptCall) {
+						if (optbit[optelement] == 1) {
+							uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
+								.append(".")
+								.append(((Method) supercall.getName()).getName())
+								.append(" -> ");
+						}
+						optelement++;
+					} else if (supercall instanceof AltCall) {
 						String methodName = selectAlt[altset] == 0 ?
 								((Method) supercall.getName()).getName() :
 									((Method) ((AltCall) supercall).getA_name().get(selectAlt[altset] - 1)).getName();
-						uncertainCode += "_" + ((UncertainInterface) supercall.getName().eContainer().eContainer()).getName() + "." + methodName + " -> ";
+						uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
+							.append(".")
+							.append(methodName)
+							.append(" -> ");
 						altset++;
+					} else {
+						uncertainCode.append("_").append(((Interface) supercall.getName().eContainer()).getName())
+							.append(".")
+							.append(((Method) supercall.getName()).getName())
+							.append(" -> ");
 					}
 				}
-				uncertainCode +=  "U" + ubehavior.getEnd().getName() + " |\n	";
+				uncertainCode.append("U").append(ubehavior.getEnd().getName())
+					.append(" |\n\t");
 				altroop--;
-				incleSelectAlt(selectAlt,altlist_used);
-			}optroop--;
-			 createbit(optbit);
-		}
-		uncertainCode = uncertainCode.substring(0,uncertainCode.length()-3) + ").\n";
-		//uncertainCode += ").\n";
-		return uncertainCode;
-	}
-	
-	
-	static int[] createbit(int num[]){
-		for(int i=0;i<num.length;i++){
-			if(num[i] == 0){
-				num[i]=1;
-				return num;
+				incleSelectAlt(selectAlt, altlist_used);
 			}
-			else{
-				num[i]=0;
+			optroop--;
+			createbit(optbit);
+		}
+		uncertainCode.delete(uncertainCode.length() - 3, uncertainCode.length());
+		uncertainCode.append(").\n");
+		return uncertainCode.toString();
+	}
+
+	static int[] createbit(int num[]) {
+		for (int i = 0; i < num.length; i++) {
+			if (num[i] == 0) {
+				num[i] = 1;
+				return num;
+			} else {
+				num[i] = 0;
 			}
 		}
 		return num;
 	}
-	
-	static int[] incleSelectAlt(int[] selectAlt,ArrayList<ArrayList<String>> altlist){
-		for(int i=0;i<selectAlt.length;i++){
-			if(selectAlt[i] != altlist.get(i).size()-1){
+
+	static int[] incleSelectAlt(int[] selectAlt, List<List<String>> altlist) {
+		for (int i = 0; i < selectAlt.length; i++) {
+			if (selectAlt[i] != altlist.get(i).size() - 1) {
 				selectAlt[i]++;
 				return selectAlt;
-			}else{
-				selectAlt[i]=0;
+			} else {
+				selectAlt[i] = 0;
 			}
 		}
 		return selectAlt;
 	}
-	
+
 }
-
-
-
