@@ -6,6 +6,7 @@ import java.util.List;
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Behavior;
+import jp.ac.kyushu.iarch.archdsl.archDSL.CertainCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Connector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
@@ -21,97 +22,78 @@ public class ConnectorToFSP {
 	public String convert(Model archface) {
 		//certain connectorをFSPに変換したものをcodeに入れていく
 		//uncertain connectorをFSPに変換したものをucodeに入れていく
-		String code = "";
-		if (!archface.getConnectors().isEmpty()) {
-			code = certainBehaviorFSP(archface);
-		}
-		String ucode  = "";
-		if (!archface.getU_connectors().isEmpty()) {
-			ucode = uncertainBehaviorFSP(archface);
-		}
-		System.out.println(ucode);
+		List<String> code = certainBehaviorFSP(archface);
+		List<String> ucode = uncertainBehaviorFSP(archface);
+		//System.out.println(ucode);
 		if (code.isEmpty() && ucode.isEmpty()) {
 			return null;
 		}
 
-		String fspcode = code + ucode;
-		fspcode = fspcode.substring(0, fspcode.length() - 2) + ".";
+		StringBuffer sb = new StringBuffer();
+		for (String c : code) {
+			sb.append(c).append(".\n");
+		}
+		boolean firstUc = true;
+		for (String uc : ucode) {
+			if (firstUc) {
+				firstUc = false;
+			} else {
+				sb.append(",\n");
+			}
+			sb.append(uc);
+		}
+		sb.append(".");
+		String fspcode = sb.toString();
 		System.out.println(fspcode);
+
 		return fspcode;
 	}
 
 	//certain connectorをFSPに変換
-	public String certainBehaviorFSP(Model archface) {
-		StringBuffer certainCode = new StringBuffer();
+	public List<String> certainBehaviorFSP(Model archface) {
+		List<String> certainCodeList = new ArrayList<String>();
 		for (Connector connector : archface.getConnectors()) {
 			for (Behavior behavior : connector.getBehaviors()) {
+				StringBuffer certainCode = new StringBuffer();
+
 				certainCode.append("property ")
 					.append(behavior.getInterface().getName())
 					.append(" = (");
+
 				for (Method methodcall : behavior.getCall()) {
-					certainCode.append("_")
-						.append(((Interface) methodcall.eContainer()).getName())
-						.append(".")
-						.append(methodcall.getName())
-						.append(" -> ");
+					certainCode.append(getFSPString(methodcall)).append(" -> ");
 				}
+
 				certainCode.append(behavior.getEnd().getName())
-					.append(").\n");
+					.append(")");
+				certainCodeList.add(certainCode.toString());
 			}
 		}
-		return certainCode.toString();
+		return certainCodeList;
 	}
 
 	//uncertain connectorをFSPに変換
-	public String uncertainBehaviorFSP(Model archface) {
-		StringBuffer uncertainCode = new StringBuffer();
+	public List<String> uncertainBehaviorFSP(Model archface) {
+		List<String> uncertainCodeList = new ArrayList<String>();
 		for (UncertainConnector uconnector : archface.getU_connectors()) {
 			for (UncertainBehavior ubehavior : uconnector.getU_behaviors()) {
+				StringBuffer uncertainCode = new StringBuffer();
+
 				uncertainCode.append("U").append(ubehavior.getName())
 					.append(" = (");
 
 				List<String> altmethods = countaltmethod(ubehavior);
-				if (!altmethods.isEmpty()) {
+				if (altmethods.isEmpty()) {
+					uncertainCode.append(printWithoutAltMethod(ubehavior, archface));
+				} else {
 					uncertainCode.append(printwithAltMethod(altmethods, ubehavior, archface));
-					continue;
 				}
 
-				int numopt = countoptmethod(ubehavior, archface);
-				int roop = 1;
-				for (int i = 0; i < numopt; i++) {
-					roop = roop * 2;
-				}
-				int[] optbit = new int[numopt];
-				while (roop > 0) {
-					int i = 0;
-					for (SuperCall supercall : ubehavior.getCall()) {
-						if (supercall instanceof OptCall) {
-							if (optbit[i] == 1) {
-								uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
-									.append(".")
-									.append(((Method) supercall.getName()).getName())
-									.append(" -> ");
-							}
-							i++;
-						} else if (supercall instanceof AltCall) {
-							System.out.println("ERROE ALTMETHODPRINTL");
-						} else {
-							uncertainCode.append("_").append(((Interface) supercall.getName().eContainer()).getName())
-								.append(".")
-								.append(((Method) supercall.getName()).getName())
-								.append(" -> ");
-						}
-					}
-					uncertainCode.append("U").append(ubehavior.getEnd().getName())
-						.append(" |\n\t");
-					roop--;
-					createbit(optbit);
-				}
-				uncertainCode.delete(uncertainCode.length() - 3, uncertainCode.length());
-				uncertainCode.append(").\n");
+				uncertainCode.append(")");
+				uncertainCodeList.add(uncertainCode.toString());
 			}
 		}
-		return uncertainCode.toString();
+		return uncertainCodeList;
 	}
 
 	//optionalなメソッドの数を数える
@@ -155,6 +137,45 @@ public class ConnectorToFSP {
 		return altlist;
 	}
 
+	public String printWithoutAltMethod(UncertainBehavior ubehavior, Model archface) {
+		StringBuffer uncertainCode = new StringBuffer();
+
+		int numopt = countoptmethod(ubehavior, archface);
+		int roop = 1;
+		for (int i = 0; i < numopt; i++) {
+			roop = roop * 2;
+		}
+		int[] optbit = new int[numopt];
+
+		boolean firstPattern = true;
+		while (roop > 0) {
+			if (firstPattern) {
+				firstPattern = false;
+			} else {
+				uncertainCode.append(" |\n\t");
+			}
+
+			int i = 0;
+			for (SuperCall supercall : ubehavior.getCall()) {
+				if (supercall instanceof OptCall) {
+					if (optbit[i] == 1) {
+						uncertainCode.append(getFSPString((OptCall) supercall)).append(" -> ");
+					}
+					i++;
+				} else if (supercall instanceof AltCall) {
+					System.out.println("ERROE ALTMETHODPRINTL");
+				} else {
+					uncertainCode.append(getFSPString((CertainCall) supercall)).append(" -> ");
+				}
+			}
+			uncertainCode.append("U").append(ubehavior.getEnd().getName());
+			roop--;
+			createbit(optbit);
+		}
+
+		return uncertainCode.toString();
+	}
+
 	//alternativeなメソッドがconnectorに存在する場合の処理
 	public String printwithAltMethod(List<String> altmethods, UncertainBehavior ubehavior, Model archface) {
 		StringBuffer uncertainCode = new StringBuffer();
@@ -179,6 +200,7 @@ public class ConnectorToFSP {
 			}
 		}
 
+		boolean firstPattern = true;
 		while (optroop > 0) {
 			int altroop = 1;
 			int[] selectAlt = new int[altlist_used.size()];
@@ -187,43 +209,36 @@ public class ConnectorToFSP {
 			}
 
 			while (altroop > 0) {
+				if (firstPattern) {
+					firstPattern = false;
+				} else {
+					uncertainCode.append(" |\n\t");
+				}
+
 				int altset = 0;
 				int optelement = 0;
 				for (SuperCall supercall : ubehavior.getCall()) {
 					if (supercall instanceof OptCall) {
 						if (optbit[optelement] == 1) {
-							uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
-								.append(".")
-								.append(((Method) supercall.getName()).getName())
-								.append(" -> ");
+							uncertainCode.append(getFSPString((OptCall) supercall)).append(" -> ");
 						}
 						optelement++;
 					} else if (supercall instanceof AltCall) {
-						String methodName = selectAlt[altset] == 0 ?
-								((Method) supercall.getName()).getName() :
-									((Method) ((AltCall) supercall).getA_name().get(selectAlt[altset] - 1)).getName();
-						uncertainCode.append("_").append(((UncertainInterface) supercall.getName().eContainer().eContainer()).getName())
-							.append(".")
-							.append(methodName)
-							.append(" -> ");
+						uncertainCode.append(getFSPString((AltCall) supercall, selectAlt[altset])).append(" -> ");
 						altset++;
 					} else {
-						uncertainCode.append("_").append(((Interface) supercall.getName().eContainer()).getName())
-							.append(".")
-							.append(((Method) supercall.getName()).getName())
-							.append(" -> ");
+						uncertainCode.append(getFSPString((CertainCall) supercall)).append(" -> ");
 					}
 				}
-				uncertainCode.append("U").append(ubehavior.getEnd().getName())
-					.append(" |\n\t");
+				uncertainCode.append("U").append(ubehavior.getEnd().getName());
 				altroop--;
 				incleSelectAlt(selectAlt, altlist_used);
 			}
+
 			optroop--;
 			createbit(optbit);
 		}
-		uncertainCode.delete(uncertainCode.length() - 3, uncertainCode.length());
-		uncertainCode.append(").\n");
+
 		return uncertainCode.toString();
 	}
 
@@ -249,6 +264,27 @@ public class ConnectorToFSP {
 			}
 		}
 		return selectAlt;
+	}
+
+	private String getFSPString(Method methodCall) {
+		String className = ((Interface) methodCall.eContainer()).getName();
+		String methodName = methodCall.getName();
+		return "_" + className + "." + methodName;
+	}
+	private String getFSPString(CertainCall certainCall) {
+		String className = ((Interface) certainCall.getName().eContainer()).getName();
+		String methodName = ((Method) certainCall.getName()).getName();
+		return "_" + className + "." + methodName;
+	}
+	private String getFSPString(OptCall optCall) {
+		String className = ((UncertainInterface) optCall.getName().eContainer().eContainer()).getName();
+		String methodName = ((Method) optCall.getName()).getName();
+		return "_" + className + "." + methodName;
+	}
+	private String getFSPString(AltCall altCall, int i) {
+		String className = ((UncertainInterface) altCall.getName().eContainer().eContainer()).getName();
+		String methodName = ((Method)(i == 0 ? altCall.getName() : altCall.getA_name().get(i - 1))).getName();
+		return "_" + className + "." + methodName;
 	}
 
 }
