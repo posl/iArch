@@ -164,6 +164,12 @@ public class ComponentMethodPairModel {
 		this.recentDiff = recentDiff;
 	}
 
-
-
+	public int getProgramPointCount() {
+		if (javaMethodNode == null) {
+			return 0;
+		} else {
+			// Do not count the method itself.
+			return javaMethodNode.selectNodes("MethodInvocation").size() * 2;
+		}
+	}
 }

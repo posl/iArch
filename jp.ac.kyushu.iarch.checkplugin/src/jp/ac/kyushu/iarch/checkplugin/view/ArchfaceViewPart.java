@@ -35,6 +35,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IViewSite;
@@ -45,6 +46,7 @@ public class ArchfaceViewPart extends ViewPart {
 	public static final String ID = "jp.ac.kyushu.iarch.checkplugin.archfaceview";
 	private TreeViewer componentTreeViewer;
 	private TreeViewer behaviorTreeViewer;
+	private Label abstractionRatioLabel;
 
 	public class ComponentTreeContentProvider implements ITreeContentProvider {
 
@@ -216,6 +218,7 @@ public class ArchfaceViewPart extends ViewPart {
 				} else {
 					return null;
 				}
+				break;
 			case 4:
 				if (element instanceof ComponentMethodPairModel) {
 					if (((ComponentMethodPairModel) element).getRecentDiff() != null) {
@@ -223,6 +226,29 @@ public class ArchfaceViewPart extends ViewPart {
 								" -> " +((ComponentMethodPairModel) element).getRecentDiff().getUncertainStrTypeB();
 					}
 				}
+				break;
+			case 5: // designPointColumn
+				if (element instanceof ComponentClassPairModel) {
+					ComponentClassPairModel ccpm = (ComponentClassPairModel) element;
+					return Integer.toString(ccpm.getDesignPointCount());
+				}
+				return "-";
+			case 6: // programPointColumn
+				if (element instanceof ComponentClassPairModel) {
+					ComponentClassPairModel ccpm = (ComponentClassPairModel) element;
+					if (ccpm.hasJavaNode()) {
+						return Integer.toString(ccpm.getProgramPointCount());
+					}
+				} else if (element instanceof AltMethodPairsContainer) {
+					return "-";
+				} else if (element instanceof ComponentMethodPairModel) {
+					ComponentMethodPairModel cmpm = (ComponentMethodPairModel) element;
+					if (cmpm.hasJavaNode()) {
+						return Integer.toString(cmpm.getProgramPointCount());
+					}
+				}
+				return "-";
+			default:;
 			}
 			return null;
 		}
@@ -369,6 +395,22 @@ public class ArchfaceViewPart extends ViewPart {
 						}
 					}
 				}
+				break;
+			case 2: // behaviorDesignPointColumn
+				if (element instanceof UncertainBehaviorContainer) {
+					UncertainBehaviorContainer ubc = (UncertainBehaviorContainer) element;
+					if (ubc.getSeparatedBehaviors().size() == 1) {
+						// Certain behavior
+						return Integer.toString(ubc.getOriginalBehavior().getDesignPointCount());
+					} else {
+						// Uncertain behavior
+						return "-";
+					}
+				} else if (element instanceof BehaviorPairModel) {
+					// Children of UBC
+					return null;
+				}
+			default: ;
 			}
 			return null;
 		}
@@ -379,6 +421,16 @@ public class ArchfaceViewPart extends ViewPart {
 		componentTreeViewer.setInput(classPairs);
 		behaviorTreeViewer.setInput(behaviorContainers);
 		componentTreeViewer.expandAll();
+	}
+	public void setAbstractionRatio() {
+		if (abstractionRatioLabel != null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("AbstractionRatio: ");
+			sb.append(0.0);
+			sb.append("[Structure: x/x, ");
+			sb.append("Behavior: x/x]");
+			abstractionRatioLabel.setText(sb.toString());
+		}
 	}
 
 	public ArchfaceViewPart() {
@@ -396,7 +448,18 @@ public class ArchfaceViewPart extends ViewPart {
 
 	@Override
 	public void createPartControl(final Composite parent) {
+		GridLayout gridLayout = new GridLayout(1, false);
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		parent.setLayout(gridLayout);
+
+		abstractionRatioLabel = new Label(parent, SWT.NONE);
+		setAbstractionRatio();
+		abstractionRatioLabel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
+
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
+		sashForm.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
 		final Tree componentTree = new Tree(sashForm, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER_SOLID | SWT.FULL_SELECTION);
 		componentTree.setHeaderVisible(true);
 		componentTree.setLinesVisible(true);
@@ -430,6 +493,12 @@ public class ArchfaceViewPart extends ViewPart {
 		TreeColumn recentType = new TreeColumn(componentTree, SWT.LEFT);
 		recentType.setText("Recent Uncertain Type");
 		recentType.setWidth(200);
+		TreeColumn designPointColumn = new TreeColumn(componentTree, SWT.LEFT);
+		designPointColumn.setText("DP");
+		designPointColumn.setWidth(50);
+		TreeColumn programPointColumn = new TreeColumn(componentTree, SWT.LEFT);
+		programPointColumn.setText("PP");
+		programPointColumn.setWidth(50);
 		componentTree.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -456,6 +525,9 @@ public class ArchfaceViewPart extends ViewPart {
 		TreeColumn behaviorImplColumn = new TreeColumn(behaviorTree, SWT.LEFT);
 		behaviorImplColumn.setText("Impl");
 		behaviorImplColumn.setWidth(50);
+		TreeColumn behaviorDesignPointColumn = new TreeColumn(behaviorTree, SWT.LEFT);
+		behaviorDesignPointColumn.setText("DP");
+		behaviorDesignPointColumn.setWidth(50);
 		behaviorTreeViewer = new TreeViewer(behaviorTree);
 		behaviorTreeViewer.setContentProvider(new BehaviorTreeContentProvider());
 		behaviorTreeViewer.setLabelProvider(new BehaviorTableLabelProvider());

@@ -108,4 +108,18 @@ public class ComponentClassPairModel {
 		return methodPairsList;
 	}
 
+	public int getDesignPointCount() {
+		if (archInterface == null) {
+			return 0;
+		} else {
+			return 1 + archInterface.getMethods().size();
+		}
+	}
+	public int getProgramPointCount() {
+		if (javaClassNode == null) {
+			return 0;
+		} else {
+			return 1 + javaClassNode.selectNodes("MethodDeclaration").size();
+		}
+	}
 }

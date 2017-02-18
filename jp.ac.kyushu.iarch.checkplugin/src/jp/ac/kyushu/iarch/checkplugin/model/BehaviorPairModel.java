@@ -3,6 +3,10 @@ package jp.ac.kyushu.iarch.checkplugin.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
+import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
+import jp.ac.kyushu.iarch.archdsl.archDSL.SuperMethod;
+
 /**
  * @author fukamachi
  *
@@ -44,4 +48,27 @@ public class BehaviorPairModel {
 		return parentUncertainBehaviorContainer;
 	}
 
+	public int getDesignPointCount() {
+		if (callModels == null) {
+			return 0;
+		} else {
+			// Implemented after AbstractionRatioChecker#checkArchface
+			int c = 0;
+			String previousInterfaceName = "";
+			for (CallPairModel cpm : callModels) {
+				SuperMethod superMethod = cpm.getArchMethod();
+				if (superMethod instanceof Method) {
+					Interface nowInterface = (Interface) ((Method) superMethod).eContainer();
+					String nowInterfaceName = nowInterface.getName();
+					if (nowInterfaceName.equals(previousInterfaceName)) {
+						c += 2;
+					} else {
+						c++;
+						previousInterfaceName = nowInterfaceName;
+					}
+				}
+			}
+			return c;
+		}
+	}
 }
