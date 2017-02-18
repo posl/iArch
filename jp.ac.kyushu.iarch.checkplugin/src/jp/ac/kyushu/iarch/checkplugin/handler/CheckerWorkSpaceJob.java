@@ -44,7 +44,9 @@ public class CheckerWorkSpaceJob extends Job {
 			@Override
 			public synchronized void run() {
 				SourceCodeCheckerHandler srchandler = new SourceCodeCheckerHandler();
-				srchandler.showArchface(archfaceChecker.getClassPairs(), archfaceChecker.getBehaviorPairs());
+				srchandler.showArchface(archfaceChecker.getClassPairs(),
+						archfaceChecker.getBehaviorPairs(),
+						archfaceChecker.getAbstractionRatio());
 			}
 		});
 		monitor.done();

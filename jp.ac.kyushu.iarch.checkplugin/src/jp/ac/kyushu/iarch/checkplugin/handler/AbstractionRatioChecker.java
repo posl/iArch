@@ -1,11 +1,12 @@
 ﻿package jp.ac.kyushu.iarch.checkplugin.handler;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.Behavior;
+import jp.ac.kyushu.iarch.archdsl.archDSL.Connector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
+import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
-import jp.ac.kyushu.iarch.checkplugin.model.ArchfaceModel;
 
 import org.w3c.dom.*;
 import org.apache.xerces.parsers.DOMParser;
@@ -18,14 +19,16 @@ import org.eclipse.core.resources.IResource;
  */
 public class AbstractionRatioChecker extends AbstractionRatio {
 
-	public void checkArchface(Model archface, IResource archfile) {
+	public void checkArchface(IResource archfile) {
+		Model model = new ArchModel(archfile).getModel();
+
 		int i_class_num = 0;
 		int i_method_num = 0;
 		int i_behavior_num = 0;
 		int i_archpoint_num = 0;
 
 		// count class
-		for (Interface archiclass : archface.getInterfaces()) {
+		for (Interface archiclass : model.getInterfaces()) {
 			i_class_num++;
 			i_method_num += archiclass.getMethods().size();
 		}
@@ -35,16 +38,12 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		// Set the number of methods.
 		setMethodNum(i_method_num);
 
-		for (Behavior archclassBehavior : archface.getBehaviors()) {
-			String previousInterfaceName = "";
-			for (Method method : archclassBehavior.getCall()) {
-				Interface nowInterface = (Interface) method.eContainer();
-				if (nowInterface.getName().equals(previousInterfaceName)) {// 自分自身でmethodを呼んでいる場合
-					i_behavior_num = i_behavior_num + 2;
-				} else {
-					i_behavior_num++;
-					previousInterfaceName = nowInterface.getName();
-				}
+		for (Behavior archclassBehavior : model.getBehaviors()) {
+			i_behavior_num += countDesignPoint(archclassBehavior);
+		}
+		for (Connector connector : model.getConnectors()) {
+			for (Behavior behavior : connector.getBehaviors()) {
+				i_behavior_num += countDesignPoint(behavior);
 			}
 		}
 		setBehaviorNum(i_behavior_num);
@@ -54,8 +53,25 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		// archpoint数set
 		setArchpointNum(i_archpoint_num);
 	}
+	private int countDesignPoint(Behavior behavior) {
+		int c = 0;
+		String previousInterfaceName = "";
+		for (Method method : behavior.getCall()) {
+			Interface nowInterface = (Interface) method.eContainer();
+			String nowInterfaceName = nowInterface.getName();
+			if (nowInterfaceName.equals(previousInterfaceName)) { // 自分自身でmethodを呼んでいる場合
+				c += 2;
+			} else {
+				c++;
+				previousInterfaceName = nowInterfaceName;
+			}
+		}
+		return c;
+	}
 
-	public void checkXml(IResource xml, Document xmldocument) {
+	public void checkXml(IResource codeXml) {
+		Document xmlDocument = getCodeXml(codeXml);
+
 		int i_class_num = 0;
 		int i_method_num = 0;
 		int i_invocation_point_num = 0;
@@ -96,7 +112,7 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		 * setXmlInvocationPointNum(i_invocation_point_num);
 		 */
 		// class カウント
-		NodeList class_nodes = xmldocument.getElementsByTagName("Class");
+		NodeList class_nodes = xmlDocument.getElementsByTagName("Class");
 		for (int i = 0; i < class_nodes.getLength(); i++) {
 //			Element xml_class = (Element) class_nodes.item(i);
 			i_class_num++;
@@ -141,15 +157,15 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		// "[xml] ProgramPoint is "+getXmlpointNum(), "archface");
 	}
 
-	public void calculateAbstractionRatio(IResource archifile) {
+	public void calculateAbstractionRatio(IResource archfile) {
 		if (getXmlpointNum() == 0) {
-			// ProblemViewManager.addInfo(archifile,
+			// ProblemViewManager.addInfo(archfile,
 			// "*** cant calculate AbstractionRatio ", "archface");
 		} else {
 			double x = (double) getArchpointNum() / getXmlpointNum();
 			double i_abstraction_ratio = (double) 1 - x;
 			setAbstractionRatio(i_abstraction_ratio);
-			// ProblemViewManager.addInfo(archifile,
+			// ProblemViewManager.addInfo(archfile,
 			// "*** AbstractionRatio is "+getAbstractionRatio(), "archface");
 		}
 	}
@@ -166,11 +182,9 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		return xmldocument;
 	}
 
-	public void execute(IResource archifile, IResource xml) {
-		Model archiface = ArchfaceModel.getArchfaceModel(archifile);
-		checkArchface(archiface, archifile);
-		Document xmldocument = getCodeXml(xml);
-		checkXml(xml, xmldocument);
-		calculateAbstractionRatio(archifile);
+	public void execute(IResource archfile, IResource codeXml) {
+		checkArchface(archfile);
+		checkXml(codeXml);
+		calculateAbstractionRatio(archfile);
 	}
 }

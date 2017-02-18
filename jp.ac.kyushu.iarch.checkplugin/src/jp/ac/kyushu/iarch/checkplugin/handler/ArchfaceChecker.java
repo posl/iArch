@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
+import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
 import jp.ac.kyushu.iarch.checkplugin.model.ComponentClassPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.UncertainBehaviorContainer;
 
@@ -18,6 +19,7 @@ public class ArchfaceChecker extends XMLreader {
 	Logger logger = Logger.getGlobal();
 	private List<ComponentClassPairModel> classPairs = new ArrayList<ComponentClassPairModel>();
 	private List<UncertainBehaviorContainer> behaviorPairs = new ArrayList<UncertainBehaviorContainer>();
+	private AbstractionRatio abstractionRatio = null;
 
 	public ArchfaceChecker(IProject project) {
 		super(project);
@@ -69,8 +71,9 @@ public class ArchfaceChecker extends XMLreader {
 		behaviorPairs = astchecker.getBehaviorContainers();
 
 		// Check AR
-		// ARChecker archecker = new ARChecker();
-		// archecker.checkAR(archfile, aRXMLResource);
+		AbstractionRatioChecker arChecker = new AbstractionRatioChecker();
+		arChecker.execute(archfile, aRXMLResource);
+		abstractionRatio = arChecker;
 
 		return;
 	}
@@ -86,4 +89,7 @@ public class ArchfaceChecker extends XMLreader {
 		return behaviorPairs;
 	}
 
+	public AbstractionRatio getAbstractionRatio() {
+		return abstractionRatio;
+	}
 }

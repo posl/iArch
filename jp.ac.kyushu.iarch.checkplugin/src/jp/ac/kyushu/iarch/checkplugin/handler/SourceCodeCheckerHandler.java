@@ -2,6 +2,7 @@ package jp.ac.kyushu.iarch.checkplugin.handler;
 
 import java.util.List;
 
+import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
 import jp.ac.kyushu.iarch.checkplugin.model.ComponentClassPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.UncertainBehaviorContainer;
 import jp.ac.kyushu.iarch.checkplugin.view.ArchfaceViewPart;
@@ -13,7 +14,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 public class SourceCodeCheckerHandler {
-	public void showArchface(List<ComponentClassPairModel> classPairs, List<UncertainBehaviorContainer> list) {
+	public void showArchface(List<ComponentClassPairModel> classPairs,
+			List<UncertainBehaviorContainer> behaviorContainers,
+			AbstractionRatio abstractionRatio) {
 		ArchfaceViewPart archfaceView = null;
 		IWorkbenchWindow[] views = PlatformUI.getWorkbench()
 				.getWorkbenchWindows();
@@ -40,7 +43,8 @@ public class SourceCodeCheckerHandler {
 				return;
 			}
 		}
-		archfaceView.setModels(classPairs, list);
+		archfaceView.setModels(classPairs, behaviorContainers);
+		archfaceView.setAbstractionRatio(abstractionRatio);
 	}
 
 }

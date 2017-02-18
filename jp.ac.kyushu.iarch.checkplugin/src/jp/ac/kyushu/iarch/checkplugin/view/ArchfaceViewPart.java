@@ -1,5 +1,6 @@
 package jp.ac.kyushu.iarch.checkplugin.view;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import jp.ac.kyushu.iarch.basefunction.exception.ProjectNotFoundException;
 import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
 import jp.ac.kyushu.iarch.checkplugin.handler.ASTSourceCodeChecker;
 import jp.ac.kyushu.iarch.checkplugin.handler.CheckerWorkSpaceJob;
+import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
 import jp.ac.kyushu.iarch.checkplugin.model.AltMethodPairsContainer;
 import jp.ac.kyushu.iarch.checkplugin.model.BehaviorPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.CallPairModel;
@@ -417,18 +419,34 @@ public class ArchfaceViewPart extends ViewPart {
 
 	}
 
-	public void setModels(List<ComponentClassPairModel> classPairs, List<UncertainBehaviorContainer> behaviorContainers) {
+	public void setModels(List<ComponentClassPairModel> classPairs,
+			List<UncertainBehaviorContainer> behaviorContainers) {
 		componentTreeViewer.setInput(classPairs);
 		behaviorTreeViewer.setInput(behaviorContainers);
 		componentTreeViewer.expandAll();
 	}
-	public void setAbstractionRatio() {
+	public void setAbstractionRatio(AbstractionRatio abstractionRatio) {
 		if (abstractionRatioLabel != null) {
+			double ratio = 0.0;
+			int structureDesignPoints = 0;
+			int structureProgramPoints = 0;
+			int behaviorDesignPoints = 0;
+			int behaviorProgramPoints = 0;
+			if (abstractionRatio != null) {
+				ratio = abstractionRatio.getAbstractionRatio();
+				structureDesignPoints = abstractionRatio.getClassNum() + abstractionRatio.getMethodNum();
+				structureProgramPoints = abstractionRatio.getXmlClassNum() + abstractionRatio.getXmlMethodNum();
+				behaviorDesignPoints = abstractionRatio.getBehaviorNum();
+				behaviorProgramPoints = abstractionRatio.getXmlInvocationPointNum();
+			}
+			DecimalFormat df = new DecimalFormat("0.000###");
 			StringBuilder sb = new StringBuilder();
-			sb.append("AbstractionRatio: ");
-			sb.append(0.0);
-			sb.append("[Structure: x/x, ");
-			sb.append("Behavior: x/x]");
+			sb.append("AbstractionRatio: ").append(df.format(ratio))
+				.append(" [Structure: ")
+				.append(structureDesignPoints).append("/").append(structureProgramPoints)
+				.append(", Behavior: ")
+				.append(behaviorDesignPoints).append("/").append(behaviorProgramPoints)
+				.append("]");
 			abstractionRatioLabel.setText(sb.toString());
 		}
 	}
@@ -454,7 +472,7 @@ public class ArchfaceViewPart extends ViewPart {
 		parent.setLayout(gridLayout);
 
 		abstractionRatioLabel = new Label(parent, SWT.NONE);
-		setAbstractionRatio();
+		setAbstractionRatio(null);
 		abstractionRatioLabel.setLayoutData(new GridData(SWT.FILL, SWT.BEGINNING, true, false));
 
 		SashForm sashForm = new SashForm(parent, SWT.VERTICAL);
