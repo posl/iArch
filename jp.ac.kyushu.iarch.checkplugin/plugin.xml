@@ -57,6 +57,22 @@
              id="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
              name="GenerateLTSfile">
        </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.syncModelToArch"
+             name="Model -&gt; iArch">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.syncArchToModel"
+             name="iArch -&gt; Model">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.syncCodeToArch"
+             name="Code -&gt; iArch">
+       </command>
+       <command
+             id="jp.ac.kyushu.iarch.checkplugin.syncArchToCode"
+             name="iArch -&gt; Code">
+       </command>
    
    </extension>
    <extension
@@ -97,6 +113,25 @@
                commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
                style="push">
          </command>
+         <menu
+               label="Synchronize">
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkplugin.syncModelToArch"
+                  style="push">
+            </command>
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkplugin.syncArchToModel"
+                  style="push">
+            </command>
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkplugin.syncCodeToArch"
+                  style="push">
+            </command>
+            <command
+                  commandId="jp.ac.kyushu.iarch.checkplugin.syncArchToCode"
+                  style="push">
+            </command>
+         </menu>
       </menuContribution>
       <!-- END Toolbar pulldown button -->
       
@@ -192,6 +227,14 @@
        <handler
              class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateLTSfile"
              commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"
+             commandId="jp.ac.kyushu.iarch.checkplugin.syncModelToArch">
+       </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.SyncCodeToArchcode"
+             commandId="jp.ac.kyushu.iarch.checkplugin.syncCodeToArch">
        </handler>
       
    </extension>
