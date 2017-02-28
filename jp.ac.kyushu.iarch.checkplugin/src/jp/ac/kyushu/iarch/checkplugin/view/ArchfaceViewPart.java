@@ -439,10 +439,10 @@ public class ArchfaceViewPart extends ViewPart {
 				behaviorDesignPoints = abstractionRatio.getBehaviorNum();
 				behaviorProgramPoints = abstractionRatio.getXmlInvocationPointNum();
 			}
-			DecimalFormat df = new DecimalFormat("0.000###");
+			DecimalFormat df = new DecimalFormat("0.0#");
 			StringBuilder sb = new StringBuilder();
-			sb.append("AbstractionRatio: ").append(df.format(ratio))
-				.append(" [Structure: ")
+			sb.append("AbstractionRatio: ").append(df.format(ratio * 100.0))
+				.append("% [Structure: ")
 				.append(structureDesignPoints).append("/").append(structureProgramPoints)
 				.append(", Behavior: ")
 				.append(behaviorDesignPoints).append("/").append(behaviorProgramPoints)
@@ -514,9 +514,11 @@ public class ArchfaceViewPart extends ViewPart {
 		TreeColumn designPointColumn = new TreeColumn(componentTree, SWT.LEFT);
 		designPointColumn.setText("DP");
 		designPointColumn.setWidth(50);
+		designPointColumn.setToolTipText("Design points");
 		TreeColumn programPointColumn = new TreeColumn(componentTree, SWT.LEFT);
 		programPointColumn.setText("PP");
 		programPointColumn.setWidth(50);
+		programPointColumn.setToolTipText("Program points");
 		componentTree.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -546,6 +548,7 @@ public class ArchfaceViewPart extends ViewPart {
 		TreeColumn behaviorDesignPointColumn = new TreeColumn(behaviorTree, SWT.LEFT);
 		behaviorDesignPointColumn.setText("DP");
 		behaviorDesignPointColumn.setWidth(50);
+		behaviorDesignPointColumn.setToolTipText("Design points");
 		behaviorTreeViewer = new TreeViewer(behaviorTree);
 		behaviorTreeViewer.setContentProvider(new BehaviorTreeContentProvider());
 		behaviorTreeViewer.setLabelProvider(new BehaviorTableLabelProvider());
