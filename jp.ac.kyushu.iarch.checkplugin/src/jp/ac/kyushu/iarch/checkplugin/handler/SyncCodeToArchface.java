@@ -23,7 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 
-public class SyncCodeToArchcode implements IHandler {
+public class SyncCodeToArchface implements IHandler {
 
 	private static final String HANDLER_TITLE = "Sync: Code -> iArch";
 

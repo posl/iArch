@@ -28,7 +28,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 
-public class SyncArchcodeToCode implements IHandler {
+public class SyncArchfaceToCode implements IHandler {
 
 	private static final String HANDLER_TITLE = "Sync: iArch -> Code";
 
