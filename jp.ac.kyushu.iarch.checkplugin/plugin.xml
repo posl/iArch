@@ -236,6 +236,10 @@
              class="jp.ac.kyushu.iarch.checkplugin.handler.SyncCodeToArchcode"
              commandId="jp.ac.kyushu.iarch.checkplugin.syncCodeToArch">
        </handler>
+       <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.SyncArchcodeToCode"
+             commandId="jp.ac.kyushu.iarch.checkplugin.syncArchToCode">
+       </handler>
       
    </extension>
    <extension
