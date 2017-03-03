@@ -26,6 +26,10 @@ public class CreateClassFeature extends AbstractCreateFeature {
     	// create new Class
         umlClass.Class newClass = UmlClassFactory.eINSTANCE.createClass();
         newClass.setArchpoint(true);
+        String newClassName = (String) context.getProperty("name");
+        if (newClassName != null) {
+            newClass.setName(newClassName);
+        }
         // Add model element to resource.
         // We add the model element to the resource of the diagram for
         // simplicity's sake. Normally, a customer would use its own

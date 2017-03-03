@@ -233,6 +233,10 @@
              commandId="jp.ac.kyushu.iarch.checkplugin.syncModelToArch">
        </handler>
        <handler
+             class="jp.ac.kyushu.iarch.checkplugin.handler.SyncArchfaceToModel"
+             commandId="jp.ac.kyushu.iarch.checkplugin.syncArchToModel">
+       </handler>
+       <handler
              class="jp.ac.kyushu.iarch.checkplugin.handler.SyncCodeToArchface"
              commandId="jp.ac.kyushu.iarch.checkplugin.syncCodeToArch">
        </handler>

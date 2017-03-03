@@ -27,4 +27,5 @@ Import-Package: com.google.inject;version="1.3.0",
  jp.ac.kyushu.iarch.sequencediagram.diagram.providers,
  org.eclipse.xtext.parsetree.reconstr
 Export-Package: jp.ac.kyushu.iarch.classdiagram.diagram,
- jp.ac.kyushu.iarch.classdiagram.features
+ jp.ac.kyushu.iarch.classdiagram.features,
+ jp.ac.kyushu.iarch.classdiagram.utils

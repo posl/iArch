@@ -189,7 +189,7 @@ public class DiagramUtils {
 		return null;
 	}
 
-	private static Shape getLinkedShape(Diagram diagram, EObject eObj) {
+	public static Shape getLinkedShape(Diagram diagram, EObject eObj) {
 		for (PictogramElement pe :
 			Graphiti.getLinkService().getPictogramElements(diagram, eObj)) {
 			if (pe instanceof Shape) {
@@ -198,11 +198,20 @@ public class DiagramUtils {
 		}
 		return null;
 	}
-	private static Connection getLinkedConnection(Diagram diagram, EObject eObj) {
+	public static Connection getLinkedConnection(Diagram diagram, EObject eObj) {
 		for (PictogramElement pe :
 			Graphiti.getLinkService().getPictogramElements(diagram, eObj)) {
 			if (pe instanceof Connection) {
 				return (Connection) pe;
+			}
+		}
+		return null;
+	}
+	public static ContainerShape getLinkedContainerShape(Diagram diagram, EObject eObj) {
+		for (PictogramElement pe :
+			Graphiti.getLinkService().getPictogramElements(diagram, eObj)) {
+			if (pe instanceof ContainerShape) {
+				return (ContainerShape) pe;
 			}
 		}
 		return null;
