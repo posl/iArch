@@ -21,7 +21,10 @@ public class CreateObjectFeature extends AbstractCreateFeature {
 
 	@Override
 	public Object[] create(ICreateContext context) {
-		String newObjectName = ExampleUtil.askString("Create object", "Enter new obj name", "");
+		String newObjectName = (String) context.getProperty("name");
+		if (newObjectName == null) {
+			newObjectName = ExampleUtil.askString("Create object", "Enter new obj name", "");
+		}
 		if(newObjectName == null || newObjectName.trim().length()==0){
 			return EMPTY;
 		}

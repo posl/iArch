@@ -21,7 +21,10 @@ public class CreateActorFeature extends AbstractCreateFeature {
 
 	@Override
 	public Object[] create(ICreateContext context) {
-		String newActorName = ExampleUtil.askString("Create actor", "Enter new actor name", "");
+		String newActorName = (String) context.getProperty("name");
+		if (newActorName == null) {
+			newActorName = ExampleUtil.askString("Create actor", "Enter new actor name", "");
+		}
 		if(newActorName == null || newActorName.trim().length()==0){
 			return EMPTY;
 		}
