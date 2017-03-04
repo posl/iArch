@@ -1,5 +1,10 @@
 ﻿package jp.ac.kyushu.iarch.checkplugin.handler;
 
+import org.apache.xerces.parsers.DOMParser;
+import org.eclipse.core.resources.IResource;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+
 import jp.ac.kyushu.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Connector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
@@ -8,9 +13,6 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
 
-import org.w3c.dom.*;
-import org.apache.xerces.parsers.DOMParser;
-import org.eclipse.core.resources.IResource;
 /**
  * Count number of Arch points, design points and program points.
  * @author Yamamoto

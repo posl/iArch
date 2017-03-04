@@ -1,10 +1,21 @@
 package jp.ac.kyushu.iarch.checkplugin.handler;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.dom4j.Document;
+import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
+import org.dom4j.Node;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jdt.core.IJavaProject;
 
 import jp.ac.kyushu.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Behavior;
@@ -26,21 +37,6 @@ import jp.ac.kyushu.iarch.checkplugin.model.ComponentMethodPairModel;
 import jp.ac.kyushu.iarch.checkplugin.model.UncertainBehaviorContainer;
 import jp.ac.kyushu.iarch.checkplugin.utils.CodeXMLUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.GitUtils;
-
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.io.OutputFormat;
-import org.dom4j.io.XMLWriter;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaModelException;
 
 public class ASTSourceCodeChecker{
 	private ArrayList<ComponentClassPairModel> componentClassPairModels = new ArrayList<ComponentClassPairModel>();

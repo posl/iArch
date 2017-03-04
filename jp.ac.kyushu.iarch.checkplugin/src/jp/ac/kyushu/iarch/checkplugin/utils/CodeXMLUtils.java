@@ -6,10 +6,10 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
-import org.eclipse.jdt.core.Flags;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IJavaProject;
