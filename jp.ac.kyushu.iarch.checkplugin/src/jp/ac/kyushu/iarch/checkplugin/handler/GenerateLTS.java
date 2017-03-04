@@ -11,7 +11,6 @@ import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 
@@ -19,11 +18,13 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.exception.ProjectNotFoundException;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
+import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
 import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
-import jp.ac.kyushu.iarch.checkplugin.view.SelectArchfile;
 import jp.ac.kyushu.iarch.checkplugin.view.ShowFSPDialog;
 
 public class GenerateLTS implements IHandler {
+
+	private static final String HANDLER_TITLE = "Generate FSP for LTS";
 
 	@Override
 	public void addHandlerListener(IHandlerListener handlerListener) {
@@ -39,24 +40,31 @@ public class GenerateLTS implements IHandler {
 		try {
 			project = ProjectReader.getProject();
 		} catch (ProjectNotFoundException e) {
-			MessageDialogUtils.showError("Generate LTS file", "Project not found.");
+			MessageDialogUtils.showError(HANDLER_TITLE, "Project not found.");
 			return null;
 		}
 
-		Shell shell = HandlerUtil.getActiveShell(event);
-		SelectArchfile archfile = new SelectArchfile(shell, project);
-		if (archfile.open() == MessageDialog.OK) {
-			String code = getSequenceCode(archfile.getArchiface());
-			if (code == null) {
-				code = "null"; // backward compatibility
-			}
-
-			writeLTSCode(project, code);
-
-			ShowFSPDialog dialog = new ShowFSPDialog(shell);
-			dialog.setCode(code);
-			dialog.open();
+		IResource archfile = new XMLreader(project).getArchfileResource();
+		if (archfile == null) {
+			MessageDialogUtils.showError(HANDLER_TITLE, "Archfile not found.");
+			return null;
 		}
+
+		// Create FSP.
+		String code = getSequenceCode(archfile);
+		if (code == null) {
+			code = "null"; // backward compatibility
+		}
+
+		// Write to a file.
+		writeLTSCode(project, code);
+
+		// Show FSP in a dialog.
+		Shell shell = HandlerUtil.getActiveShell(event);
+		ShowFSPDialog dialog = new ShowFSPDialog(shell);
+		dialog.setCode(code);
+		dialog.open();
+
 		return null;
 	}
 

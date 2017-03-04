@@ -23,11 +23,11 @@ import jp.ac.kyushu.iarch.basefunction.controller.GraphitiModelManager;
 import jp.ac.kyushu.iarch.basefunction.exception.ProjectNotFoundException;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.basefunction.reader.ProjectReader;
+import jp.ac.kyushu.iarch.basefunction.reader.XMLreader;
 import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEquality;
 import jp.ac.kyushu.iarch.checkplugin.utils.MethodEqualityUtils;
-import jp.ac.kyushu.iarch.checkplugin.view.SelectDiagramsDialog;
 import jp.ac.kyushu.iarch.sequencediagram.utils.MessageUtils;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -39,8 +39,6 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.handlers.HandlerUtil;
 
 import umlClass.AlternativeOperation;
 import umlClass.DataType;
@@ -60,6 +58,8 @@ public class GenerateArchCode implements IHandler {
 	public void dispose() {
 	}
 
+	private static final String HANDLER_TITLE = "Generate Archcode";
+
 	private static final String generatedArchcodePath = "/Gen-Arch.arch";
 
 	@Override
@@ -68,17 +68,21 @@ public class GenerateArchCode implements IHandler {
 		try {
 			project = ProjectReader.getProject();
 		} catch (ProjectNotFoundException e) {
-			MessageDialogUtils.showError("Generate Archcode", "Project not found.");
+			MessageDialogUtils.showError(HANDLER_TITLE, "Project not found.");
 			return null;
 		}
 
-		SelectDiagramsDialog dialog = new SelectDiagramsDialog(
-				HandlerUtil.getActiveShell(event), project);
-		if (dialog.open() == MessageDialog.OK) {
-			// Generate Archface-U code.
-			IFile file = project.getFile(generatedArchcodePath);
-			GenerateArchfaceU(dialog.getClassDiagram(), dialog.getSequenceDiagrams(), file);
+		XMLreader xmlreader = new XMLreader(project);
+		IResource classDiagramResource = xmlreader.getClassDiagramResource();
+		List<IResource> sequenceDiagramResources = xmlreader.getSequenceDiagramResource();
+		if (classDiagramResource == null && sequenceDiagramResources.isEmpty()) {
+			MessageDialogUtils.showError(HANDLER_TITLE, "Diagrams not found.");
+			return null;
 		}
+
+		// Generate Archface-U code.
+		IFile file = project.getFile(generatedArchcodePath);
+		GenerateArchfaceU(classDiagramResource, sequenceDiagramResources, file);
 
 		return null;
 	}
