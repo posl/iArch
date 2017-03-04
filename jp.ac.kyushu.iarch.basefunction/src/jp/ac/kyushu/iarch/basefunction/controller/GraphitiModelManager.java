@@ -16,9 +16,9 @@ import umlClass.UmlClassPackage;
  * @author hosoai
  */
 public class GraphitiModelManager {
-	private static ResourceSet resourceSet;
-	static {
-		resourceSet = new ResourceSetImpl();
+
+	private static ResourceSet createResourceSet() {
+		ResourceSet resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
 				.put("diagram", new XMIResourceFactoryImpl());
 		resourceSet.getPackageRegistry().put(
@@ -28,17 +28,19 @@ public class GraphitiModelManager {
 				UmlClassPackage.eINSTANCE);
 		resourceSet.getPackageRegistry().put("http://behavior/1.0",
 				BehaviorPackage.eINSTANCE);
+		return resourceSet;
 	}
 
 	public static Resource getGraphitiModel(IResource file) {
 		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-		Resource resource = resourceSet.getResource(uri, true);
+		Resource resource = createResourceSet().getResource(uri, true);
 		return resource;
 	}
 
 	public static Resource createGraphitiModel(IResource file) {
 		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
-		Resource resource = resourceSet.createResource(uri);
+		Resource resource = createResourceSet().createResource(uri);
 		return resource;
 	}
+
 }
