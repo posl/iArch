@@ -275,8 +275,9 @@ You can edit Archcode in the Archface-U editor, which offers syntax error checki
 ## Model inspection
 
 In `Archface-U View`, you can check whether an element described in Archcode is uncertain and is already implemented, as a result of type checking.
+In addition, you can check the metrics about the abstraction (number of design points(DP), program points(PP), and the abstraction ratio) of the project.
 
-![Archface-U view](../images/archface_u_view.png)
+![Archface-U view](../images/archface_u_view_2.png)
 
 
 ## Testing support
@@ -316,6 +317,73 @@ When you select `Generate Archface` from the `iArch` menu of the toolbar, a dial
 After choosing one class diagram and more than or equal to one sequence diagram, you can generate Archface-U description corresponding to those models.
 
 ![Select diagrams](../images/select_diagrams_dialog.png)
+
+
+### Generate FSP code for LTS analyser
+
+When you select `Generate FSP for LTS` from the `iArch` menu of the toolbar, you can generate FSP code corresponding to Archface-U file which you chose in the configuration described above.
+Resulting FSP code is displayed on a dialogue box, from which you can copy the code to use in the LTS analyser.
+Also, the FSP code is saved in the project folder.
+
+![Generated FSP](../images/generated_fsp_dialog.png)
+
+
+### Synchronisation among Archface-U, model diagrams, and Java codes
+
+When you select items within the `Synchronize` from the `iArch` menu of the toolbar, you can synchronise Archface-U with model diagrams and Java codes.
+
+#### Model diagrams to Archface-U
+
+When you select `Model -> iArch`, you can generate Archface-U description corresponding to the model diagrams which you chose in the configuration described above.
+
+This feature is the same as the one which is previously provided as `Generate Archface` in the menu, except that the diagram selection by a dialogue is unnecessary.
+
+For example, from a class diagram and a sequence diagram,
+
+![model to Archface-U class diagram](../images/sync_model_arch_1.png)
+![model to Archface-U sequence diagram](../images/sync_model_arch_2.png)
+
+you can get the Archface-U like:
+
+![model to Archface-U result](../images/sync_model_arch_3.png)
+
+
+#### Archface-U to model diagrams
+
+When you select `iArch -> Model`, you can generate model diagrams corresponding the Archcode which you chose in the configuration described above.
+
+For example, from an Archface-U,
+
+![Archface-U to model archfile](../images/sync_arch_model_1.png)
+
+you can get class and sequence diagrams like:
+
+![Archface-U to model result 1](../images/sync_arch_model_2.png)
+![Archface-U to model result 2](../images/sync_arch_model_3.png)
+![Archface-U to model result 3](../images/sync_arch_model_4.png)
+
+
+#### Java codes to Archface-U
+
+When you select `Code -> iArch`, you can generate Archface-U description corresponding to the Java codes which you chose in the configuration described above.
+
+For example, from 4 classes in the project, you can get the Archface-U like:
+
+![code to Archface-U result](../images/sync_code_arch_1.png)
+
+
+#### Archface-U to Java codes
+
+When you select `iArch -> Code`, you can generate Java codes corresponding the Archcode which you chose in the configuration described above.
+
+For example, from an Archface-U,
+
+![Archface-U to model archfile](../images/sync_arch_code_1.png)
+
+you can get Java code skeltons like:
+
+![Archface-U to model result 1](../images/sync_arch_code_2.png)
+![Archface-U to model result 2](../images/sync_arch_code_3.png)
 
 
 # Architecture
