@@ -1,4 +1,4 @@
-﻿package jp.ac.kyushu.iarch.checkplugin.handler;
+package jp.ac.kyushu.iarch.checkplugin.handler;
 
 import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.resources.IResource;
