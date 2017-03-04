@@ -301,7 +301,7 @@ Additionally, if you double click an uncertainty element in the view, you can ex
 ![Git log dialog](../images/git_log_dialog.png)
 
 
-## Model check support
+## Model checking support
 
 When you need to verify your model, the LTS analyser (http://www.doc.ic.ac.uk/~jnm/LTSdocumention/LTSA.html) will help.
 The LTS analyser checks FSP code which represents the model.
@@ -311,7 +311,7 @@ Resulting code is displayed in a dialogue, and is saved in the project folder.
 ![Generated FSP](../images/generated_fsp_dialog.png)
 
 
-## Generation/Synchronisation support among Archface-U, model diagrams, and Java code
+## Generation/Synchronisation support among Archface-U, model diagrams and Java code
 
 Every time you add/remove the uncertainty to/from the model, both Archface-U and the model diagrams should be updated simultaneously.
 However, sometimes the relationship among them is disturbed.
