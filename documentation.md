@@ -311,7 +311,7 @@ Resulting code is displayed in a dialogue, and is saved in the project folder.
 ![Generated FSP](../images/generated_fsp_dialog.png)
 
 
-## Generation/Synchronisation support among Archface-U, model diagrams and Java code
+## Generation/synchronisation support among Archface-U, model diagrams and Java code
 
 Every time you add/remove the uncertainty to/from the model, both Archface-U and the model diagrams should be updated simultaneously.
 However, sometimes the relationship among them is disturbed.
