@@ -15,11 +15,6 @@
       </category>
       <command
             categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
-            id="jp.ac.kyushu.iarch.checkPlugin.generateArch"
-            name="Generate ArchCode">
-      </command>
-      <command
-            categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
             id="jp.ac.kyushu.iarch.checkPlugin.generateAspect"
             name="Generate Aspect from Archface-U">
       </command>
@@ -54,8 +49,8 @@
    
        <command
              categoryId="jp.ac.kyushu.iarch.checkPlugin.iarchcategory"
-             id="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
-             name="GenerateLTSfile">
+             id="jp.ac.kyushu.iarch.checkplugin.GenerateLTS"
+             name="Generate FSP for LTS">
        </command>
        <command
              id="jp.ac.kyushu.iarch.checkplugin.syncModelToArch"
@@ -98,10 +93,6 @@
                style="push">
          </command>
          <command
-               commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch"
-               style="push">
-         </command>
-         <command
                commandId="jp.ac.kyushu.iarch.checkPlugin.generateAspect"
                style="push">
          </command>
@@ -110,7 +101,7 @@
                style="push">
          </command>
          <command
-               commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile"
+               commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTS"
                style="push">
          </command>
          <menu
@@ -191,10 +182,6 @@
             commandId="jp.ac.kyushu.iarch.checkPlugin.configurationCommand">
       </handler>
       <handler
-            class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"
-            commandId="jp.ac.kyushu.iarch.checkPlugin.generateArch">
-      </handler>
-      <handler
             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateAspectCode"
             commandId="jp.ac.kyushu.iarch.checkPlugin.generateAspect">
       </handler>
@@ -225,8 +212,8 @@
              commandId="jp.ac.kyushu.iarch.checkplugin.removeUncertaintyAsUnnecessaryCommand">
        </handler>
        <handler
-             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateLTSfile"
-             commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTSfile">
+             class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateLTS"
+             commandId="jp.ac.kyushu.iarch.checkplugin.GenerateLTS">
        </handler>
        <handler
              class="jp.ac.kyushu.iarch.checkplugin.handler.GenerateArchCode"

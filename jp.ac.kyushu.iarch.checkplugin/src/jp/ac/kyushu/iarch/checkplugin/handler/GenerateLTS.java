@@ -23,7 +23,7 @@ import jp.ac.kyushu.iarch.basefunction.utils.MessageDialogUtils;
 import jp.ac.kyushu.iarch.checkplugin.view.SelectArchfile;
 import jp.ac.kyushu.iarch.checkplugin.view.ShowFSPDialog;
 
-public class GenerateLTSfile implements IHandler {
+public class GenerateLTS implements IHandler {
 
 	@Override
 	public void addHandlerListener(IHandlerListener handlerListener) {
