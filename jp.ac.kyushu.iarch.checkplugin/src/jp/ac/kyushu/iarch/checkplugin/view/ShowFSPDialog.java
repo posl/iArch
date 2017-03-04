@@ -13,7 +13,7 @@ import org.eclipse.swt.widgets.Text;
 public class ShowFSPDialog extends Dialog {
 
 	private static final String TITLE = "Generated FSP";
-	private static final Point initialSize = new Point(640, 480);
+	private static final Point initialSize = new Point(960, 640);
 
 	private Text text = null;
 	private String code = null;
