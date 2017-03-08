@@ -7,7 +7,7 @@
 
 # Site settings
 title: iArch-U
-email: iarch@posl.ait.kyushu-u.ac.jp
+# email: iarch@posl.ait.kyushu-u.ac.jp
 description: >
   iArch-U is an Eclipse plug-in for managing and modelling uncertainty which arises during the software development process.
 baseurl: "" # the subpath of your site, e.g. /blog

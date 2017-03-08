@@ -11,7 +11,7 @@ As the research on uncertainty is so young, there are many issues to be tackled.
 Modularity for uncertainty is one of them.
 If uncertainty can be dealt with modularly, we can add or delete uncertain concerns to/from models, code and tests whenever these concerns arise or are fixed to certain concerns.
 
-The _iArch-U_ Integrated Development Environment (IDE) has been developed for that purpose by the members of [Principles of Software Languages (POSL) research group](http://posl.ait.kyushu-u.ac.jp/index.html).
+The _iArch-U_ Integrated Development Environment (IDE) has been developed for that purpose by the members of Principles of Software Languages (POSL) research group.
 iArch-U supports development with uncertainty management using interface component called _Archface-U_.
 Archface-U is a new interface designed to enable continuous development with ensuring traceability between software design and implementation.
 It is an interface between UML models and Java code described on the iArch-U IDE.
@@ -42,11 +42,11 @@ You might be able to run iArch-U with older versions of middleware and/or librar
   - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
 1. Restart Eclipse.
 
-
+<!--
 # Contact
 
 If you have any questions or comments, please email us: [iarch@posl.ait.kyushu-u.ac.jp](mailto:iarch@posl.ait.kyushu-u.ac.jp)
-
+-->
 
 # License
 
