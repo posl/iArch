@@ -7,7 +7,7 @@ priority: 20
 
 <h1 markdown="0" id="page-title">Documentation</h1>
 
-This is the documentation for iArch 1.0.
+This is the documentation for iArch 1.1.
 
 - TOC
 {:toc}
@@ -272,11 +272,12 @@ If the code does not conform to the restrictions imposed by Archcode, it will be
 You can edit Archcode in the Archface-U editor, which offers syntax error checking and syntax highlighting features.
 
 
-## Model inspection
+## Model inspection and metrics calculation
 
 In `Archface-U View`, you can check whether an element described in Archcode is uncertain and is already implemented, as a result of type checking.
+In addition, you can check the metrics about the abstraction (number of design points(DP), program points(PP), and the abstraction ratio) of the project.
 
-![Archface-U view](../images/archface_u_view.png)
+![Archface-U view](../images/archface_u_view_2.png)
 
 
 ## Testing support
@@ -300,6 +301,78 @@ Additionally, if you double click an uncertainty element in the view, you can ex
 ![Git log dialog](../images/git_log_dialog.png)
 
 
+## Model checking support
+
+When you need to verify your model, the LTS analyser (http://www.doc.ic.ac.uk/~jnm/LTSdocumention/LTSA.html) will help.
+The LTS analyser checks FSP code which represents the model.
+You can generate FSP code from an Archface-U file by selecting `Generate FSP for LTS` from the `iArch` menu of the toolbar.
+Resulting code is displayed in a dialogue, and is saved in the project folder.
+
+![Generated FSP](../images/generated_fsp_dialog.png)
+
+
+## Generation/synchronisation support among Archface-U, model diagrams and Java code
+
+Every time you add/remove the uncertainty to/from the model, both Archface-U and the model diagrams should be updated simultaneously.
+However, sometimes the relationship among them is disturbed.
+On the other hand, you want to start managing uncertainty on existing (unmanaged) project, or you wish to avoid writing routine phrases for classes you have modelled already.
+
+iArch gives you the functionalities to generate/synchronise Archface-U,  model diagrams, and Java code, by selecting items within the `Synchronize` from the `iArch` menu of the toolbar.
+
+### Model diagrams to Archface-U
+
+When you select `Model -> iArch`, you can generate Archface-U description corresponding to the model diagrams which you chose in the configuration described below.
+
+This feature is the same as the one which is previously provided as `Generate Archface` in the menu, except that the diagram selection by a dialogue is unnecessary.
+
+For example, from a class diagram and a sequence diagram,
+
+![model to Archface-U class diagram](../images/sync_model_arch_1.png)
+![model to Archface-U sequence diagram](../images/sync_model_arch_2.png)
+
+you can get the Archface-U like:
+
+![model to Archface-U result](../images/sync_model_arch_3.png)
+
+
+### Archface-U to model diagrams
+
+When you select `iArch -> Model`, you can generate model diagrams corresponding the Archcode which you chose in the configuration described below.
+
+For example, from an Archface-U,
+
+![Archface-U to model archfile](../images/sync_arch_model_1.png)
+
+you can get class and sequence diagrams like:
+
+![Archface-U to model result 1](../images/sync_arch_model_2.png)
+![Archface-U to model result 2](../images/sync_arch_model_3.png)
+![Archface-U to model result 3](../images/sync_arch_model_4.png)
+
+
+### Java code to Archface-U
+
+When you select `Code -> iArch`, you can generate Archface-U description corresponding to the Java code which you chose in the configuration described below.
+
+For example, from 4 classes in the project, you can get the Archface-U like:
+
+![code to Archface-U result](../images/sync_code_arch_1.png)
+
+
+### Archface-U to Java code
+
+When you select `iArch -> Code`, you can generate Java code corresponding the Archcode which you chose in the configuration described below.
+
+For example, from an Archface-U,
+
+![Archface-U to model archfile](../images/sync_arch_code_1.png)
+
+you can get Java code skeltons like:
+
+![Archface-U to model result 1](../images/sync_arch_code_2.png)
+![Archface-U to model result 2](../images/sync_arch_code_3.png)
+
+
 ## Other features
 
 ### Configuring type checking target
@@ -308,14 +381,6 @@ When you select `Check Archface Configuration` from the `iArch` menu of the tool
 Selected elements are to be type checked when you save Java code.
 
 ![Select all](../images/select_all_dialog.png)
-
-
-### Generating Archcode
-
-When you select `Generate Archface` from the `iArch` menu of the toolbar, a dialogue box to select a model diagram in the project will be displayed.
-After choosing one class diagram and more than or equal to one sequence diagram, you can generate Archface-U description corresponding to those models.
-
-![Select diagrams](../images/select_diagrams_dialog.png)
 
 
 # Architecture
