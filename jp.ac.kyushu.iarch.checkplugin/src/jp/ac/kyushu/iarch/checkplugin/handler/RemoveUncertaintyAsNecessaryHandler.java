@@ -135,7 +135,7 @@ public class RemoveUncertaintyAsNecessaryHandler extends AbstractUncertaintyOper
 					} else {
 						// Check duplication.
 						for (UncertainBehavior ub: uConnector.getU_behaviors()) {
-							if (ub != uBehavior && sameUncertainBehavior(ub, uBehavior)) {
+							if (ub != uBehavior && ArchModelUtils.sameUncertainBehavior(ub, uBehavior)) {
 								uBehaviorIt.remove();
 							}
 						}

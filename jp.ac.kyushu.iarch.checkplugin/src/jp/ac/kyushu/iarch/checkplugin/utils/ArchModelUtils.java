@@ -259,6 +259,19 @@ public class ArchModelUtils {
 	}
 
 	//
+	// Connector
+	//
+
+	public static Connector findConnectorByName(Model model, String cName) {
+		for (Connector connector: model.getConnectors()) {
+			if (connector.getName().equals(cName)) {
+				return connector;
+			}
+		}
+		return null;
+	}
+
+	//
 	// Behavior
 	//
 
@@ -288,6 +301,37 @@ public class ArchModelUtils {
 		return behavior;
 	}
 
+	public static boolean sameBehavior(Behavior b1, Behavior b2) {
+		if (!b1.getInterface().getName().equals(b2.getInterface().getName())) {
+			return false;
+		}
+		Interface end1 = b1.getEnd();
+		Interface end2 = b2.getEnd();
+		if (end1 == null) {
+			if (end2 != null) {
+				return false;
+			}
+		} else {
+			if (end2 == null) {
+				return false;
+			}
+			if (!end1.getName().equals(end2.getName())) {
+				return false;
+			}
+		}
+		EList<Method> call1 = b1.getCall();
+		EList<Method> call2 = b2.getCall();
+		if (call1.size() != call2.size()) {
+			return false;
+		}
+		for (int i = 0; i < call1.size(); ++i) {
+			if (!MethodEqualityUtils.sameMethod(call1.get(i), call2.get(i), true)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	//
 	// UncertainConnector
 	//
@@ -306,6 +350,17 @@ public class ArchModelUtils {
 			}
 		}
 		return null;
+	}
+
+	public static List<UncertainConnector> searchUncertainConnectorBySuperName(Model model, String cName) {
+		List<UncertainConnector> uConnectors = new ArrayList<UncertainConnector>();
+		for (UncertainConnector uConnector : model.getU_connectors()) {
+			Connector connector = uConnector.getSuperInterface();
+			if (connector != null && connector.getName().equals(cName)) {
+				uConnectors.add(uConnector);
+			}
+		}
+		return uConnectors;
 	}
 
 	///
@@ -336,6 +391,35 @@ public class ArchModelUtils {
 				return name;
 			}
 		}
+	}
+
+	public static boolean sameUncertainBehavior(UncertainBehavior ub1, UncertainBehavior ub2) {
+		// Name is not concerned.
+		Interface end1 = ub1.getEnd();
+		Interface end2 = ub2.getEnd();
+		if (end1 == null) {
+			if (end2 != null) {
+				return false;
+			}
+		} else {
+			if (end2 == null) {
+				return false;
+			}
+			if (!end1.getName().equals(end2.getName())) {
+				return false;
+			}
+		}
+		EList<SuperCall> call1 = ub1.getCall();
+		EList<SuperCall> call2 = ub2.getCall();
+		if (call1.size() != call2.size()) {
+			return false;
+		}
+		for (int i = 0; i < call1.size(); ++i) {
+			if (!MethodEqualityUtils.sameSuperCall(call1.get(i), call2.get(i), true)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	//

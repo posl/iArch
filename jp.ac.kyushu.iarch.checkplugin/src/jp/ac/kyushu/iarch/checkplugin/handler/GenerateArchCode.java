@@ -96,34 +96,39 @@ public class GenerateArchCode implements IHandler {
 
 	private void GenerateArchfaceU(IResource classDiagramResource,
 			List<IResource> sequenceDiagramResources, IFile file) {
-		// Create empty Archface model.
-		ArchModel archModel = new ArchModel(file, true);
+		// Open or create Archface model.
+		ArchModel archModel = new ArchModel(file, !file.exists());
 		Model model = archModel.getModel();
 
+		boolean modified = false;
+
 		// Extract Class/Operations and put into the model.
-		gatherComponents(classDiagramResource, model);
+		modified |= gatherComponents(classDiagramResource, model);
 
 		// Extract Sequences and put them into the model.
 		for (IResource sequenceDiagramResource : sequenceDiagramResources) {
-			gatherConnector(sequenceDiagramResource, model, RESOLVE_BY_GENERATE);
+			modified |= gatherConnector(sequenceDiagramResource, model, RESOLVE_BY_GENERATE);
 		}
 
-		// Generate Archface file.
-		try {
-			archModel.save();
-		} catch (IOException e) {
-			MessageDialogUtils.showError("Generate Archcode", "Failed to save Archcode.");
-		} catch (RuntimeException e) {
-			// Model error falls here.
-			String m = e.getMessage();
-			StringBuilder sb = new StringBuilder("Model validation failed.\n");
-			sb.append(m != null ? m : "Unknown reason.");
-			MessageDialogUtils.showError("Generate Archcode", sb.toString());
+		if (modified) {
+			// Generate Archface file.
+			try {
+				archModel.save();
+			} catch (IOException e) {
+				MessageDialogUtils.showError("Generate Archcode", "Failed to save Archcode.");
+			} catch (RuntimeException e) {
+				// Model error falls here.
+				String m = e.getMessage();
+				StringBuilder sb = new StringBuilder("Model validation failed.\n");
+				sb.append(m != null ? m : "Unknown reason.");
+				MessageDialogUtils.showError("Generate Archcode", sb.toString());
+			}
 		}
-		
 	}
 
-	private void gatherComponents(IResource classDiagramResource, Model model) {
+	private boolean gatherComponents(IResource classDiagramResource, Model model) {
+		boolean modified = false;
+
 		Resource classDiagram = GraphitiModelManager.getGraphitiModel(classDiagramResource);
 		for (EObject eObj : classDiagram.getContents()) {
 			if (eObj instanceof umlClass.Class) {
@@ -131,47 +136,89 @@ public class GenerateArchCode implements IHandler {
 				if (!eClass.isArchpoint()) { continue; }
 				String className = eClass.getName();
 
-				// Create interfaces.
-				Interface cInterface = ArchModelUtils.createInterfaceElement(className);
-				String uIfName = ArchModelUtils.getAutoUncertainInterfaceName(className);
-				UncertainInterface uInterface = ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
+				// Find or create interfaces.
+				Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+				if (cInterface == null) {
+					cInterface = ArchModelUtils.createInterfaceElement(className);
+					model.getInterfaces().add(cInterface);
+					modified = true;
+				}
+				UncertainInterface uInterface = null;
+				boolean uInterfaceCreated = false;
+				List<UncertainInterface> uInterfaces = ArchModelUtils.searchUncertainInterfaceBySuperName(model, className);
+				if (uInterfaces.isEmpty()) {
+					String uIfName = ArchModelUtils.getAutoUncertainInterfaceName(className);
+					uInterface = ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
+					uInterfaceCreated = true;
+					// Do not add to model here.
+				} else {
+					uInterface = uInterfaces.get(0);
+				}
 
 				// Convert Operations to Methods and put them.
 				for (Operation operation : eClass.getOwnedOperation()) {
 					if (!operation.isArchpoint()) { continue; }
 
 					if (operation instanceof AlternativeOperation) {
-						AltMethod altMethod = ArchDSLFactory.eINSTANCE.createAltMethod();
-						for (Operation op : ((AlternativeOperation) operation).getOperations()) {
-							altMethod.getMethods().add(convertToMethod(classDiagram, op));
+						AlternativeOperation altOperation = (AlternativeOperation) operation;
+						AltMethod altMethod = null;
+						for (Operation op : altOperation.getOperations()) {
+							Method method = ArchModelUtils.findMethodByName(uInterface, op.getName());
+							if (method != null) {
+								EObject container = method.eContainer();
+								if (container instanceof AltMethod) {
+									altMethod = (AltMethod) container;
+									break;
+								}
+							}
 						}
-						uInterface.getAltmethods().add(altMethod);
+						if (altMethod == null) {
+							List<Method> innerMethods = new ArrayList<Method>();
+							for (Operation op : altOperation.getOperations()) {
+								innerMethods.add(convertToMethod(classDiagram, op));
+							}
+							altMethod = ArchModelUtils.createAltMethodElement(innerMethods);
+							uInterface.getAltmethods().add(altMethod);
+							modified = true;
+						}
+
 					} else if (operation instanceof OptionalOperation) {
-						OptMethod optMethod =
-								ArchModelUtils.createOptMethodElement(convertToMethod(classDiagram, operation));
-						uInterface.getOptmethods().add(optMethod);
+						Method method = ArchModelUtils.findMethodByName(uInterface, operation.getName());
+						if (method != null) {
+							EObject container = method.eContainer();
+							if (!(container instanceof OptMethod)) {
+								Method innerMethod = convertToMethod(classDiagram, operation);
+								OptMethod optMethod = ArchModelUtils.createOptMethodElement(innerMethod);
+								uInterface.getOptmethods().add(optMethod);
+								modified = true;
+							}
+						}
+
 					} else {
-						Method method = convertToMethod(classDiagram, operation);
-						cInterface.getMethods().add(method);
+						Method method = ArchModelUtils.findMethodByName(cInterface, operation.getName());
+						if (method == null) {
+							method = convertToMethod(classDiagram, operation);
+							cInterface.getMethods().add(method);
+							modified = true;
+						}
 					}
 				}
 
-				// Add interfaces if needed.
+				// Add UncertainInterfaces if needed.
 				boolean uInterfaceNeeded = uInterface.getOptmethods().size() > 0
 						|| uInterface.getAltmethods().size() > 0;
-				if (uInterfaceNeeded || cInterface.getMethods().size() > 0) {
-					model.getInterfaces().add(cInterface);
-				}
-				if (uInterfaceNeeded) {
+				if (uInterfaceCreated && uInterfaceNeeded) {
 					model.getU_interfaces().add(uInterface);
+					modified = true;
 				}
 			}
 		}
+
+		return modified;
 	}
 
 	private Method convertToMethod(Resource classDiagram, Operation operation) {
-		Method method = ArchDSLFactory.eINSTANCE.createMethod();
-		method.setName(operation.getName());
+		Method method = ArchModelUtils.createMethodElement(operation.getName());
 		DataType dataType = operation.getDatatype();
 		// Due to ECore property, DataType is added to Resource directly.
 		if (dataType == null) {
@@ -195,26 +242,26 @@ public class GenerateArchCode implements IHandler {
 		return null;
 	}
 
-	private void gatherConnector(IResource sequenceDiagramResource, Model model,
+	private boolean gatherConnector(IResource sequenceDiagramResource, Model model,
 			int resolveType) {
+		boolean modified = false;
+
+		Resource sequenceDiagram = GraphitiModelManager.getGraphitiModel(sequenceDiagramResource);
+
 		// Get connector name from file.
-		String sequenceName = sequenceDiagramResource.getName();
-		// Drop extension.
-		int extIndex = sequenceName.lastIndexOf('.');
-		if (extIndex >= 0) {
-			sequenceName = sequenceName.substring(0, extIndex);
-		}
-		// If it does not match ID rule, use safe name.
+		String sequenceName = getSequenceName(sequenceDiagramResource.getName());
 		if (!isValidID(sequenceName)) {
 			sequenceName = generateConnectorName(model, "Connector");
 		}
 
-		Resource sequenceDiagram = GraphitiModelManager.getGraphitiModel(sequenceDiagramResource);
-
-		// Create Connectors.
-		Connector connector = ArchDSLFactory.eINSTANCE.createConnector();
-		connector.setName(sequenceName);
-		model.getConnectors().add(connector);
+		// Find or create Connectors.
+		Connector connector = ArchModelUtils.findConnectorByName(model, sequenceName);
+		if (connector == null) {
+			connector = ArchDSLFactory.eINSTANCE.createConnector();
+			connector.setName(sequenceName);
+			model.getConnectors().add(connector);
+			modified = true;
+		}
 
 		// Collect ordered Messages.
 		List<Message> messages = MessageUtils.collectMessages(sequenceDiagram);
@@ -233,22 +280,71 @@ public class GenerateArchCode implements IHandler {
 			// Convert Messages to Behavior and put it.
 			Behavior behavior = convertToBehavior(model, messages, resolveType);
 			if (behavior != null) {
-				connector.getBehaviors().add(behavior);
+				boolean hasSameBehavior = false;
+				for (Behavior b : connector.getBehaviors()) {
+					if (ArchModelUtils.sameBehavior(behavior, b)) {
+						hasSameBehavior = true;
+						break;
+					}
+				}
+				if (!hasSameBehavior) {
+					connector.getBehaviors().add(behavior);
+					modified = true;
+				}
 			}
 		} else {
-			// Create UncertainConnector
-			UncertainConnector uConnector = ArchDSLFactory.eINSTANCE.createUncertainConnector();
-			uConnector.setSuperInterface(connector);
-			uConnector.setName(ArchModelUtils.getAutoUncertainConnectorName(sequenceName));
-			model.getU_connectors().add(uConnector);
+			// Find or create UncertainConnector
+			UncertainConnector uConnector = null;
+			List<UncertainConnector> uConnectors = ArchModelUtils.searchUncertainConnectorBySuperName(model, sequenceName);
+			if (uConnectors.isEmpty()) {
+				uConnector = ArchDSLFactory.eINSTANCE.createUncertainConnector();
+				uConnector.setSuperInterface(connector);
+				uConnector.setName(ArchModelUtils.getAutoUncertainConnectorName(sequenceName));
+				model.getU_connectors().add(uConnector);
+				modified = true;
+			} else {
+				uConnector = uConnectors.get(0);
+			}
 
 			// Convert Messages to UncertainBehavior and put it into UncertainConnector.
 			UncertainBehavior uBehavior = convertToUncertainBehavior(model, messages, resolveType);
 			if (uBehavior != null) {
-				uBehavior.setName(ArchModelUtils.generateUncertainBehaviorName(uConnector));
-				uConnector.getU_behaviors().add(uBehavior);
+				boolean hasSameBehavior = false;
+				for (UncertainBehavior ub : uConnector.getU_behaviors()) {
+					if (ArchModelUtils.sameUncertainBehavior(uBehavior, ub)) {
+						hasSameBehavior = true;
+						break;
+					}
+				}
+				if (!hasSameBehavior) {
+					uBehavior.setName(ArchModelUtils.generateUncertainBehaviorName(uConnector));
+					uConnector.getU_behaviors().add(uBehavior);
+					modified = true;
+				}
 			}
 		}
+
+		return modified;
+	}
+
+	private String getSequenceName(String filename) {
+		String sequenceName = filename;
+		// Drop extension.
+		int extIndex = sequenceName.lastIndexOf('.');
+		if (extIndex >= 0) {
+			sequenceName = sequenceName.substring(0, extIndex);
+		}
+		// Drop index if exists.
+		int sepIndex = sequenceName.lastIndexOf('_');
+		if (sepIndex >= 0) {
+			try {
+				String idx = sequenceName.substring(sepIndex + 1);
+				Integer.getInteger(idx);
+				sequenceName = sequenceName.substring(0, sepIndex);
+			} catch (NumberFormatException e) {
+			}
+		}
+		return sequenceName;
 	}
 
 	// Xtext ID terminal definition.

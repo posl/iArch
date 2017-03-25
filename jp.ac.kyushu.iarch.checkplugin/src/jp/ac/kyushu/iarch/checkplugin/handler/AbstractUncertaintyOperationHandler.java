@@ -941,40 +941,12 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 	private UncertainBehavior addUncertainBehavior(UncertainConnector uConnector, UncertainBehavior uBehavior) {
 		for (UncertainBehavior ub: uConnector.getU_behaviors()) {
 			// Check duplication
-			if (sameUncertainBehavior(ub, uBehavior)) {
+			if (ArchModelUtils.sameUncertainBehavior(ub, uBehavior)) {
 				return ub;
 			}
 		}
 		uConnector.getU_behaviors().add(uBehavior);
 		return uBehavior;
-	}
-	protected boolean sameUncertainBehavior(UncertainBehavior ub1, UncertainBehavior ub2) {
-		// Name is not concerned.
-		Interface end1 = ub1.getEnd();
-		Interface end2 = ub2.getEnd();
-		if (end1 == null) {
-			if (end2 != null) {
-				return false;
-			}
-		} else {
-			if (end2 == null) {
-				return false;
-			}
-			if (!end1.getName().equals(end2.getName())) {
-				return false;
-			}
-		}
-		EList<SuperCall> call1 = ub1.getCall();
-		EList<SuperCall> call2 = ub2.getCall();
-		if (call1.size() != call2.size()) {
-			return false;
-		}
-		for (int i = 0; i < call1.size(); ++i) {
-			if (!MethodEqualityUtils.sameSuperCall(call1.get(i), call2.get(i), true)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	/**
@@ -1025,7 +997,7 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 
 				if (uBehaviorModified) {
 					for (UncertainBehavior ub: uConnector.getU_behaviors()) {
-						if (ub != uBehavior && sameUncertainBehavior(ub, uBehavior)) {
+						if (ub != uBehavior && ArchModelUtils.sameUncertainBehavior(ub, uBehavior)) {
 							uBehaviorIt.remove();
 						}
 					}
@@ -1056,43 +1028,13 @@ public abstract class AbstractUncertaintyOperationHandler extends AbstractHandle
 	protected Behavior addBehavior(Connector connector, Behavior behavior) {
 		// Add only if the same behavior does not exist.
 		for (Behavior b: connector.getBehaviors()) {
-			if (sameBehavior(behavior, b)) {
+			if (ArchModelUtils.sameBehavior(behavior, b)) {
 				// returns existing one instead.
 				return b;
 			}
 		}
 		connector.getBehaviors().add(behavior);
 		return behavior;
-	}
-	private boolean sameBehavior(Behavior b1, Behavior b2) {
-		if (!b1.getInterface().getName().equals(b2.getInterface().getName())) {
-			return false;
-		}
-		Interface end1 = b1.getEnd();
-		Interface end2 = b2.getEnd();
-		if (end1 == null) {
-			if (end2 != null) {
-				return false;
-			}
-		} else {
-			if (end2 == null) {
-				return false;
-			}
-			if (!end1.getName().equals(end2.getName())) {
-				return false;
-			}
-		}
-		EList<Method> call1 = b1.getCall();
-		EList<Method> call2 = b2.getCall();
-		if (call1.size() != call2.size()) {
-			return false;
-		}
-		for (int i = 0; i < call1.size(); ++i) {
-			if (!MethodEqualityUtils.sameMethod(call1.get(i), call2.get(i), true)) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	protected boolean removeUnusedUncertainMethod(Model model, String className, MethodEquality equality,
