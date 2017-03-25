@@ -33,16 +33,18 @@ public class ConnectorToFSP {
 		for (String c : code) {
 			sb.append(c).append(".\n");
 		}
-		boolean firstUc = true;
-		for (String uc : ucode) {
-			if (firstUc) {
-				firstUc = false;
-			} else {
-				sb.append(",\n");
+		if (!ucode.isEmpty()) {
+			boolean firstUc = true;
+			for (String uc : ucode) {
+				if (firstUc) {
+					firstUc = false;
+				} else {
+					sb.append(",\n");
+				}
+				sb.append(uc);
 			}
-			sb.append(uc);
+			sb.append(".");
 		}
-		sb.append(".");
 		String fspcode = sb.toString();
 		System.out.println(fspcode);
 
