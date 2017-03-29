@@ -61,6 +61,10 @@ public class ArchModel {
 
 		resource = rs.getResource(URI.createPlatformResourceURI(
 				archfile.getFullPath().toString(), true), true);
+		// Contents may be empty if filesize == 0
+		if (resource.getContents().isEmpty()) {
+			resource.getContents().add(ArchDSLFactory.eINSTANCE.createModel());
+		}
 	}
 
 	// Null output stream.
