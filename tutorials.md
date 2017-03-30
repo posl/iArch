@@ -14,8 +14,15 @@ Welcome to the iArch-U tutorials.
 
 # Preparing the sample project
 
-First, please clone the sample project to your local machine from [StudentList](https://github.com/posl/iArch/tree/master/StudentList).
-Then, open the cloned project as an existing Java project in iArch-U, or in Eclipse in other words.
+First, please clone [the repository](https://github.com/posl/iArch/) of iArch-U.
+
+```
+$ git clone https://github.com/posl/iArch.git
+$ cd iArch
+```
+
+Here you will find `StudentList` folder, the sample project you use in this tutorials.
+Then please launch Eclipse, create new java project, uncheck "Use default location", and select `StudentList` folder as the project's location.
 
 
 # iArch-U editors and a view
