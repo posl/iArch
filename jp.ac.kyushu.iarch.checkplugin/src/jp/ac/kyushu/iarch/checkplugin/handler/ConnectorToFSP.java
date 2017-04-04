@@ -16,6 +16,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
+import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 
 public class ConnectorToFSP {
 	
@@ -269,7 +270,7 @@ public class ConnectorToFSP {
 	}
 
 	private String getFSPString(Method methodCall) {
-		String className = ((Interface) methodCall.eContainer()).getName();
+		String className = ArchModelUtils.getClassName(methodCall, true);
 		String methodName = methodCall.getName();
 		return "_" + className + "." + methodName;
 	}
