@@ -12,6 +12,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.basefunction.reader.ArchModel;
 import jp.ac.kyushu.iarch.checkplugin.model.AbstractionRatio;
+import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 
 /**
  * Count number of Arch points, design points and program points.
@@ -59,7 +60,11 @@ public class AbstractionRatioChecker extends AbstractionRatio {
 		int c = 0;
 		String previousInterfaceName = "";
 		for (Method method : behavior.getCall()) {
-			Interface nowInterface = (Interface) method.eContainer();
+			Interface nowInterface = ArchModelUtils.getInterface(method, true);
+			if (nowInterface == null) {
+				// It means that the Method does not belong to Interface.
+				continue;
+			}
 			String nowInterfaceName = nowInterface.getName();
 			if (nowInterfaceName.equals(previousInterfaceName)) { // 自分自身でmethodを呼んでいる場合
 				c += 2;

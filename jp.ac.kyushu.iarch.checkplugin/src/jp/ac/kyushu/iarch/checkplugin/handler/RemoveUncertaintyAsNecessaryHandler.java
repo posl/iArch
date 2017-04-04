@@ -23,7 +23,6 @@ import jp.ac.kyushu.iarch.checkplugin.utils.MethodEqualityUtils;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -218,9 +217,9 @@ public class RemoveUncertaintyAsNecessaryHandler extends AbstractUncertaintyOper
 
 		if (methodCreated && !modified) {
 			// Discard unused Method.
-			EObject container = method.eContainer();
-			if (container instanceof Interface) {
-				((Interface) container).getMethods().remove(method);
+			Interface interfaceToDetach = ArchModelUtils.getInterface(method, false);
+			if (interfaceToDetach != null) {
+				interfaceToDetach.getMethods().remove(method);
 			} else {
 				throw new ModelErrorException("Failed to discard unused Method: " + className);
 			}

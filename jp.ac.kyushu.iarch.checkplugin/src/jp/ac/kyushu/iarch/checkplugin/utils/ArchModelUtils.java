@@ -113,7 +113,7 @@ public class ArchModelUtils {
 		}
 		return null;
 	}
-	
+
 	public static Method findMethodByName(UncertainInterface uInterface, String methodName) {
 		for (AltMethod altMethod : uInterface.getAltmethods()) {
 			for (Method method : altMethod.getMethods()) {
@@ -130,7 +130,7 @@ public class ArchModelUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 特定のインターフェースとそのサブインターフェースの中から特定のメソッドを探す。
 	 * @param model
@@ -156,21 +156,37 @@ public class ArchModelUtils {
 		return null;
 	}
 
+	public static Interface getInterface(Method method, boolean allowUncertain) {
+		EObject container = method.eContainer();
+		if (container instanceof Interface) {
+			// Method belongs to Interface.
+			return (Interface) container;
+		} else if (allowUncertain) {
+			UncertainInterface uInterface = getUncertainInterface(method);
+			if (uInterface != null) {
+				// NOTE: UncertainInterface may not have parent Interface.
+				return uInterface.getSuperInterface();
+			}
+		}
+		return null;
+	}
+	public static UncertainInterface getUncertainInterface(Method method) {
+		EObject container = method.eContainer();
+		if (container instanceof OptMethod || container instanceof AltMethod) {
+			EObject uContainer = container.eContainer();
+			if (uContainer instanceof UncertainInterface) {
+				return (UncertainInterface) uContainer;
+			}
+		}
+		return null;
+	}
+
 	public static String getClassName(Method method) {
 		return getClassName(method, true);
 	}
 	public static String getClassName(Method method, boolean allowUncertain) {
-		EObject container = method.eContainer();
-		if (container instanceof Interface) {
-			return ((Interface) container).getName();
-		} else if (allowUncertain
-				&& (container instanceof OptMethod || container instanceof AltMethod)) {
-			EObject uContainer = container.eContainer();
-			if (uContainer instanceof UncertainInterface) {
-				return ((UncertainInterface) uContainer).getSuperInterface().getName();
-			}
-		}
-		return null;
+		Interface cInterface = getInterface(method, allowUncertain);
+		return cInterface != null ? cInterface.getName() : null;
 	}
 
 	//
@@ -205,6 +221,33 @@ public class ArchModelUtils {
 	}
 
 	//
+	// SuperMethod
+	//
+
+	public static Interface getInterface(SuperMethod superMethod) {
+		if (superMethod instanceof Method) {
+			return getInterface((Method) superMethod, true);
+		}
+		// OptMethod, AltMethod
+		UncertainInterface uInterface = getUncertainInterface(superMethod);
+		if (uInterface != null) {
+			return uInterface.getSuperInterface();
+		}
+		return null;
+	}
+	public static UncertainInterface getUncertainInterface(SuperMethod superMethod) {
+		if (superMethod instanceof Method) {
+			return getUncertainInterface((Method) superMethod);
+		}
+		// OptMethod, AltMethod
+		EObject container = superMethod.eContainer();
+		if (container instanceof UncertainInterface) {
+			return (UncertainInterface) container;
+		}
+		return null;
+	}
+
+	//
 	// OptMethod
 	//
 
@@ -224,6 +267,16 @@ public class ArchModelUtils {
 
 	public static OptMethod createOptMethodElement(IMethodBinding binding) {
 		return createOptMethodElement(createMethodElement(binding));
+	}
+
+	public static OptMethod findOptMethodByName(UncertainInterface uInterface, String methodName) {
+		for (OptMethod optMethod: uInterface.getOptmethods()) {
+			Method method = optMethod.getMethod();
+			if (method.getName().equals(methodName)) {
+				return optMethod;
+			}
+		}
+		return null;
 	}
 
 	//
@@ -256,6 +309,17 @@ public class ArchModelUtils {
 			return null;
 		}
 		return altMethod;
+	}
+
+	public static AltMethod findAltMethodByName(UncertainInterface uInterface, String methodName) {
+		for (AltMethod altMethod : uInterface.getAltmethods()) {
+			for (Method method : altMethod.getMethods()) {
+				if (method.getName().equals(methodName)) {
+					return altMethod;
+				}
+			}
+		}
+		return null;
 	}
 
 	//

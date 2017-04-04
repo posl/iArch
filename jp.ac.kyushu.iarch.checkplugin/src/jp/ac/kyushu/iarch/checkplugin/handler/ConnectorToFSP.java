@@ -13,6 +13,7 @@ import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu.iarch.archdsl.archDSL.OptCall;
 import jp.ac.kyushu.iarch.archdsl.archDSL.SuperCall;
+import jp.ac.kyushu.iarch.archdsl.archDSL.SuperMethod;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu.iarch.archdsl.archDSL.UncertainInterface;
@@ -274,20 +275,20 @@ public class ConnectorToFSP {
 		String methodName = methodCall.getName();
 		return "_" + className + "." + methodName;
 	}
-	private String getFSPString(CertainCall certainCall) {
-		String className = ((Interface) certainCall.getName().eContainer()).getName();
-		String methodName = ((Method) certainCall.getName()).getName();
+	private String getFSPString(SuperMethod superMethod) {
+		Interface cInterface = ArchModelUtils.getInterface(superMethod);
+		String className = cInterface != null ? cInterface.getName() : "";
+		String methodName = superMethod instanceof Method ? ((Method) superMethod).getName() : "";
 		return "_" + className + "." + methodName;
+	}
+	private String getFSPString(CertainCall certainCall) {
+		return getFSPString(certainCall.getName());
 	}
 	private String getFSPString(OptCall optCall) {
-		String className = ((UncertainInterface) optCall.getName().eContainer().eContainer()).getName();
-		String methodName = ((Method) optCall.getName()).getName();
-		return "_" + className + "." + methodName;
+		return getFSPString(optCall.getName());
 	}
 	private String getFSPString(AltCall altCall, int i) {
-		String className = ((UncertainInterface) altCall.getName().eContainer().eContainer()).getName();
-		String methodName = ((Method)(i == 0 ? altCall.getName() : altCall.getA_name().get(i - 1))).getName();
-		return "_" + className + "." + methodName;
+		return getFSPString(i == 0 ? altCall.getName() : altCall.getA_name().get(i - 1));
 	}
 
 }

@@ -163,13 +163,9 @@ public class GenerateArchCode implements IHandler {
 						AlternativeOperation altOperation = (AlternativeOperation) operation;
 						AltMethod altMethod = null;
 						for (Operation op : altOperation.getOperations()) {
-							Method method = ArchModelUtils.findMethodByName(uInterface, op.getName());
-							if (method != null) {
-								EObject container = method.eContainer();
-								if (container instanceof AltMethod) {
-									altMethod = (AltMethod) container;
-									break;
-								}
+							altMethod = ArchModelUtils.findAltMethodByName(uInterface, op.getName());
+							if (altMethod != null) {
+								break;
 							}
 						}
 						// TODO: If part of methods are found, what should I do?
@@ -184,17 +180,11 @@ public class GenerateArchCode implements IHandler {
 						}
 
 					} else if (operation instanceof OptionalOperation) {
-						Method method = ArchModelUtils.findMethodByName(uInterface, operation.getName());
-						if (method != null) {
-							EObject container = method.eContainer();
-							if (!(container instanceof OptMethod)) {
-								// TODO: If the method is found in AltMethod, what should I do?
-								method = null;
-							}
-						}
-						if (method == null) {
+						OptMethod optMethod = ArchModelUtils.findOptMethodByName(uInterface, operation.getName());
+						// TODO: If the method is found in AltMethod, what should I do?
+						if (optMethod == null) {
 							Method innerMethod = convertToMethod(classDiagram, operation);
-							OptMethod optMethod = ArchModelUtils.createOptMethodElement(innerMethod);
+							optMethod = ArchModelUtils.createOptMethodElement(innerMethod);
 							uInterface.getOptmethods().add(optMethod);
 							modified = true;
 						}
@@ -470,7 +460,7 @@ public class GenerateArchCode implements IHandler {
 				AltCall altCall = convertToAltCall(model, message, resolveType);
 				if (altCall != null) {
 					// AltCall->Method->AltMethod->UncertainInterface->Interface
-					uBehavior.setEnd(((UncertainInterface) altCall.getName().eContainer().eContainer()).getSuperInterface());
+					uBehavior.setEnd(ArchModelUtils.getInterface(altCall.getName()));
 					uBehavior.getCall().add(altCall);
 				} else if (resolveType == RESOLVE_BY_ABORT) {
 					return null;
@@ -479,7 +469,7 @@ public class GenerateArchCode implements IHandler {
 				OptCall optCall = convertToOptCall(model, message, resolveType);
 				if (optCall != null) {
 					// OptCall->Method->OptMethod->UncertainInterface->Interface
-					uBehavior.setEnd(((UncertainInterface) optCall.getName().eContainer().eContainer()).getSuperInterface());
+					uBehavior.setEnd(ArchModelUtils.getInterface(optCall.getName()));
 					uBehavior.getCall().add(optCall);
 				} else if (resolveType == RESOLVE_BY_ABORT) {
 					return null;
@@ -487,7 +477,7 @@ public class GenerateArchCode implements IHandler {
 			} else {
 				CertainCall certainCall = convertToCertainCall(model, message, resolveType);
 				if (certainCall != null) {
-					uBehavior.setEnd((Interface) certainCall.getName().eContainer());
+					uBehavior.setEnd(ArchModelUtils.getInterface(certainCall.getName()));
 					uBehavior.getCall().add(certainCall);
 				} else if (resolveType == RESOLVE_BY_ABORT) {
 					return null;

@@ -6,6 +6,7 @@ import java.util.List;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Interface;
 import jp.ac.kyushu.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu.iarch.archdsl.archDSL.SuperMethod;
+import jp.ac.kyushu.iarch.checkplugin.utils.ArchModelUtils;
 
 /**
  * @author fukamachi
@@ -58,7 +59,11 @@ public class BehaviorPairModel {
 			for (CallPairModel cpm : callModels) {
 				SuperMethod superMethod = cpm.getArchMethod();
 				if (superMethod instanceof Method) {
-					Interface nowInterface = (Interface) ((Method) superMethod).eContainer();
+					Interface nowInterface = ArchModelUtils.getInterface((Method) superMethod, true);
+					if (nowInterface == null) {
+						// It means that the Method does not belong to Interface.
+						continue;
+					}
 					String nowInterfaceName = nowInterface.getName();
 					if (nowInterfaceName.equals(previousInterfaceName)) {
 						c += 2;

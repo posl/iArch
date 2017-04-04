@@ -13,7 +13,6 @@ import jp.ac.kyushu.iarch.checkplugin.utils.MethodEqualityUtils;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -157,9 +156,9 @@ public class SetOptionalUncertaintyHandler extends AbstractUncertaintyOperationH
 
 		if (optMethodCreated && !modified) {
 			// Discard unused OptMethod.
-			EObject container = optMethod.eContainer();
-			if (container instanceof UncertainInterface) {
-				((UncertainInterface) container).getOptmethods().remove(optMethod);
+			UncertainInterface uInterface = ArchModelUtils.getUncertainInterface(optMethod);
+			if (uInterface != null) {
+				uInterface.getAltmethods().remove(optMethod);
 			} else {
 				throw new ModelErrorException("Failed to discard unused OptMethod: " + className);
 			}

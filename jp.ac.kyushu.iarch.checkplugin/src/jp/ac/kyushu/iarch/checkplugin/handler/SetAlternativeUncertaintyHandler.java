@@ -18,7 +18,6 @@ import jp.ac.kyushu.iarch.checkplugin.view.SelectAlternativeDialog;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -251,9 +250,9 @@ public class SetAlternativeUncertaintyHandler extends AbstractUncertaintyOperati
 
 		if (altMethodCreated && !modified) {
 			// Discard unused AltMethod.
-			EObject container = altMethod.eContainer();
-			if (container instanceof UncertainInterface) {
-				((UncertainInterface) container).getAltmethods().remove(altMethod);
+			UncertainInterface uInterface = ArchModelUtils.getUncertainInterface(altMethod);
+			if (uInterface != null) {
+				uInterface.getAltmethods().remove(altMethod);
 			} else {
 				throw new ModelErrorException("Failed to discard unused AltMethod: " + className);
 			}
