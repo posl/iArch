@@ -172,6 +172,7 @@ public class GenerateArchCode implements IHandler {
 								}
 							}
 						}
+						// TODO: If part of methods are found, what should I do?
 						if (altMethod == null) {
 							List<Method> innerMethods = new ArrayList<Method>();
 							for (Operation op : altOperation.getOperations()) {
@@ -187,11 +188,15 @@ public class GenerateArchCode implements IHandler {
 						if (method != null) {
 							EObject container = method.eContainer();
 							if (!(container instanceof OptMethod)) {
-								Method innerMethod = convertToMethod(classDiagram, operation);
-								OptMethod optMethod = ArchModelUtils.createOptMethodElement(innerMethod);
-								uInterface.getOptmethods().add(optMethod);
-								modified = true;
+								// TODO: If the method is found in AltMethod, what should I do?
+								method = null;
 							}
+						}
+						if (method == null) {
+							Method innerMethod = convertToMethod(classDiagram, operation);
+							OptMethod optMethod = ArchModelUtils.createOptMethodElement(innerMethod);
+							uInterface.getOptmethods().add(optMethod);
+							modified = true;
 						}
 
 					} else {
