@@ -283,7 +283,7 @@ In addition, you can check the metrics about the abstraction (number of design p
 ## Testing Support
 
 <div markdown="1" class="note">
-There is [a known issue](documentation/#known-issues) in Java8 that may prevent execution of Testing Support.
+There is [a known issue](documentation#known-issues) in Java8 that may prevent execution of Testing Support.
 </div>
 
 iArch also provides an easy way to test uncertainty-involving code.
