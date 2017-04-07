@@ -31,6 +31,9 @@ For detailed information, please refer to the [documentation](documentation/). F
 - Graphiti SDK Plus 0.13~
 - Xtext Complete SDK 2.10.0~
 
+Also, if you would like to use Testing Support function, please install below.
+- AspectJ Development Tools 4.6~ (Development builds)
+
 These requirements are not strict.
 You might be able to run iArch-U with older versions of middleware and/or libraries.
 
@@ -45,6 +48,7 @@ You might be able to run iArch-U with older versions of middleware and/or librar
 1. Start Eclipse.
 1. Select `Help` -> `Install New Software`
   - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
+  - If you use Testing Support function, also install development builds of _AspectJ Development Tools_ from the update URL shown [here](https://eclipse.org/ajdt/downloads/).
 1. Restart Eclipse.
 
 
