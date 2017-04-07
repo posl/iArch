@@ -280,13 +280,97 @@ In addition, you can check the metrics about the abstraction (number of design p
 ![Archface-U view](../images/archface_u_view_2.png)
 
 
-## Testing support
+## Testing Support
 
-When you try to test code which has uncertainty, you normally have to resolve uncertainty beforehand, but this involves code change and thus incurs extra cost of implementation.
-By using this testing support functionality, you do not need to change code, but the compiler generates testing support code which selectively executes one of possible uncertainty resolved code with certain probability, guided by annotations embedded in code.
+iArch also provides an easy way to test uncertainty-involving code.
+You should begin with expressing uncertainty in Archface-U as mentioned above, and then add the annotations
+which represents how the program should perform in testing.
+For example, when you have alternative uncertain methods, you specify which method should be executed in testing.
 
-You can generate testing support code by selecting `Generate Aspect` from the `iArch` menu of the toolbar.
-Removing testing support code is done by selecting `Remove Aspect`.
+Based on an annotations you added, iArch-U generate *Aspect* in your project.
+Aspect is the special source code to control program's behavior,
+that makes it possible to test your program depending on the annotations you added without modifying the original code.
+Aspect and Java source code are compiled together by AspectJ compiler (You may install [AJDT](http://www.eclipse.org/ajdt/) for that).
+
+This is a brief description of testing support. For concrete usage examples of each annotation, please see the [tutorials](tutorials/).
+
+### Method-Execution-Control Annotations
+
+Here we introduce the annotations which specifies how the program should perform in testing.
+The annotations are added to methods in uncertain component interfaces.
+
+As for behaviors in uncertain connector interface,
+you must have a corresponding method definition in component interface,
+so add annotations to it.
+
+#### Non-probabilistic Effect Annotations
+
+|Annotation|Effect|
+|----|----|
+|`@ExecForce`|To execute the method.|
+|`@ExecIgnore`|Not to execute the method.|
+
+Uncertainty-involving program can result in many different instances at the end.
+To continue development while involving uncertainty,
+it is important to investigate whether a specific instance meets the requirements.
+With these annotations, you are able to emulate one instance of uncertainty-involving program in testing.
+
+For Alternative, you can add `@ExecForce` to the method that should be executed.
+For Optional, you can add `@ExecForce` in order to execute the method, or `@ExecIgnore` to suppress execution.
+
+<div markdown="1" class="note">
+There are some undefined combinations of annotation.
+(e.g. `@ExecForce` added to all of alternative uncertain methods.)
+For clarity, avoid using undefined combinations.
+</div>
+
+#### Probabilistic Effect Annotations
+
+|Annotation|Effect|
+|----|----|
+|`@ExecRatio(double p)`|To execute the method with `p` probability.|
+|`@ExecWeight(double w)`|To execute the method with `w` weight.|
+
+The representative use case of these annotations is A/B testing, as known as controlled experiment.
+That is, when you have some candidate implementations,
+you assign each candidate to a subset of user base, and analyze logs to know which is better.
+(e.g. In an e-commerce app, red or green, which color for "buy" button makes more sales?)
+
+The difference between `@ExecRatio` and `@ExecWeight` is their argument.
+The value `@ExecRatio` accepts is a probability to execute the method (e.g. 0.5).
+On the other hand, `@ExecWeight` accepts a weight for the method.
+The weight defines the ratio to execute the method relatively among the alternatives.
+
+If you add `@ExecRatio(p)` to one alternative method and there are remaining alternative methods,
+The rest of probability `1 - p` should be distributed to the the remaining methods uniformly.
+For Optional, the remaining method is just an empty method.
+As for `@ExecWeight`, the weight for a method without annotation is set to `0`.
+
+Practically, for Alternative, you should use `@ExecWeight` to set ratio, because that is easier to use.
+For Optional, you should use `@ExecRatio` instead.
+
+<div markdown="1" class="note">
+There are some undefined combinations of annotation.
+(e.g. `@ExecRatio` and `@ExecWeight` are used at the same time.)
+There are also undefined argument values.
+(e.g. `@ExecRatio(p)` under `p > 1`)
+For clarity, avoid using these undefined expressions.
+</div>
+
+### Labeling Annotations
+
+|Annotation|Effect|
+|----|----|
+|`@Label(String l)`|To label the method as `l`.|
+
+The annotation `@Label` affects a class name or method name of generated aspect code. By default serial numbers are used in generated aspect code, however, You can set human-readable name to improve readability.
+
+`@Label` is optional annotation, there is no problem if you add this annotation or not. Unlike the method-execution-control annotations, `@Label` can be added to not only a method but also an uncertainty itself.
+
+### Usage
+
+On GUI, you can generate Aspect by selecting **Generate Aspect** from the iArch menu of the toolbar.
+Removing Aspect is done by selecting **Remove Aspect**.
 
 
 ## Management support

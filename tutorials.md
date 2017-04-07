@@ -267,9 +267,44 @@ This enables to manage uncertainty with ensuring traceability between models and
 
 # Testing Support
 
-It remains to be uncertain which of this GUI view 1. or 2. is approved until the teacher decides.
-Prototyping with iArch-U Testing Support enables usability testing, which allow the developer to select temporarily on GUI.
-iArch-U changed the software behavior to emulate the temporary selection.
-This change is not implemented by changing code directly but by adding a few files.
+Until the teacher decides, it remains to be uncertain which of the *implementation 1.* or *2.* is approved.
+Here iArch-U Testing Support enables you to carry out usability test for this decision.
+Based on annotations added to Archface-U, iArch-U changes the software behavior.
+This behavior control is carried out without changing application code.
 
-In this tutorial, as a temporary choice, enabling the Optional Uncertainty in uStudentConroller connector and choosing ColorStudent from Alternative Uncertainty in ucStudent, we can display the view.
+To use iArch-U Testing Support, make sure [AJDT](http://www.eclipse.org/ajdt/) is installed,
+and convert the project into an AspectJ project by right-clicking the project and selecting
+**Configure** -> **Convert to AspectJ Project**.
+
+In this tutorial, as a temporary choice, choose `colorStudent`(*implementation 2.*).
+So you would edit Archface-U as below.
+
+```
+interface component Main{
+	void actionPerformed(ActionEvent e);
+}
+
+interface component StudentController{}
+uncertain component uStudentController extends StudentController{
+	{ void filterStudent(JTable table);,
+	  @ExecForce void colorStudent(JTable table); }
+}
+```
+
+Please select **Generate Aspect** from the iArch menu in toolbar. This operation adds few files into your project directory. Running the program, you will see *implementation 2.* even if `filterStudent`(*implementation 1.*) is called in the application code.
+
+You can also carry out "A/B testing", which is the probabilistic usability testing strategy.
+For example, when the Archface-U is written as below, `filterStudent` and `colorStudent` will be executed at the ratio 4:1.
+For more detailed useage of annotations, please see [documentation](documentation/).
+
+```
+interface component Main{
+	void actionPerformed(ActionEvent e);
+}
+
+interface component StudentController{}
+uncertain component uStudentController extends StudentController{
+	{ @ExecWeight(4) void filterStudent(JTable table);,
+	  @ExecWeight(1) void colorStudent(JTable table); }
+}
+```
