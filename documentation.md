@@ -282,6 +282,10 @@ In addition, you can check the metrics about the abstraction (number of design p
 
 ## Testing Support
 
+<div markdown="1" class="note">
+There is [a known issue](documentation/#known-issues) in Java8 that may prevent execution of Testing Support.
+</div>
+
 iArch also provides an easy way to test uncertainty-involving code.
 You should begin with expressing uncertainty in Archface-U as mentioned above, and then add the annotations
 which represents how the program should perform in testing.
@@ -489,3 +493,8 @@ iArch-U consists of these Java packages.
 - model: defines models for model editors.
 - classdiagram: provides class diagram editor using Graphiti.
 - sequencediagram: provides sequence diagram editor using Graphiti.
+
+# Known Issues
+
+- Testing Support
+  - In a Java8 environment, the error `org.aspectj.weaver.BCException` might occurs and you cannot build project after you generate Aspect.

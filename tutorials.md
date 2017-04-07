@@ -267,6 +267,10 @@ This enables to manage uncertainty with ensuring traceability between models and
 
 # Testing Support
 
+<div markdown="1" class="note">
+There is [a known issue](documentation/#known-issues) in Java8 that may prevent execution of Testing Support.
+</div>
+
 Until the teacher decides, it remains to be uncertain which of the *implementation 1.* or *2.* is approved.
 Here iArch-U Testing Support enables you to carry out usability test for this decision.
 Based on annotations added to Archface-U, iArch-U changes the software behavior.
