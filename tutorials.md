@@ -268,7 +268,7 @@ This enables to manage uncertainty with ensuring traceability between models and
 # Testing Support
 
 <div markdown="1" class="note">
-There is [a known issue](http://posl.github.io/iArch/documentation/#known-issues) in Java8 that may prevent execution of Testing Support.
+There is [a known issue](http://posl.github.io/iArch/documentation/#known-issues) in Java8 environment that may prevent execution of Testing Support.
 </div>
 
 Until the teacher decides, it remains to be uncertain which of the *implementation 1.* or *2.* is approved.

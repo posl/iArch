@@ -283,7 +283,7 @@ In addition, you can check the metrics about the abstraction (number of design p
 ## Testing Support
 
 <div markdown="1" class="note">
-There is [a known issue](http://posl.github.io/iArch/documentation/#known-issues) in Java8 that may prevent execution of Testing Support.
+There is [a known issue](http://posl.github.io/iArch/documentation/#known-issues) in Java8 environment that may prevent execution of Testing Support.
 </div>
 
 iArch also provides an easy way to test uncertainty-involving code.
@@ -497,4 +497,4 @@ iArch-U consists of these Java packages.
 # Known Issues
 
 - Testing Support
-  - In a Java8 environment, the error `org.aspectj.weaver.BCException` might occurs and you cannot build project after you generate Aspect.
+  - In Java8 environment, the error `org.aspectj.weaver.BCException` might occurs and cannot build a project after you generate aspects.
