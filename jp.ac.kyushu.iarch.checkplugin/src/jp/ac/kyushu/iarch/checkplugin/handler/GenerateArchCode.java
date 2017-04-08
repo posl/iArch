@@ -329,12 +329,16 @@ public class GenerateArchCode implements IHandler {
 		if (extIndex >= 0) {
 			sequenceName = sequenceName.substring(0, extIndex);
 		}
-		// Drop index if exists.
+		// Drop index part if exists.
 		int sepIndex = sequenceName.lastIndexOf('_');
 		if (sepIndex >= 0) {
 			try {
 				String idx = sequenceName.substring(sepIndex + 1);
+				if (!idx.isEmpty() && idx.charAt(0) == 'u') {
+					idx = idx.substring(1);
+				}
 				Integer.getInteger(idx);
+				// Can drop index part.
 				sequenceName = sequenceName.substring(0, sepIndex);
 			} catch (NumberFormatException e) {
 			}
@@ -546,17 +550,7 @@ public class GenerateArchCode implements IHandler {
 
 		if (optMethod == null && resolveType == RESOLVE_BY_GENERATE) {
 			// Generate UncertainInterface and OptMethod.
-			Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
-			if (cInterface == null) {
-				cInterface = ArchModelUtils.createInterfaceElement(className);
-				model.getInterfaces().add(cInterface);
-			}
-
-			String uIfName = generateUncertainInterfaceName(model,
-					ArchModelUtils.getAutoUncertainInterfaceName(className));
-			UncertainInterface uInterface =
-					ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
-			model.getU_interfaces().add(uInterface);
+			UncertainInterface uInterface = findOrCreateUncertainInterface(model, className);
 
 			optMethod = ArchModelUtils.createOptMethodElement(methodName);
 			uInterface.getOptmethods().add(optMethod);
@@ -598,17 +592,7 @@ public class GenerateArchCode implements IHandler {
 
 		if (altMethod == null && resolveType == RESOLVE_BY_GENERATE) {
 			// Generate UncertainInterface and AltMethod.
-			Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
-			if (cInterface == null) {
-				cInterface = ArchModelUtils.createInterfaceElement(className);
-				model.getInterfaces().add(cInterface);
-			}
-
-			String uIfName = generateUncertainInterfaceName(model,
-					ArchModelUtils.getAutoUncertainInterfaceName(className));
-			UncertainInterface uInterface =
-					ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
-			model.getU_interfaces().add(uInterface);
+			UncertainInterface uInterface = findOrCreateUncertainInterface(model, className);
 
 			altMethod = ArchDSLFactory.eINSTANCE.createAltMethod();
 			for (Message m : ((AlternativeMessage) message).getMessages()) {
@@ -631,6 +615,27 @@ public class GenerateArchCode implements IHandler {
 			return altCall;
 		} else {
 			return null;
+		}
+	}
+
+	private UncertainInterface findOrCreateUncertainInterface(Model model, String className) {
+		Interface cInterface = ArchModelUtils.findInterfaceByName(model, className);
+		if (cInterface == null) {
+			cInterface = ArchModelUtils.createInterfaceElement(className);
+			model.getInterfaces().add(cInterface);
+		}
+
+		List<UncertainInterface> uInterfaces =
+				ArchModelUtils.searchUncertainInterfaceBySuperName(model, className);
+		if (uInterfaces.isEmpty()) {
+			String uIfName = generateUncertainInterfaceName(model,
+					ArchModelUtils.getAutoUncertainInterfaceName(className));
+			UncertainInterface uInterface =
+					ArchModelUtils.createUncertainInterfaceElement(uIfName, cInterface);
+			model.getU_interfaces().add(uInterface);
+			return uInterface;
+		} else {
+			return uInterfaces.get(0);
 		}
 	}
 

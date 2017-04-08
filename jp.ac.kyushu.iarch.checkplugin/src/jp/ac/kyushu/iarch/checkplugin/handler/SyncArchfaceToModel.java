@@ -78,6 +78,8 @@ public class SyncArchfaceToModel implements IHandler {
 	private static final String SEQUENCE_DIAGRAM_TYPE_ID = "SequenceDiagram";
 	private static final String SEQUENCE_DIAGRAM_PROVIDER_ID = "jp.ac.kyushu.iarch.sequencediagram.diagram.SequenceDiagramTypeProvider";
 
+	private static final String CLASS_DIAGRAM_NAME = "Class";
+
 	private class FindOrCreateResult<T> {
 		public boolean created;
 		public T result;
@@ -166,10 +168,8 @@ public class SyncArchfaceToModel implements IHandler {
 		}
 
 		// Open a class diagram
-		String diagramName = "Class";
-		String diagramFilename = diagramName + ".diagram";
-		IFile diagramFile = folder.getFile(diagramFilename);
-		Resource resource = openDiagramResource(diagramFile, CLASS_DIAGRAM_TYPE_ID, diagramName);
+		IFile diagramFile = folder.getFile(CLASS_DIAGRAM_NAME + ".diagram");
+		Resource resource = openDiagramResource(diagramFile, CLASS_DIAGRAM_TYPE_ID, CLASS_DIAGRAM_NAME);
 		Diagram diagram = findDiagram(resource);
 
 		IDiagramTypeProvider dtp = GraphitiUi.getExtensionManager()
@@ -339,10 +339,11 @@ public class SyncArchfaceToModel implements IHandler {
 		}
 
 		for (UncertainConnector uConnector : model.getU_connectors()) {
-			String connName = uConnector.getName();
+			Connector connector = uConnector.getSuperInterface();
+			String connName = connector != null ? connector.getName() : uConnector.getName();
 			behaviorCount = 1;
 			for (UncertainBehavior uBehavior : uConnector.getU_behaviors()) {
-				String seqName = connName + "_" + (behaviorCount++);
+				String seqName = connName + "_u" + (behaviorCount++);
 				generateSequenceDiagram(uBehavior, folder, seqName);
 			}
 		}
