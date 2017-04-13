@@ -3,6 +3,7 @@ package jp.ac.kyushu.iarch.checkplugin.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ import org.eclipse.jgit.lib.AbbreviatedObjectId;
 import org.eclipse.jgit.lib.AnyObjectId;
 import org.eclipse.jgit.lib.ConfigConstants;
 import org.eclipse.jgit.lib.Constants;
+import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectLoader;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
@@ -130,8 +132,12 @@ public class GitUtils {
 			ObjectReader reader = repo.newObjectReader();
 
 			String archifilePath = new XMLreader(proj).getArchfileResource().getProjectRelativePath().toString();
-			Iterator<RevCommit> gitLog = git.log().add(repo.resolve(Constants.HEAD)).addPath(archifilePath).all().call()
-					.iterator();
+			ObjectId head = repo.resolve(Constants.HEAD);
+			if (head == null) {
+				// A new repository may not have HEAD.
+				return diffList;
+			}
+			Iterator<RevCommit> gitLog = git.log().add(head).addPath(archifilePath).all().call().iterator();
 			DiffFormatter diffFormatter = new DiffFormatter(System.out);
 			// TODO setPathFilterによってArchifileのみのDiffを取得する
 			// diffFormatter.setPathFilter(filter);
