@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/jp.ac.kyushu_u.iarch_1.1.0.qualifier.jar" id="jp.ac.kyushu_u.iarch" version="1.1.0.qualifier">
+      <category name="programming_and_modelling"/>
+   </feature>
+   <category-def name="programming_and_modelling" label="Programming and Modelling"/>
+</site>
