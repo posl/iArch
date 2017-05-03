@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: iArch ArchDSL UI
+Bundle-Vendor: POSL Research Group
+Bundle-Version: 1.1.0.qualifier
+Bundle-SymbolicName: jp.ac.kyushu_u.iarch.archdsl.ui;singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: jp.ac.kyushu_u.iarch.archdsl;visibility:=reexport,
+ org.eclipse.xtext.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.ui,
+ org.eclipse.xtext.builder,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types.ui,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: jp.ac.kyushu.iarch.archdsl.ui.quickfix,
+ jp.ac.kyushu.iarch.archdsl.ui.contentassist,
+ jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr,
+ jp.ac.kyushu.iarch.archdsl.ui.internal,
+ jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr.internal
+Bundle-Activator: jp.ac.kyushu.iarch.archdsl.ui.internal.ArchDSLActivator
