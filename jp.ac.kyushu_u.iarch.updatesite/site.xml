@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/jp.ac.kyushu_u.iarch_1.0.0.qualifier.jar" id="jp.ac.kyushu_u.iarch" version="1.0.0.qualifier"/>
+   <feature url="features/jp.ac.kyushu_u.iarch_1.1.0.qualifier.jar" id="jp.ac.kyushu_u.iarch" version="1.1.0.qualifier"/>
 </site>
