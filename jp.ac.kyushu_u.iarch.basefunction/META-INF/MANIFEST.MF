@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: iArch BaseFunction
 Bundle-SymbolicName: jp.ac.kyushu_u.iarch.basefunction
 Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: jp.ac.kyushu.iarch.basefunction.Activator
+Bundle-Activator: jp.ac.kyushu_u.iarch.basefunction.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources;bundle-version="3.8.101",
@@ -18,11 +18,11 @@ Bundle-ActivationPolicy: lazy
 Export-Package: ch.qos.logback.classic,
  ch.qos.logback.core,
  freemarker.template,
- jp.ac.kyushu.iarch.basefunction.controller,
- jp.ac.kyushu.iarch.basefunction.exception,
- jp.ac.kyushu.iarch.basefunction.model,
- jp.ac.kyushu.iarch.basefunction.reader,
- jp.ac.kyushu.iarch.basefunction.utils,
+ jp.ac.kyushu_u.iarch.basefunction.controller,
+ jp.ac.kyushu_u.iarch.basefunction.exception,
+ jp.ac.kyushu_u.iarch.basefunction.model,
+ jp.ac.kyushu_u.iarch.basefunction.reader,
+ jp.ac.kyushu_u.iarch.basefunction.utils,
  org.dom4j,
  org.dom4j.io,
  org.slf4j

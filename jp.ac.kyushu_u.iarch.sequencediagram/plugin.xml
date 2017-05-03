@@ -5,7 +5,7 @@
       point="org.eclipse.graphiti.ui.diagramTypes">
     <diagramType
       description="Sequence Diagram"
-      id="jp.ac.kyushu.iarch.sequencediagram.DiagramType"
+      id="jp.ac.kyushu_u.iarch.sequencediagram.DiagramType"
       name="SequenceDiagram"
       type="SequenceDiagram">
     </diagramType>
@@ -14,12 +14,12 @@
   <extension
       point="org.eclipse.graphiti.ui.diagramTypeProviders">
     <diagramTypeProvider
-      class="jp.ac.kyushu.iarch.sequencediagram.diagram.providers.SequenceDiagramTypeProvider"
+      class="jp.ac.kyushu_u.iarch.sequencediagram.diagram.providers.SequenceDiagramTypeProvider"
       description="Sequence Diagram Editor"
-      id="jp.ac.kyushu.iarch.sequencediagram.diagram.SequenceDiagramTypeProvider"
+      id="jp.ac.kyushu_u.iarch.sequencediagram.diagram.SequenceDiagramTypeProvider"
       name="Sequence Diagram Editor">
       <diagramType
-        id="jp.ac.kyushu.iarch.sequencediagram.DiagramType">
+        id="jp.ac.kyushu_u.iarch.sequencediagram.DiagramType">
       </diagramType>
     </diagramTypeProvider>
   </extension>
@@ -63,8 +63,8 @@
     <propertySections
           contributorId="SequenceDiagram.PropertyContributor">
         <propertySection
-              class="jp.ac.kyushu.iarch.sequencediagram.property.SequenceDiagramSection"
-              filter="jp.ac.kyushu.iarch.sequencediagram.property.SequenceDiagramFilter"
+              class="jp.ac.kyushu_u.iarch.sequencediagram.property.SequenceDiagramSection"
+              filter="jp.ac.kyushu_u.iarch.sequencediagram.property.SequenceDiagramFilter"
               id="graphiti.main.tab.emfclass"
               tab="graphiti.main.tab">
         </propertySection>

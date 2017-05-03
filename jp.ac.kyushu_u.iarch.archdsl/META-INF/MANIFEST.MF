@@ -23,15 +23,16 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: jp.ac.kyushu.iarch.archdsl,
- jp.ac.kyushu.iarch.archdsl.services,
- jp.ac.kyushu.iarch.archdsl.archDSL,
- jp.ac.kyushu.iarch.archdsl.archDSL.impl,
- jp.ac.kyushu.iarch.archdsl.archDSL.util,
- jp.ac.kyushu.iarch.archdsl.serializer,
- jp.ac.kyushu.iarch.archdsl.parser.antlr,
- jp.ac.kyushu.iarch.archdsl.parser.antlr.internal,
- jp.ac.kyushu.iarch.archdsl.validation,
- jp.ac.kyushu.iarch.archdsl.scoping,
- jp.ac.kyushu.iarch.archdsl.generator,
- jp.ac.kyushu.iarch.archdsl.formatting
+Export-Package: jp.ac.kyushu_u.iarch.archdsl,
+ jp.ac.kyushu_u.iarch.archdsl.archDSL,
+ jp.ac.kyushu_u.iarch.archdsl.archDSL.impl,
+ jp.ac.kyushu_u.iarch.archdsl.archDSL.util,
+ jp.ac.kyushu_u.iarch.archdsl.formatting,
+ jp.ac.kyushu_u.iarch.archdsl.generator,
+ jp.ac.kyushu_u.iarch.archdsl.parser.antlr,
+ jp.ac.kyushu_u.iarch.archdsl.parser.antlr.internal,
+ jp.ac.kyushu_u.iarch.archdsl.scoping,
+ jp.ac.kyushu_u.iarch.archdsl.serializer,
+ jp.ac.kyushu_u.iarch.archdsl.services,
+ jp.ac.kyushu_u.iarch.archdsl.validation
+

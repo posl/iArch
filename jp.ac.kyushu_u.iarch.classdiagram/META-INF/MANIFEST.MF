@@ -6,7 +6,7 @@ Bundle-Version: 1.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: POSL Research Group
 Bundle-Localization: plugin
-Bundle-Activator: jp.ac.kyushu.iarch.classdiagram.Activator
+Bundle-Activator: jp.ac.kyushu_u.iarch.classdiagram.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
@@ -23,9 +23,9 @@ Require-Bundle: org.eclipse.ui,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Import-Package: com.google.inject;version="1.3.0",
- jp.ac.kyushu.iarch.archdsl,
- jp.ac.kyushu.iarch.sequencediagram.diagram.providers,
+ jp.ac.kyushu_u.iarch.archdsl,
+ jp.ac.kyushu_u.iarch.sequencediagram.diagram.providers,
  org.eclipse.xtext.parsetree.reconstr
-Export-Package: jp.ac.kyushu.iarch.classdiagram.diagram,
- jp.ac.kyushu.iarch.classdiagram.features,
- jp.ac.kyushu.iarch.classdiagram.utils
+Export-Package: jp.ac.kyushu_u.iarch.classdiagram.diagram,
+ jp.ac.kyushu_u.iarch.classdiagram.features,
+ jp.ac.kyushu_u.iarch.classdiagram.utils

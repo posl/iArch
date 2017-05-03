@@ -9,7 +9,7 @@
       point="org.eclipse.graphiti.ui.diagramTypes">
     <diagramType
       description="This is the diagram type for Graphiti Class Diagram"
-      id="jp.ac.kyushu.iarch.classdiagram.diagram.DiagramType"
+      id="jp.ac.kyushu_u.iarch.classdiagram.diagram.DiagramType"
       name="Graphiti Diagram Type"
       type="ClassDiagram">
     </diagramType>
@@ -18,12 +18,12 @@
   <extension
       point="org.eclipse.graphiti.ui.diagramTypeProviders">
     <diagramTypeProvider
-      class="jp.ac.kyushu.iarch.classdiagram.diagram.DiagramTypeProvider"
+      class="jp.ac.kyushu_u.iarch.classdiagram.diagram.DiagramTypeProvider"
       description="This is my editor for the Graphiti test"
-      id="jp.ac.kyushu.iarch.classdiagram.diagram.DiagramTypeProvider"
+      id="jp.ac.kyushu_u.iarch.classdiagram.diagram.DiagramTypeProvider"
       name="Class Diagram">
       <diagramType
-        id="jp.ac.kyushu.iarch.classdiagram.diagram.DiagramType">
+        id="jp.ac.kyushu_u.iarch.classdiagram.diagram.DiagramType">
       </diagramType>
     </diagramTypeProvider>
   </extension>
@@ -58,8 +58,8 @@
     <propertySections
           contributorId="ClassDiagram.PropertyContributor">
         <propertySection
-              class="jp.ac.kyushu.iarch.classdiagram.property.ClassDiagramSection"
-              filter="jp.ac.kyushu.iarch.classdiagram.property.ClassDiagramFilter"
+              class="jp.ac.kyushu_u.iarch.classdiagram.property.ClassDiagramSection"
+              filter="jp.ac.kyushu_u.iarch.classdiagram.property.ClassDiagramFilter"
               id="graphiti.main.tab.emfclass"
               tab="graphiti.main.tab">
         </propertySection>

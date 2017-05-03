@@ -20,9 +20,9 @@ Require-Bundle: jp.ac.kyushu_u.iarch.archdsl;visibility:=reexport,
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: jp.ac.kyushu.iarch.archdsl.ui.quickfix,
- jp.ac.kyushu.iarch.archdsl.ui.contentassist,
- jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr,
- jp.ac.kyushu.iarch.archdsl.ui.internal,
- jp.ac.kyushu.iarch.archdsl.ui.contentassist.antlr.internal
-Bundle-Activator: jp.ac.kyushu.iarch.archdsl.ui.internal.ArchDSLActivator
+Export-Package: jp.ac.kyushu_u.iarch.archdsl.ui.quickfix,
+ jp.ac.kyushu_u.iarch.archdsl.ui.contentassist,
+ jp.ac.kyushu_u.iarch.archdsl.ui.contentassist.antlr,
+ jp.ac.kyushu_u.iarch.archdsl.ui.internal,
+ jp.ac.kyushu_u.iarch.archdsl.ui.contentassist.antlr.internal
+Bundle-Activator: jp.ac.kyushu_u.iarch.archdsl.ui.internal.ArchDSLActivator

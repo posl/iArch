@@ -6,48 +6,48 @@
     <extension
             point="org.eclipse.ui.editors">
         <editor
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
             extensions="arch"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
             name="ArchDSL Editor">
         </editor>
     </extension>
     <extension
         point="org.eclipse.ui.handlers">
         <handler
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclarationHandler"
             commandId="org.eclipse.xtext.ui.editor.hyperlinking.OpenDeclaration">
             <activeWhen>
                 <reference
-                    definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                    definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
         <handler
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
-            commandId="jp.ac.kyushu.iarch.archdsl.ArchDSL.validate">
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.handler.ValidateActionHandler"
+            commandId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.validate">
          <activeWhen>
             <reference
-                    definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                    definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
             </reference>
          </activeWhen>
       	</handler>
       	<!-- copy qualified name -->
         <handler
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName">
             <activeWhen>
-				<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened" />
+				<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened" />
             </activeWhen>
         </handler>
         <handler
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedNameHandler"
             commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.OutlineCopyQualifiedName">
             <activeWhen>
             	<and>
-            		<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.XtextEditor.opened" />
+            		<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.XtextEditor.opened" />
 	                <iterate>
 						<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 					</iterate>
@@ -56,22 +56,22 @@
         </handler>
     </extension>
     <extension point="org.eclipse.core.expressions.definitions">
-        <definition id="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+        <definition id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
             <and>
                 <reference definitionId="isActiveEditorAnInstanceOfXtextEditor"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="jp.ac.kyushu.iarch.archdsl.ArchDSL" 
+                        value="jp.ac.kyushu_u.iarch.archdsl.ArchDSL" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
         </definition>
-        <definition id="jp.ac.kyushu.iarch.archdsl.ArchDSL.XtextEditor.opened">
+        <definition id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.XtextEditor.opened">
             <and>
                 <reference definitionId="isXtextEditorActive"/>
                 <with variable="activeEditor">
                     <test property="org.eclipse.xtext.ui.editor.XtextEditor.languageName" 
-                        value="jp.ac.kyushu.iarch.archdsl.ArchDSL" 
+                        value="jp.ac.kyushu_u.iarch.archdsl.ArchDSL" 
                         forcePluginActivation="true"/>
                 </with>        
             </and>
@@ -80,33 +80,33 @@
     <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
             name="ArchDSL">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
         </page>
         <page
-            category="jp.ac.kyushu.iarch.archdsl.ArchDSL"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL.coloring"
+            category="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.syntaxcoloring.SyntaxColoringPreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.coloring"
             name="Syntax Coloring">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
         </page>
         <page
-            category="jp.ac.kyushu.iarch.archdsl.ArchDSL"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL.templates"
+            category="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.templates.XtextTemplatePreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.templates"
             name="Templates">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
             name="ArchDSL">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -116,14 +116,14 @@
     <extension
         point="org.eclipse.ui.keywords">
         <keyword
-            id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"
+            id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"
             label="ArchDSL"/>
     </extension>
     <extension
          point="org.eclipse.ui.commands">
       <command
             description="Trigger expensive validation"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL.validate"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.validate"
             name="Validate">
       </command>
       <!-- copy qualified name -->
@@ -144,12 +144,12 @@
         <menuContribution
             locationURI="popup:#TextEditorContext?after=group.edit">
              <command
-                 commandId="jp.ac.kyushu.iarch.archdsl.ArchDSL.validate"
+                 commandId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.validate"
                  style="push"
                  tooltip="Trigger expensive validation">
             <visibleWhen checkEnabled="false">
                 <reference
-                    definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                    definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
                 </reference>
             </visibleWhen>
          </command>  
@@ -159,7 +159,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName" 
          		style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened" />
+                	<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -167,7 +167,7 @@
          	<command commandId="org.eclipse.xtext.ui.editor.copyqualifiedname.EditorCopyQualifiedName"
             	style="push" tooltip="Copy Qualified Name">
             	<visibleWhen checkEnabled="false">
-                	<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened" />
+                	<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened" />
             	</visibleWhen>
          	</command>  
          </menuContribution>
@@ -176,7 +176,7 @@
 				style="push" tooltip="Copy Qualified Name">
          		<visibleWhen checkEnabled="false">
 	            	<and>
-	            		<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.XtextEditor.opened" />
+	            		<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.XtextEditor.opened" />
 						<iterate>
 							<adapt type="org.eclipse.xtext.ui.editor.outline.IOutlineNode" />
 						</iterate>
@@ -189,7 +189,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command commandId="org.eclipse.xtext.ui.editor.FindReferences">
 				<visibleWhen checkEnabled="false">
-                	<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                	<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
                 	</reference>
             	</visibleWhen>
 			</command>
@@ -197,11 +197,11 @@
 	</extension>
 	<extension point="org.eclipse.ui.handlers">
 	    <handler
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.findrefs.FindReferencesHandler"
             commandId="org.eclipse.xtext.ui.editor.FindReferences">
             <activeWhen>
                 <reference
-                    definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                    definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
                 </reference>
             </activeWhen>
         </handler>
@@ -212,19 +212,19 @@
 	<extension
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
-			class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
+			class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
 			type="arch">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
             uriExtension="arch">
         </resourceServiceProvider>
     </extension>
 
 
-	<!-- marker definitions for jp.ac.kyushu.iarch.archdsl.ArchDSL -->
+	<!-- marker definitions for jp.ac.kyushu_u.iarch.archdsl.ArchDSL -->
 	<extension
 	        id="archdsl.check.fast"
 	        name="ArchDSL Problem"
@@ -250,27 +250,27 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
       </participant>
    </extension>
    <extension
             point="org.eclipse.ui.preferencePages">
         <page
-            category="jp.ac.kyushu.iarch.archdsl.ArchDSL"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL.compiler.preferencePage"
+            category="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.compiler.preferencePage"
             name="Compiler">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
         </page>
     </extension>
     <extension
             point="org.eclipse.ui.propertyPages">
         <page
-            category="jp.ac.kyushu.iarch.archdsl.ArchDSL"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
-            id="jp.ac.kyushu.iarch.archdsl.ArchDSL.compiler.propertyPage"
+            category="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.builder.preferences.BuilderPreferencePage"
+            id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.compiler.propertyPage"
             name="Compiler">
-            <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+            <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
 			</enabledWhen>
@@ -282,11 +282,11 @@
 	<extension
 		point="org.eclipse.ui.handlers">
 		<handler 
-			class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
+			class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.outline.quickoutline.ShowQuickOutlineActionHandler"
 			commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline">
 			<activeWhen>
 				<reference
-					definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+					definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -306,33 +306,33 @@
 				style="push"
 				tooltip="Open Quick Outline">
 				<visibleWhen checkEnabled="false">
-					<reference definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened"/>
+					<reference definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened"/>
 				</visibleWhen>
 			</command>
 		</menuContribution>
 	</extension>
-    <!-- quickfix marker resolution generator for jp.ac.kyushu.iarch.archdsl.ArchDSL -->
+    <!-- quickfix marker resolution generator for jp.ac.kyushu_u.iarch.archdsl.ArchDSL -->
     <extension
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="jp.ac.kyushu.iarch.archdsl.ui.archdsl.check.fast">
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="jp.ac.kyushu_u.iarch.archdsl.ui.archdsl.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="jp.ac.kyushu.iarch.archdsl.ui.archdsl.check.normal">
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="jp.ac.kyushu_u.iarch.archdsl.ui.archdsl.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
             </attribute>
         </markerResolutionGenerator>
         <markerResolutionGenerator
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="jp.ac.kyushu.iarch.archdsl.ui.archdsl.check.expensive">
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
+            markerType="jp.ac.kyushu_u.iarch.archdsl.ui.archdsl.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -342,11 +342,11 @@
    	<!-- Rename Refactoring -->
 	<extension point="org.eclipse.ui.handlers">
 		<handler 
-			class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
+			class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.DefaultRenameElementHandler"
 			commandId="org.eclipse.xtext.ui.refactoring.RenameElement">
 			<activeWhen>
 				<reference
-					definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+					definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
 				</reference>
 			</activeWhen>
 		</handler>
@@ -358,7 +358,7 @@
                style="push">
             <visibleWhen checkEnabled="false">
                <reference
-                     definitionId="jp.ac.kyushu.iarch.archdsl.ArchDSL.Editor.opened">
+                     definitionId="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.Editor.opened">
                </reference>
             </visibleWhen>
          </command>
@@ -366,29 +366,29 @@
    </extension>
    <extension point="org.eclipse.ui.preferencePages">
 	    <page
-	        category="jp.ac.kyushu.iarch.archdsl.ArchDSL"
-	        class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
-	        id="jp.ac.kyushu.iarch.archdsl.ArchDSL.refactoring"
+	        category="jp.ac.kyushu_u.iarch.archdsl.ArchDSL"
+	        class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.refactoring.ui.RefactoringPreferencePage"
+	        id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.refactoring"
 	        name="Refactoring">
-	        <keywordReference id="jp.ac.kyushu.iarch.archdsl.ui.keyword_ArchDSL"/>
+	        <keywordReference id="jp.ac.kyushu_u.iarch.archdsl.ui.keyword_ArchDSL"/>
 	    </page>
 	</extension>
 
   <extension point="org.eclipse.compare.contentViewers">
-    <viewer id="jp.ac.kyushu.iarch.archdsl.ArchDSL.compare.contentViewers"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+    <viewer id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.compare.contentViewers"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="arch">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
-    <viewer id="jp.ac.kyushu.iarch.archdsl.ArchDSL.compare.contentMergeViewers"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
+    <viewer id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.compare.contentMergeViewers"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
             extensions="arch" label="ArchDSL Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
-    <provider id="jp.ac.kyushu.iarch.archdsl.ArchDSL.editors.documentProviders"
-            class="jp.ac.kyushu.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
+    <provider id="jp.ac.kyushu_u.iarch.archdsl.ArchDSL.editors.documentProviders"
+            class="jp.ac.kyushu_u.iarch.archdsl.ui.ArchDSLExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
             extensions="arch">
     </provider>
   </extension>

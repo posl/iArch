@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: iArch SequenceDiagram
 Bundle-SymbolicName: jp.ac.kyushu_u.iarch.sequencediagram;singleton:=true
 Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: jp.ac.kyushu.iarch.sequencediagram.Activator
+Bundle-Activator: jp.ac.kyushu_u.iarch.sequencediagram.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.graphiti;bundle-version="0.9.2",
@@ -16,7 +16,7 @@ Require-Bundle: org.eclipse.ui,
  jp.ac.kyushu_u.iarch.archdsl
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: jp.ac.kyushu.iarch.sequencediagram.diagram.providers,
- jp.ac.kyushu.iarch.sequencediagram.features,
- jp.ac.kyushu.iarch.sequencediagram.utils
+Export-Package: jp.ac.kyushu_u.iarch.sequencediagram.diagram.providers,
+ jp.ac.kyushu_u.iarch.sequencediagram.features,
+ jp.ac.kyushu_u.iarch.sequencediagram.utils
 Bundle-Vendor: POSL Research Group

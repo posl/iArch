@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: iArch CheckPlugin
 Bundle-SymbolicName: jp.ac.kyushu_u.iarch.checkplugin;singleton:=true
 Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: jp.ac.kyushu.iarch.checkplugin.Activator
+Bundle-Activator: jp.ac.kyushu_u.iarch.checkplugin.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.xtext.ui;bundle-version="2.4.1",
@@ -27,9 +27,9 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ClassPath: .
-Export-Package: jp.ac.kyushu.iarch.checkplugin.handler
-Import-Package: jp.ac.kyushu.iarch.basefunction.controller,
- jp.ac.kyushu.iarch.basefunction.reader,
+Export-Package: jp.ac.kyushu_u.iarch.checkplugin.handler
+Import-Package: jp.ac.kyushu_u.iarch.basefunction.controller,
+ jp.ac.kyushu_u.iarch.basefunction.reader,
  org.apache.log4j;version="1.2.15",
  org.eclipse.debug.core,
  org.eclipse.debug.core.model
