@@ -512,13 +512,11 @@ public class ArchfaceViewPart extends ViewPart {
 		recentType.setText("Recent Uncertain Type");
 		recentType.setWidth(200);
 		TreeColumn designPointColumn = new TreeColumn(componentTree, SWT.LEFT);
-		designPointColumn.setText("DP");
-		designPointColumn.setWidth(50);
-		designPointColumn.setToolTipText("Design points");
+		designPointColumn.setText("Design Points");
+		designPointColumn.setWidth(150);
 		TreeColumn programPointColumn = new TreeColumn(componentTree, SWT.LEFT);
-		programPointColumn.setText("PP");
-		programPointColumn.setWidth(50);
-		programPointColumn.setToolTipText("Program points");
+		programPointColumn.setText("Program Points");
+		programPointColumn.setWidth(150);
 		componentTree.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -546,9 +544,8 @@ public class ArchfaceViewPart extends ViewPart {
 		behaviorImplColumn.setText("Impl");
 		behaviorImplColumn.setWidth(50);
 		TreeColumn behaviorDesignPointColumn = new TreeColumn(behaviorTree, SWT.LEFT);
-		behaviorDesignPointColumn.setText("DP");
-		behaviorDesignPointColumn.setWidth(50);
-		behaviorDesignPointColumn.setToolTipText("Design points");
+		behaviorDesignPointColumn.setText("Design points");
+		behaviorDesignPointColumn.setWidth(150);
 		behaviorTreeViewer = new TreeViewer(behaviorTree);
 		behaviorTreeViewer.setContentProvider(new BehaviorTreeContentProvider());
 		behaviorTreeViewer.setLabelProvider(new BehaviorTableLabelProvider());
