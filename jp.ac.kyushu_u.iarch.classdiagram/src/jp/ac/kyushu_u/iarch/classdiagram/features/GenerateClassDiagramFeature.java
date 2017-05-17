@@ -123,7 +123,7 @@ public class GenerateClassDiagramFeature extends AbstractCustomFeature{
 		if (classDiagramIResource == null || archfile == null) {
 			MessageDialog.open(MessageDialog.WARNING,
 					null, "Can't slice",
-					"Please check the Archface Configration.(Menu->iArch->Configration)", SWT.None);
+					"Please check the Archface Configuration.(Menu->iArch->Configuration)", SWT.None);
 			return;
 		}
 		ArchModel archModel = new ArchModelController(archfile);

@@ -58,7 +58,7 @@ public class XMLreader {
 		if (!file.exists()){
 			try {
 				IMarker marker = project.createMarker(IMarker.PROBLEM);
-				marker.setAttribute(IMarker.MESSAGE, "Auto-Check failed: Please check the Archface Configration.(Menu->iArch->Configration)");
+				marker.setAttribute(IMarker.MESSAGE, "Auto-Check failed: Please check the Archface Configuration.(Menu->iArch->Configuration)");
 				marker.setAttribute(IMarker.DONE, false);
 				marker.setAttribute(IMarker.PRIORITY, IMarker.PRIORITY_HIGH);
 			} catch (CoreException e) {
