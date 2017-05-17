@@ -20,7 +20,7 @@ import jp.ac.kyushu_u.iarch.sequencediagram.utils.MessageUtils;
 
 public class CreateAlternativeMessageFeature extends AbstractCreateConnectionFeature {
 	private static final String DIALOG_TITLE = "Create AlternativeMessage";
-	private static final String DIALOG_MESSAGE = "Enter new AlternativeMessage names";
+	private static final String DIALOG_MESSAGE = "Enter new AlternativeMessage names. (separated by space)";
 
 	public CreateAlternativeMessageFeature(IFeatureProvider fp) {
 		super(fp, "AlternativeMessage", "add AlternativeMessage");

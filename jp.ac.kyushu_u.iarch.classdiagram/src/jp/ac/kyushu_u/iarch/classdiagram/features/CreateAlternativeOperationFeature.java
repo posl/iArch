@@ -15,7 +15,7 @@ import umlClass.UmlClassFactory;
 
 public class CreateAlternativeOperationFeature extends AbstractCreateFeature {
 	private static final String TITLE = "Create AlternativeOperation";
-	private static final String USER_QUESTION = "Enter new AlternativeOperation name";
+	private static final String USER_QUESTION = "Enter new AlternativeOperation names. (separated by space)";
 
 	public CreateAlternativeOperationFeature(IFeatureProvider fp) {
 		super(fp, "AlternativeOperation", "Create AlternativeOperation");
