@@ -54,19 +54,19 @@
        </command>
        <command
              id="jp.ac.kyushu_u.iarch.checkplugin.syncModelToArch"
-             name="Model -&gt; iArch">
+             name="Model -&gt; Archface">
        </command>
        <command
              id="jp.ac.kyushu_u.iarch.checkplugin.syncArchToModel"
-             name="iArch -&gt; Model">
+             name="Archface -&gt; Model">
        </command>
        <command
              id="jp.ac.kyushu_u.iarch.checkplugin.syncCodeToArch"
-             name="Code -&gt; iArch">
+             name="Code -&gt; Archface">
        </command>
        <command
              id="jp.ac.kyushu_u.iarch.checkplugin.syncArchToCode"
-             name="iArch -&gt; Code">
+             name="Archface -&gt; Code">
        </command>
    
    </extension>
