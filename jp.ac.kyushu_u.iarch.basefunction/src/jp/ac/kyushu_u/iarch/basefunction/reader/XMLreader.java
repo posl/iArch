@@ -31,7 +31,8 @@ public class XMLreader {
 	private List<String> SourceCodePathes = new ArrayList<String>();
 	private String ARXMLPath = null;
 	private IJavaProject JavaProject = null;
-	
+	private boolean succeeded_ = false;
+
 	public static final String CONFIG_FILEPATH = "Config.xml";
 
 
@@ -114,6 +115,7 @@ public class XMLreader {
 					setARXMLPath(attribute.getValue());
 				}
 
+				succeeded_ = true;
 			}
 			catch(DocumentException e){
 				System.out.println(e.getMessage());
@@ -214,5 +216,9 @@ public class XMLreader {
 	 */
 	private void setJavaProject(IJavaProject javaProject) {
 		JavaProject = javaProject;
+	}
+
+	public boolean succeeded() {
+		return succeeded_;
 	}
 }

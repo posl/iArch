@@ -78,6 +78,10 @@ public class ArchfaceChecker extends XMLreader {
 		return;
 	}
 
+	public boolean hasConfig() {
+		return succeeded();
+	}
+
 	public List<ComponentClassPairModel> getClassPairs() {
 		return classPairs;
 	}
