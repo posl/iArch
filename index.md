@@ -24,7 +24,9 @@ It also has testing support and model inspection features for testing the softwa
 
 For detailed information, please refer to the [documentation](documentation/). For basic usage of iArch-U, please see the [tutorials](tutorials/).
 
-<iframe src="https://www.youtube.com/embed/uM6H-vkddNg?rel=0" frameborder="0" allowfullscreen></iframe>
+<div markdown="0">
+  <iframe src="https://www.youtube.com/embed/uM6H-vkddNg?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
 
 # System requirements
 
