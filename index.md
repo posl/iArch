@@ -7,8 +7,8 @@ permalink: /
 # What is iArch-U?
 
 <div markdown="0" class="introduction-video">
-  <div markdown="0" class="video-wrapper tutorial-video-wrapper">
-    <iframe src="https://www.youtube.com/embed/uM6H-vkddNg?rel=0" frameborder="0" allowfullscreen></iframe>
+  <div markdown="0" class="video-wrapper introduction-video-wrapper">
+    <iframe src="https://www.youtube.com/embed/jC5EvlswRNA?rel=0" frameborder="0" allowfullscreen></iframe>
   </div>
 </div>
 
