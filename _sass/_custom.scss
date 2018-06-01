@@ -269,4 +269,26 @@ div.page-content {
         border-color: hsl($sub-color-hue, 20% * $theme-color-sat, 20%);
         color: hsl($sub-color-hue, 20% * $theme-color-sat, 40%);
     }
+
+    .introduction-video {
+        background-color: hsl($sub-color-hue, 20% * $theme-color-sat, 90%);
+        padding: 8px 15px 15px;
+        margin: 20px auto;
+        text-align: center;
+        // border-radius: 4px;
+    }
+
+    .introduction-video:before {
+        content: 'Introduction Video';
+        display: block;
+        margin-bottom: 8px;
+        font-family: $sub-font-family;
+        font-size: 100%;
+        font-weight: bold;
+        padding: 0px 20px;
+        border-bottom: dashed;
+        border-width: 1px;
+        border-color: hsl($sub-color-hue, 20% * $theme-color-sat, 20%);
+        color: hsl($sub-color-hue, 20% * $theme-color-sat, 40%);
+    }
 }
