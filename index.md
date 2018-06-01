@@ -6,12 +6,6 @@ permalink: /
 
 # What is iArch-U?
 
-<div markdown="0" class="tutorial-video">
-  <div markdown="0" class="video-wrapper tutorial-video-wrapper">
-    <iframe src="https://www.youtube.com/embed/uM6H-vkddNg?rel=0" frameborder="0" allowfullscreen></iframe>
-  </div>
-</div>
-
 Uncertainty can appear in all aspects of software development: uncertainty in requirements analysis, design decisions, implementation and testing.
 As the research on uncertainty is so young, there are many issues to be tackled.
 Modularity for uncertainty is one of them.
@@ -29,6 +23,8 @@ iArch-U is an [Eclipse](https://eclipse.org/) plug-in, so you can view and edit 
 It also has testing support and model inspection features for testing the software with uncertainty.
 
 For detailed information, please refer to the [documentation](documentation/). For basic usage of iArch-U, please see the [tutorials](tutorials/).
+
+<iframe src="https://www.youtube.com/embed/uM6H-vkddNg?rel=0" frameborder="0" allowfullscreen></iframe>
 
 # System requirements
 
