@@ -15,11 +15,16 @@ public class ShowFSPDialog extends Dialog {
 	private static final String TITLE = "Generated FSP";
 	private static final Point initialSize = new Point(960, 640);
 
+	private String title = null;
 	private Text text = null;
 	private String code = null;
 
 	public ShowFSPDialog(Shell parentShell) {
+		this(parentShell, TITLE);
+	}
+	public ShowFSPDialog(Shell parentShell, String title) {
 		super(parentShell);
+		this.title = title;
 	}
 
 	@Override
@@ -35,7 +40,7 @@ public class ShowFSPDialog extends Dialog {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(TITLE);
+		newShell.setText(title);
 	}
 
 	@Override

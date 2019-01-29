@@ -1,10 +1,13 @@
 package jp.ac.kyushu_u.iarch.checkplugin.handler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.Annotation;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Connector;
@@ -22,18 +25,25 @@ import jp.ac.kyushu_u.iarch.checkplugin.utils.ArchModelUtils;
 public class ConnectorToFSP {
 	
 	public String convert(Model archface) {
+		return convert(archface, false);
+	}
+	public String convert(Model archface, boolean isProbabilistic) {
 		//certain connectorをFSPに変換したものをcodeに入れていく
 		//uncertain connectorをFSPに変換したものをucodeに入れていく
 		List<String> code = certainBehaviorFSP(archface);
-		List<String> ucode = uncertainBehaviorFSP(archface);
+		List<String> ucode = uncertainBehaviorFSP(archface, isProbabilistic);
 		//System.out.println(ucode);
 		if (code.isEmpty() && ucode.isEmpty()) {
 			return null;
 		}
 
 		StringBuffer sb = new StringBuffer();
-		for (String c : code) {
-			sb.append(c).append(".\n");
+		if (isProbabilistic) {
+			sb.append("pca\n\n");
+		} else {
+			for (String c : code) {
+				sb.append(c).append(".\n");
+			}
 		}
 		if (!ucode.isEmpty()) {
 			boolean firstUc = true;
@@ -78,23 +88,30 @@ public class ConnectorToFSP {
 
 	//uncertain connectorをFSPに変換
 	public List<String> uncertainBehaviorFSP(Model archface) {
+		return uncertainBehaviorFSP(archface, false);
+	}
+	public List<String> uncertainBehaviorFSP(Model archface, boolean isProbabilistic) {
 		List<String> uncertainCodeList = new ArrayList<String>();
 		for (UncertainConnector uconnector : archface.getU_connectors()) {
 			for (UncertainBehavior ubehavior : uconnector.getU_behaviors()) {
-				StringBuffer uncertainCode = new StringBuffer();
+				if (isProbabilistic) {
+					uncertainCodeList.add(getFSPString(ubehavior));
+				} else {
+					StringBuffer uncertainCode = new StringBuffer();
 
-				uncertainCode.append("U").append(ubehavior.getName())
+					uncertainCode.append("U").append(ubehavior.getName())
 					.append(" = (");
 
-				List<String> altmethods = countaltmethod(ubehavior);
-				if (altmethods.isEmpty()) {
-					uncertainCode.append(printWithoutAltMethod(ubehavior, archface));
-				} else {
-					uncertainCode.append(printwithAltMethod(altmethods, ubehavior, archface));
-				}
+					List<String> altmethods = countaltmethod(ubehavior);
+					if (altmethods.isEmpty()) {
+						uncertainCode.append(printWithoutAltMethod(ubehavior, archface));
+					} else {
+						uncertainCode.append(printwithAltMethod(altmethods, ubehavior, archface));
+					}
 
-				uncertainCode.append(")");
-				uncertainCodeList.add(uncertainCode.toString());
+					uncertainCode.append(")");
+					uncertainCodeList.add(uncertainCode.toString());
+				}
 			}
 		}
 		return uncertainCodeList;
@@ -268,6 +285,298 @@ public class ConnectorToFSP {
 			}
 		}
 		return selectAlt;
+	}
+
+	private static class BranchInfo {
+		double probability;
+		String identifier;
+		BranchInfo(double probability, String identifier) {
+			this.probability = probability;
+			this.identifier = identifier;
+		}
+		BranchInfo copy() {
+			return new BranchInfo(probability, identifier);
+		}
+	}
+
+	private List<List<BranchInfo>> convertToBranchInfo(UncertainBehavior uBehavior) {
+		List<List<BranchInfo>> info = new ArrayList<List<BranchInfo>>();
+		for (SuperCall superCall : uBehavior.getCall()) {
+			info.add(convertToBranchInfo(superCall));
+		}
+		return info;
+	}
+
+	private List<BranchInfo> convertToBranchInfo(SuperCall superCall) {
+		if (superCall instanceof CertainCall) {
+			return Arrays.asList(new BranchInfo(1.0, getFSPString((CertainCall) superCall)));
+		} else if (superCall instanceof OptCall) {
+			OptCall optCall = (OptCall) superCall;
+
+			double probability = 0.5;
+			if (! optCall.getAnnotations().isEmpty()) {
+				Annotation annotation = optCall.getAnnotations().get(0);
+				String aName = annotation.getName();
+				if ("ExecForce".equals(aName)) {
+					probability = 1.0;
+				} else if ("ExecIgnore".equals(aName)) {
+					probability = 0.0;
+				} else if ("ExecRatio".equals(aName)) {
+					if (! annotation.getArgs().isEmpty()) {
+						try {
+							probability = Double.parseDouble(annotation.getArgs().get(0));
+						} catch (NumberFormatException e) {
+							System.err.println("ignored ExecRatio with non-number.");
+						}
+					} else {
+						System.err.println("ignored ExecRatio without arguments.");
+					}
+				} else if ("ExecWeight".equals(aName)) {
+					System.err.println("ignored ExecWeight.");
+				}
+			}
+
+			if (probability <= 0.0) {
+				return Arrays.asList(new BranchInfo(1.0, null));
+			} else if (probability >= 1.0) {
+				return Arrays.asList(new BranchInfo(1.0, getFSPString((OptCall) superCall)));
+			} else {
+				BranchInfo bi1 = new BranchInfo(1.0 - probability, null);
+				BranchInfo bi2 = new BranchInfo(probability, getFSPString((OptCall) superCall));
+				return Arrays.asList(bi1, bi2);
+			}
+		} else if (superCall instanceof AltCall) {
+			AltCall altCall = (AltCall) superCall;
+
+			List<Annotation> annotationList = new ArrayList<Annotation>();
+			if (altCall.getName().getAnnotations().isEmpty()) {
+				annotationList.add(null);
+			} else {
+				annotationList.add(altCall.getName().getAnnotations().get(0));
+			}
+			for (AltCallChoice choice : altCall.getA_name()) {
+				if (choice.getAnnotations().isEmpty()) {
+					annotationList.add(null);
+				} else {
+					annotationList.add(choice.getAnnotations().get(0));
+				}
+			}
+			int size = annotationList.size();
+
+			List<String> execForceChoices = new ArrayList<String>();
+			for (int i = 0; i < size; ++i) {
+				Annotation an = annotationList.get(i);
+				if (an != null && "ExecForce".equals(an.getName())) {
+					execForceChoices.add(getFSPString(altCall, i));
+				}
+			}
+			if (! execForceChoices.isEmpty()) {
+				double probability = 1.0 / execForceChoices.size();
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
+				for (String identifier : execForceChoices) {
+					bis.add(new BranchInfo(probability, identifier));
+				}
+				return bis;
+			}
+
+			boolean hasExecRatio = false;
+			boolean hasExecWeight = false;
+			for (int i = 0; i < size; ++i) {
+				Annotation an = annotationList.get(i);
+				if (an != null) {
+					if ("ExecRatio".equals(an.getName())) {
+						if (! an.getArgs().isEmpty()) {
+							try {
+								Double.parseDouble(an.getArgs().get(0));
+								hasExecRatio = true;
+							} catch (NumberFormatException e) {
+								System.err.println("ignored ExecRatio with non-number.");
+							}
+						}
+					} else if ("ExecWeight".equals(an.getName())) {
+						if (! an.getArgs().isEmpty()) {
+							try {
+								Double.parseDouble(an.getArgs().get(0));
+								hasExecWeight = true;
+							} catch (NumberFormatException e) {
+								System.err.println("ignored ExecWeight with non-number.");
+							}
+						}
+					}
+				}
+			}
+			if (hasExecRatio) {
+				if (hasExecWeight) {
+					System.err.println("cannot set ExecRatio and ExecWeight.");
+				} else {
+					double[] ratio = new double[size];
+					for (int i = 0; i < size; ++i) {
+						ratio[i] = 0.0;
+						Annotation an = annotationList.get(i);
+						if (an != null) {
+							if ("ExecRatio".equals(an.getName())) {
+								if (! an.getArgs().isEmpty()) {
+									try {
+										ratio[i] = Double.parseDouble(an.getArgs().get(0));
+									} catch (NumberFormatException e) {
+									}
+								}
+							}
+						}
+					}
+					double totalRatio = 0.0;
+					int countPositive = 0;
+					for (int i = 0; i < size; ++i) {
+						if (ratio[i] > 0.0) {
+							totalRatio += ratio[i];
+							countPositive++;
+						}
+					}
+					if (totalRatio >= 1.0) {
+						List<BranchInfo> bis = new ArrayList<BranchInfo>();
+						for (int i = 0; i < size; ++i) {
+							if (ratio[i] > 0.0) {
+								bis.add(new BranchInfo(ratio[i] / totalRatio,
+										getFSPString(altCall, i)));
+							}
+						}
+						return bis;
+					} else if (countPositive > 0) {
+						double rest = (1.0 - totalRatio) / (size - countPositive);
+						List<BranchInfo> bis = new ArrayList<BranchInfo>();
+						for (int i = 0; i < size; ++i) {
+							double p = ratio[i] > 0.0 ? ratio[i] : rest;
+							bis.add(new BranchInfo(p, getFSPString(altCall, i)));
+						}
+						return bis;
+					}
+				}
+			} else if (hasExecWeight) {
+				double[] weight = new double[size];
+				for (int i = 0; i < size; ++i) {
+					weight[i] = 0.0;
+					Annotation an = annotationList.get(i);
+					if (an != null) {
+						if ("ExecWeight".equals(an.getName())) {
+							if (! an.getArgs().isEmpty()) {
+								try {
+									weight[i] = Double.parseDouble(an.getArgs().get(0));
+								} catch (NumberFormatException e) {
+								}
+							}
+						}
+					}
+				}
+				double totalWeight = 0.0;
+				for (int i = 0; i < size; ++i) {
+					if (weight[i] > 0.0) {
+						totalWeight += weight[i];
+					}
+				}
+				if (totalWeight > 0.0) {
+					List<BranchInfo> bis = new ArrayList<BranchInfo>();
+					for (int i = 0; i < size; ++i) {
+						if (weight[i] > 0.0) {
+							double p = weight[i] / totalWeight;
+							bis.add(new BranchInfo(p, getFSPString(altCall, i)));
+						}
+					}
+					return bis;
+				}
+			}
+
+			List<String> validChoices = new ArrayList<String>();
+			for (int i = 0; i < size; ++i) {
+				Annotation an = annotationList.get(i);
+				if (!(an != null && "ExecIgnore".equals(an.getName()))) {
+					validChoices.add(getFSPString(altCall, i));
+				}
+			}
+			if (validChoices.isEmpty()) {
+				System.err.println("ignored ExecIgnore for all choices.");
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
+				for (int i = 0; i < size; ++i) {
+					bis.add(new BranchInfo(1.0 / size, getFSPString(altCall, i)));
+				}
+				return bis;
+			} else {
+				double probability = 1.0 / validChoices.size();
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
+				for (String identifier : validChoices) {
+					bis.add(new BranchInfo(probability, identifier));
+				}
+				return bis;
+			}
+		}
+		return null;
+	}
+
+	private List<List<BranchInfo>> flattenBranchInfo(List<List<BranchInfo>> info) {
+		List<List<BranchInfo>> flattenInfo = null;
+		for (List<BranchInfo> branch : info) {
+			if (flattenInfo == null) {
+				flattenInfo = new ArrayList<List<BranchInfo>>();
+				for (BranchInfo choice : branch) {
+					List<BranchInfo> flattenChoice = new ArrayList<BranchInfo>();
+					flattenChoice.add(choice.copy());
+					flattenInfo.add(flattenChoice);
+				}
+			} else {
+				List<List<BranchInfo>> newInfo = new ArrayList<List<BranchInfo>>();
+				for (List<BranchInfo> flattenChoice : flattenInfo) {
+					for (BranchInfo choice : branch) {
+						List<BranchInfo> newChoice = new ArrayList<BranchInfo>();
+						for (BranchInfo f : flattenChoice) {
+							newChoice.add(f.copy());
+						}
+						newChoice.add(choice.copy());
+						newInfo.add(newChoice);
+					}
+				}
+				flattenInfo = newInfo;
+			}
+		}
+
+		for (List<BranchInfo> choice : flattenInfo) {
+			for (int j = 1; j < choice.size(); ++j) {
+				choice.get(0).probability *= choice.get(j).probability;
+				choice.get(j).probability = 1.0;
+			}
+		}
+		return flattenInfo;
+	}
+
+	private String getFSPString(UncertainBehavior uBehavior) {
+		List<List<BranchInfo>> info = convertToBranchInfo(uBehavior);
+		info = flattenBranchInfo(info);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("U").append(uBehavior.getName()).append(" = (");
+
+		boolean firstChoice = true;
+		for (List<BranchInfo> choice : info) {
+			if (firstChoice) {
+				firstChoice = false;
+			} else {
+				sb.append(" |\n\t");
+			}
+
+			sb.append("<").append(choice.get(0).probability).append("> ");
+			boolean first = true;
+			for (BranchInfo step : choice) {
+				if (step.identifier != null) {
+					if (first) {
+						first = false;
+					} else {
+						sb.append("<1.0> ");
+					}
+					sb.append(step.identifier).append(" -> ");
+				}
+			}
+			sb.append("U").append(uBehavior.getEnd().getName());
+		}
+
+		return sb.append(")").toString();
 	}
 
 	private String getFSPString(Method methodCall) {
