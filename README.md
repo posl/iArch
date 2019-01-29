@@ -14,7 +14,7 @@ How to build
 3. Select all Eclipse projects, and select `Next`, then you will see 9 iArch projects and several example projects which exhibit how to use iArch.
 
 ### Generate Xtext code ###
-1. Open a file: `jp.ac.kyushu.iarch.archdsl/src/jp.ac.kyushu.iarch.archdsl/ArchDSL.xtext`.
+1. Open a file: `jp.ac.kyushu_u.iarch.archdsl/src/jp.ac.kyushu_u.iarch.archdsl/ArchDSL.xtext`.
 2. Select `Run` -> `Generate Language Infrastructure`.
 
 How to run
@@ -27,8 +27,8 @@ Included middleware and libraries
 * Eclipse Mars.2~
 * Graphiti SDK Plus 0.12.2~
 * Xtext Complete SDK 2.9.1~
-* Libraries included in `jp.ac.kyushu.iarch.basefunction/lib`.  
-You can also check the licenses in `jp.ac.kyushu.iarch.basefunction/lib/licenses`
+* Libraries included in `jp.ac.kyushu_u.iarch.basefunction/lib`.
+You can also check the licenses in `jp.ac.kyushu_u.iarch.basefunction/lib/licenses`
     * [dom4j-1.6.1](http://dom4j.sourceforge.net/dom4j-1.6.1/index.html) | [Apache-style open source license](http://dom4j.sourceforge.net/dom4j-1.6.1/faq.html)
     * [jaxen-1.1.6](http://jaxen.org/) | [Apache-style open source license](http://jaxen.org/faq.html)
     * [logback-1.0.13](http://logback.qos.ch/) | [EPL v1.0 or LPGL 2.1](http://logback.qos.ch/license.html)
@@ -39,4 +39,3 @@ You can also check the licenses in `jp.ac.kyushu.iarch.basefunction/lib/licenses
 License
 ------
 Eclipse Public License - Version 1.0
-
