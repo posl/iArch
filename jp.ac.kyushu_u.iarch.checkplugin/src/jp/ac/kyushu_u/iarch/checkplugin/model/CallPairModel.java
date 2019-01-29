@@ -6,6 +6,8 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.OptCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.SuperCall;
@@ -47,7 +49,13 @@ public class CallPairModel{
 			SuperCall methodSuperCall) {
 		this.componentClassPairModels = componentClassPairModels;
 		this.methodSuperCall = (SuperCall) methodSuperCall;
-		this.archMethod = methodSuperCall.getName();
+		if (methodSuperCall instanceof CertainCall) {
+			this.archMethod = ((CertainCall) methodSuperCall).getName();
+		} else if (methodSuperCall instanceof OptCall) {
+			this.archMethod = ((OptCall) methodSuperCall).getName();
+		} else if (methodSuperCall instanceof AltCall) {
+			this.archMethod = ((AltCall) methodSuperCall).getName().getName();
+		}
 		// tmp impl(finally, archMethod type will change Method from
 		// SuperMethod)
 		//this.name = ((Method) this.archMethod).getName();
@@ -61,8 +69,9 @@ public class CallPairModel{
 		}
 		if (methodSuperCall instanceof AltCall) {
 			this.isAlt = true;
-			for (SuperMethod altMethod : ((AltCall) methodSuperCall)
+			for (AltCallChoice choice : ((AltCall) methodSuperCall)
 					.getA_name()) {
+				SuperMethod altMethod = choice.getName();
 				this.altMethodPairSets
 						.add(getMethodPairModelByArchMethod(altMethod));
 			}
@@ -97,8 +106,9 @@ public class CallPairModel{
 		}
 		if (methodSuperCall instanceof AltCall) {
 			this.isAlt = true;
-			for (SuperMethod altMethod : ((AltCall) methodSuperCall)
+			for (AltCallChoice choice : ((AltCall) methodSuperCall)
 					.getA_name()) {
+				SuperMethod altMethod = choice.getName();
 				this.altMethodPairSets
 						.add(getMethodPairModelByArchMethod(altMethod));
 			}

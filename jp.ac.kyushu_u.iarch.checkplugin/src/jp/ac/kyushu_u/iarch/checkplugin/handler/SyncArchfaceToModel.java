@@ -3,6 +3,7 @@ package jp.ac.kyushu_u.iarch.checkplugin.handler;
 import java.io.IOException;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
@@ -477,7 +478,7 @@ public class SyncArchfaceToModel implements IHandler {
 				}
 			} else if (superCall instanceof AltCall) {
 				AltCall altCall = (AltCall) superCall;
-				SuperMethod superMethod = altCall.getName();
+				SuperMethod superMethod = altCall.getName().getName();
 				if (superMethod instanceof Method) {
 					method = (Method) superMethod;
 					ifName = ArchModelUtils.getClassName(method);
@@ -526,7 +527,8 @@ public class SyncArchfaceToModel implements IHandler {
 				StringBuilder sb = new StringBuilder();
 				sb.append(method.getName());
 				int addY = 80;
-				for (SuperMethod sm : ((AltCall) superCall).getA_name()) {
+				for (AltCallChoice choice : ((AltCall) superCall).getA_name()) {
+					SuperMethod sm = choice.getName();
 					if (sm instanceof Method) {
 						sb.append(" ").append(((Method) sm).getName());
 						addY += 40;

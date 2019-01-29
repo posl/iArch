@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Method;
@@ -405,7 +406,7 @@ public class MethodEqualityUtils {
 	// Note that AltCall is consider not to contain OptMethod nor AltMethod.
 	public static List<MethodEquality> createAltMethodEquality(AltCall altCall, boolean checkClass) {
 		ArrayList<MethodEquality> equalities = new ArrayList<MethodEquality>();
-		SuperMethod firstSuperMethod = altCall.getName();
+		SuperMethod firstSuperMethod = altCall.getName().getName();
 		if (firstSuperMethod instanceof Method) {
 			Method firstMethod = (Method) firstSuperMethod;
 			if (checkClass) {
@@ -417,7 +418,8 @@ public class MethodEqualityUtils {
 		} else {
 			return null;
 		}
-		for (SuperMethod superMethod: altCall.getA_name()) {
+		for (AltCallChoice choice : altCall.getA_name()) {
+			SuperMethod superMethod = choice.getName();
 			if (superMethod instanceof Method) {
 				Method method = (Method) superMethod;
 				if (checkClass) {
@@ -434,13 +436,14 @@ public class MethodEqualityUtils {
 	}
 	public static List<MethodEquality> createAltMethodEquality(String className, AltCall altCall) {
 		ArrayList<MethodEquality> equalities = new ArrayList<MethodEquality>();
-		SuperMethod firstSuperMethod = altCall.getName();
+		SuperMethod firstSuperMethod = altCall.getName().getName();
 		if (firstSuperMethod instanceof Method) {
 			equalities.add(createMethodEquality(className, (Method) firstSuperMethod));
 		} else {
 			return null;
 		}
-		for (SuperMethod superMethod: altCall.getA_name()) {
+		for (AltCallChoice choice : altCall.getA_name()) {
+			SuperMethod superMethod = choice.getName();
 			if (superMethod instanceof Method) {
 				equalities.add(createMethodEquality(className, (Method) superMethod));
 			} else {
@@ -475,13 +478,13 @@ public class MethodEqualityUtils {
 		}
 		for (MethodEquality equality: equalities) {
 			boolean methodFound = false;
-			SuperMethod firstSuperMethod = altCall.getName();
+			SuperMethod firstSuperMethod = altCall.getName().getName();
 			if (equality.match(firstSuperMethod)) {
 				methodFound = true;
 			}
 			if (!methodFound) {
-				for (SuperMethod superMethod: altCall.getA_name()) {
-					if (equality.match(superMethod)) {
+				for (AltCallChoice choice : altCall.getA_name()) {
+					if (equality.match(choice.getName())) {
 						methodFound = true;
 						break;
 					}
@@ -561,11 +564,13 @@ public class MethodEqualityUtils {
 	public static boolean sameSuperCall(SuperCall sc1, SuperCall sc2, boolean checkClass) {
 		if (sc1 instanceof CertainCall) {
 			if (sc2 instanceof CertainCall) {
-				return sameSuperMethod(sc1.getName(), sc2.getName(), checkClass);
+				return sameSuperMethod(((CertainCall) sc1).getName(),
+						((CertainCall) sc2).getName(), checkClass);
 			}
 		} else if (sc1 instanceof OptCall) {
 			if (sc2 instanceof OptCall) {
-				return sameSuperMethod(sc1.getName(), sc2.getName(), checkClass);
+				return sameSuperMethod(((OptCall) sc1).getName(),
+						((OptCall) sc2).getName(), checkClass);
 			}
 		} else if (sc1 instanceof AltCall) {
 			if (sc2 instanceof AltCall) {

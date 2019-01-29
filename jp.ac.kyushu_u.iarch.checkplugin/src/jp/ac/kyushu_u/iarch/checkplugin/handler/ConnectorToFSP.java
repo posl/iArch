@@ -117,7 +117,7 @@ public class ConnectorToFSP {
 		for (SuperCall supercall : ubehavior.getCall()) {
 			if (supercall instanceof AltCall) {
 				// Store string representation of the first alternative.
-				altmethods.add(supercall.getName().toString());
+				altmethods.add(((AltCall) supercall).getName().getName().toString());
 			}
 		}
 		return altmethods;
@@ -288,7 +288,8 @@ public class ConnectorToFSP {
 		return getFSPString(optCall.getName());
 	}
 	private String getFSPString(AltCall altCall, int i) {
-		return getFSPString(i == 0 ? altCall.getName() : altCall.getA_name().get(i - 1));
+		return getFSPString(i == 0 ? altCall.getName().getName()
+				: altCall.getA_name().get(i - 1).getName());
 	}
 
 }

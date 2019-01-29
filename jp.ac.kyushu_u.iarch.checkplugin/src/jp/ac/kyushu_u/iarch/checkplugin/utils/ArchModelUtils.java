@@ -12,7 +12,9 @@ import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.Annotation;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.ArchDSLFactory;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
@@ -295,10 +297,11 @@ public class ArchModelUtils {
 	 */
 	public static AltMethod createAltMethodElement(AltCall altCall) {
 		AltMethod altMethod = ArchDSLFactory.eINSTANCE.createAltMethod();
-		SuperMethod firstSuperMethod = altCall.getName();
+		SuperMethod firstSuperMethod = altCall.getName().getName();
 		if (firstSuperMethod instanceof Method) {
 			altMethod.getMethods().add((Method) firstSuperMethod);
-			for (SuperMethod superMethod: altCall.getA_name()) {
+			for (AltCallChoice choice : altCall.getA_name()) {
+				SuperMethod superMethod = choice.getName();
 				if (superMethod instanceof Method) {
 					altMethod.getMethods().add((Method) superMethod);
 				} else {
@@ -506,10 +509,12 @@ public class ArchModelUtils {
 		AltCall altCall = ArchDSLFactory.eINSTANCE.createAltCall();
 		EList<Method> methods = altMethod.getMethods();
 		for (int j = 0; j < methods.size(); ++j) {
+			AltCallChoice choice = ArchDSLFactory.eINSTANCE.createAltCallChoice();
+			choice.setName(methods.get(j));
 			if (j == 0) {
-				altCall.setName(methods.get(j));
+				altCall.setName(choice);
 			} else {
-				altCall.getA_name().add(methods.get(j));
+				altCall.getA_name().add(choice);
 			}
 		}
 		return altCall;
@@ -527,6 +532,26 @@ public class ArchModelUtils {
 			}
 		}
 		return null;
+	}
+
+	public static AltCallChoice duplicateAltCallChoice(AltCallChoice choice) {
+		AltCallChoice newChoice = ArchDSLFactory.eINSTANCE.createAltCallChoice();
+		newChoice.setName(choice.getName());
+		for (Annotation annotation : choice.getAnnotations()) {
+			newChoice.getAnnotations().add(duplicateAnnotation(annotation));
+		}
+		return newChoice;
+	}
+
+	//
+	// Annotation
+	//
+
+	public static Annotation duplicateAnnotation(Annotation annotation) {
+		Annotation newAnnotation = ArchDSLFactory.eINSTANCE.createAnnotation();
+		newAnnotation.setName(annotation.getName());
+		newAnnotation.getArgs().addAll(annotation.getArgs());
+		return newAnnotation;
 	}
 
 	//

@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
@@ -145,9 +146,9 @@ public class ConnectorTypeCheckModel {
 			} else if (superCall instanceof AltCall) {
 				this.alternative = true;
 				AltCall ac = (AltCall) superCall;
-				setSuperMethod(ac.getName(), true);
-				for (SuperMethod sm : ac.getA_name()) {
-					setSuperMethod(sm, false);
+				setSuperMethod(ac.getName().getName(), true);
+				for (AltCallChoice choice : ac.getA_name()) {
+					setSuperMethod(choice.getName(), false);
 				}
 			}
 		}

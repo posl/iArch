@@ -1,6 +1,7 @@
 package jp.ac.kyushu_u.iarch.checkplugin.utils;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Method;
@@ -55,11 +56,11 @@ public abstract class MethodEquality {
 			return match(((OptCall) superCall).getName());
 		} else if (superCall instanceof AltCall) {
 			AltCall altCall = (AltCall) superCall;
-			if (match(altCall.getName())) {
+			if (match(altCall.getName().getName())) {
 				return true;
 			}
-			for (SuperMethod superMethod: altCall.getA_name()) {
-				if (match(superMethod)) {
+			for (AltCallChoice choice : altCall.getA_name()) {
+				if (match(choice.getName())) {
 					return true;
 				}
 			}

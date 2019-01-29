@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.ArchDSLFactory;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
@@ -163,51 +164,58 @@ public class RemoveUncertaintyAsUnnecessaryHandler extends AbstractUncertaintyOp
 		newAltCall.setOpt(altCall.isOpt());
 
 		// Check first Method.
-		SuperMethod firstSuperMethod = altCall.getName();
+		AltCallChoice firstChoice = altCall.getName();
+		SuperMethod firstSuperMethod = firstChoice.getName();
 		if (!(firstSuperMethod instanceof Method)) {
 			String message = "AltCall contains other than certain Method.";
 			throw new ModelErrorException(message);
 		}
 		if (equality.match((Method) firstSuperMethod)) {
 			// Remove first Method.
-			EList<SuperMethod> superMethods = altCall.getA_name();
-			if (superMethods.size() == 0) {
+			EList<AltCallChoice> choices = altCall.getA_name();
+			if (choices.size() == 0) {
 				// Wired but shortcut
 				return null;
-			} else if (superMethods.size() == 1) {
+			} else if (choices.size() == 1) {
 				// Convert to CertainCall
-				return ArchModelUtils.createCertainCallElement(superMethods.get(0));
+				// Note that annotations on the sole Method will be lost (and they should).
+				return ArchModelUtils.createCertainCallElement(choices.get(0).getName());
 			} else {
 				// Set popped SuperMethod as first.
-				newAltCall.setName(superMethods.get(0));
-				for (int i = 1; i < superMethods.size(); ++i) {
-					newAltCall.getA_name().add(superMethods.get(i));
+				newAltCall.setName(ArchModelUtils.duplicateAltCallChoice(choices.get(0)));
+				for (int i = 1; i < choices.size(); ++i) {
+					newAltCall.getA_name().add(
+							ArchModelUtils.duplicateAltCallChoice(choices.get(i)));
 				}
 				return newAltCall;
 			}
 		}
-		newAltCall.setName(firstSuperMethod);
+		newAltCall.setName(ArchModelUtils.duplicateAltCallChoice(firstChoice));
 
-		EList<SuperMethod> superMethods = altCall.getA_name();
-		for (int i = 0; i < superMethods.size(); ++i) {
-			SuperMethod superMethod = superMethods.get(i);
+		EList<AltCallChoice> choices = altCall.getA_name();
+		for (int i = 0; i < choices.size(); ++i) {
+			AltCallChoice choice = choices.get(i);
+			SuperMethod superMethod = choice.getName();
 			if (!(superMethod instanceof Method)) {
 				String message = "AltCall contains other than certain Method.";
 				throw new ModelErrorException(message);
 			}
 			if (equality.match((Method) superMethod)) {
 				// Add rest.
-				for (int j = i + 1; j < superMethods.size(); ++j) {
-					newAltCall.getA_name().add(superMethods.get(j));
+				for (int j = i + 1; j < choices.size(); ++j) {
+					newAltCall.getA_name().add(
+							ArchModelUtils.duplicateAltCallChoice(choices.get(j)));
 				}
 				if (newAltCall.getA_name().size() == 0) {
 					// Convert to CertainCall
-					return ArchModelUtils.createCertainCallElement(altCall.getName());
+					// Note that annotations on the sole Method will be lost (and they should).
+					return ArchModelUtils.createCertainCallElement(altCall.getName().getName());
 				} else {
 					return newAltCall;
 				}
 			} else {
-				newAltCall.getA_name().add(superMethod);
+				newAltCall.getA_name().add(
+						ArchModelUtils.duplicateAltCallChoice(choice));
 			}
 		}
 
@@ -215,7 +223,7 @@ public class RemoveUncertaintyAsUnnecessaryHandler extends AbstractUncertaintyOp
 		return altCall;
 	}
 	private AltMethod addAltMethodIfNeeded(Model model, AltCall altCall) throws ModelErrorException {
-		SuperMethod firstSuperMethod = altCall.getName();
+		SuperMethod firstSuperMethod = altCall.getName().getName();
 		if (!(firstSuperMethod instanceof Method)) {
 			String message = "AltCall contains other than certain Method.";
 			throw new ModelErrorException(message);

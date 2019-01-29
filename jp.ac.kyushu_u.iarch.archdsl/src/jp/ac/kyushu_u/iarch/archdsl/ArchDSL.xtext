@@ -77,8 +77,11 @@ CertainCall:
 OptCall:
 	(annotations+=Annotation)* "[" name=[SuperMethod|FQN] "]";
 
+AltCallChoice:
+	(annotations+=Annotation)* name=[SuperMethod|FQN];
+
 AltCall:
-	(annotations+=Annotation)* "{" (opt?="null" ",")? name=[SuperMethod|FQN] ("," (a_name+=[SuperMethod|FQN] | (opt?="null")?))* "}";
+	(annotations+=Annotation)* "{" (opt?="null" ",")? name=AltCallChoice ("," (a_name+=AltCallChoice | (opt?="null")?))* "}";
 
 SuperCall:
 	CertainCall | OptCall | AltCall;

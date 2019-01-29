@@ -2,6 +2,7 @@ package jp.ac.kyushu_u.iarch.checkplugin.testsupport;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.dom4j.io.SAXReader;
 import org.eclipse.emf.ecore.EObject;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Annotation;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
@@ -164,16 +166,23 @@ public class ArchReader {
 			throw new IllegalArgumentException();
 		}
 		// メソッドの設定
+		List<SuperMethod> superMethods = null;
+		if (isOpt) {
+			superMethods = Arrays.asList(isComp ? ((OptMethod) node).getMethod() : ((OptCall) node).getName());
+		} else if (isComp) {
+			superMethods = new ArrayList<>();
+			superMethods.addAll(((AltMethod) node).getMethods());
+		} else {
+			superMethods = new ArrayList<>();
+			superMethods.add(((AltCall) node).getName().getName());
+			for (AltCallChoice choice : ((AltCall) node).getA_name()) {
+				superMethods.add(choice.getName());
+			}
+		}
+
 		List<IMethodBean> methods = new LinkedList<>();
 		Map<String, String> importClasses = new HashMap<>();
-		for (SuperMethod method : isOpt
-				? Arrays.asList(isComp 
-					? ((OptMethod) node).getMethod() 
-					: ((OptCall) node).getName())
-				: isComp 
-					? ((AltMethod) node).getMethods()
-					: GeneralUtils.joinElemAndList(((AltCall) node).getName(), ((AltCall) node).getA_name())
-			) {
+		for (SuperMethod method : superMethods) {
 			MethodBean methodBean = generateMethodBean((Method) method, labelForIndex(methods.size()));
 			methods.add(methodBean);
 			importClasses.putAll(loadImports(methodBean.getPackageName(), methodBean.getClassName()));

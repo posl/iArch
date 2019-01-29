@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.ArchDSLFactory;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
@@ -464,7 +465,7 @@ public class GenerateArchCode implements IHandler {
 				AltCall altCall = convertToAltCall(model, message, resolveType);
 				if (altCall != null) {
 					// AltCall->Method->AltMethod->UncertainInterface->Interface
-					uBehavior.setEnd(ArchModelUtils.getInterface(altCall.getName()));
+					uBehavior.setEnd(ArchModelUtils.getInterface(altCall.getName().getName()));
 					uBehavior.getCall().add(altCall);
 				} else if (resolveType == RESOLVE_BY_ABORT) {
 					return null;
@@ -605,11 +606,13 @@ public class GenerateArchCode implements IHandler {
 			AltCall altCall = ArchDSLFactory.eINSTANCE.createAltCall();
 			boolean first = true;
 			for (Method m : altMethod.getMethods()) {
+				AltCallChoice choice = ArchDSLFactory.eINSTANCE.createAltCallChoice();
+				choice.setName(m);
 				if (first) {
-					altCall.setName(m);
+					altCall.setName(choice);
 					first = false;
 				} else {
-					altCall.getA_name().add(m);
+					altCall.getA_name().add(choice);
 				}
 			}
 			return altCall;
