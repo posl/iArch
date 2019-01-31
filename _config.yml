@@ -7,11 +7,11 @@
 
 # Site settings
 title: iArch-U
-email: iarch@posl.ait.kyushu-u.ac.jp
+# email: iarch@posl.ait.kyushu-u.ac.jp
 description: >
   iArch-U is an Eclipse plug-in for managing and modelling uncertainty which arises during the software development process.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "http://posl.github.io/iArch" # the base hostname & protocol for your site
+baseurl: "/iArch" # the subpath of your site, e.g. /blog
+url: "http://posl.github.io" # the base hostname & protocol for your site
 github_username:  posl
 
 # Build settings

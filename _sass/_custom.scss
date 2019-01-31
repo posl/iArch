@@ -165,6 +165,46 @@ div.page-content {
         margin: 40px auto 40px;
     }
 
+    // table
+    table {
+        margin: 15px 0px;
+        width: 100%;
+    }
+
+    table, td, th {
+        border: 1px hsl($theme-color-hue, 20% * $theme-color-sat, 70%) solid;
+        border-collapse: collapse;
+        padding: 4px 8px;
+    }
+
+    thead {
+        background-color: hsl($theme-color-hue, 40% * $theme-color-sat, 95%);
+    }
+
+    // note
+    .note {
+        font-size: 80%;
+        color: hsl(0, 0%, 20%);
+        margin: 15px 0px;
+        padding: 4px 8px;
+        border: 1px hsl($sub-color-hue, 20% * $theme-color-sat, 70%) dashed;
+        background-color: hsl($sub-color-hue, 40% * $theme-color-sat, 95%);
+
+        p {
+            margin-bottom: 0px;
+        }
+    }
+
+    .note:before {
+        content: "Note:";
+        display: block;
+        margin-bottom: 0px;
+        font-family: $sub-font-family;
+        font-weight: 600;
+        font-size: 100%;
+        color: hsl($sub-color-hue, 0% * $theme-color-sat, 40%);
+    }
+
     // code
     $code-bg-color: hsl($theme-color-hue, 0% * $theme-color-sat, 95%);
     $code-border-color: hsl($theme-color-hue, 0% * $theme-color-sat, 80%);
@@ -218,6 +258,28 @@ div.page-content {
 
     .tutorial-video:before {
         content: 'Tutorial Video';
+        display: block;
+        margin-bottom: 8px;
+        font-family: $sub-font-family;
+        font-size: 100%;
+        font-weight: bold;
+        padding: 0px 20px;
+        border-bottom: dashed;
+        border-width: 1px;
+        border-color: hsl($sub-color-hue, 20% * $theme-color-sat, 20%);
+        color: hsl($sub-color-hue, 20% * $theme-color-sat, 40%);
+    }
+
+    .introduction-video {
+        background-color: hsl($sub-color-hue, 20% * $theme-color-sat, 90%);
+        padding: 8px 15px 15px;
+        margin: 20px auto;
+        text-align: center;
+        // border-radius: 4px;
+    }
+
+    .introduction-video:before {
+        content: 'Introduction Video';
         display: block;
         margin-bottom: 8px;
         font-family: $sub-font-family;
