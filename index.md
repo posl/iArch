@@ -51,10 +51,9 @@ You might be able to run iArch-U with older versions of middleware and/or librar
 1. [Download](https://github.com/posl/iArch/releases) an iArch-U package archive file.
 1. Start Eclipse.
 1. Select `Help` -> `Install New Software`
-  - Install iArch-U IDE.
-    - Select `Add` and `Archive` to designate the downloaded archive file.
-    - Uncheck `Group items by category`.
-    - Check _iArch Integrated Development Environment_ and proceed.
+  - Select `Add` and `Archive` to designate the downloaded archive file.
+  - Uncheck `Group items by category`.
+  - Check _iArch Integrated Development Environment_ and proceed to install iArch-U IDE.
   - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
   - If you use the Testing Support function, also install a development build of _AspectJ Development Tools_ by updating the URL to one of download sites shown [here](https://eclipse.org/ajdt/downloads/).
 1. Restart Eclipse.
