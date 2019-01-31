@@ -20,15 +20,16 @@ If uncertainty can be dealt with modularly, we can add or delete uncertain conce
 The _iArch-U_ Integrated Development Environment (IDE) has been developed for that purpose.<!-- (double blind test)
  by the members of [Principles of Software Languages (POSL) research group](http://posl.ait.kyushu-u.ac.jp/index.html)
 -->
-iArch-U supports development with uncertainty management using interface component called _Archface-U_.
-Archface-U is a new interface designed to enable continuous development with ensuring traceability between software design and implementation.
+iArch-U supports software development with controlled uncertainty management processes using an interface description language called _Archface-U_.
+Archface-U is a new interface description language designed to enable continuous development of the software, ensuring traceability between software design and implementation.
 It is an interface between UML models and Java code described on the iArch-U IDE.
 
 iArch-U also has modelling and coding features which facilitate design and implementation involving uncertainty.
 iArch-U is an [Eclipse](https://eclipse.org/) plug-in, so you can view and edit project assets within an environment tightly integrated with Eclipse.
 It also has testing support and model inspection features for testing the software with uncertainty.
 
-For detailed information, please refer to the [documentation](documentation/). For basic usage of iArch-U, please see the [tutorials](tutorials/).
+For detailed information, please refer to the [documentation](documentation/).
+For basic usage of iArch-U, please see the [tutorials](tutorials/).
 
 
 # System requirements
@@ -38,8 +39,8 @@ For detailed information, please refer to the [documentation](documentation/). F
 - Graphiti SDK Plus 0.13~
 - Xtext Complete SDK 2.10.0~
 
-Also, if you would like to use Testing Support function, please install below.
-- AspectJ Development Tools 4.6~ (Development builds)
+Also, if you would like to use the Testing Support function, please install a package below.
+- AspectJ Development Tools 4.6~ (development build)
 
 These requirements are not strict.
 You might be able to run iArch-U with older versions of middleware and/or libraries.
@@ -47,15 +48,15 @@ You might be able to run iArch-U with older versions of middleware and/or librar
 
 # Installation
 
-1. [Download](https://github.com/posl/iArch/releases) the iArch-U package archive.
-1. Expand the archive and copy expanded `plugins` directory into Eclipse plugin directory.
-  - We recommend that you use not installer but archive(zip or tar) in Eclipse installation process. If you did so, you can find `plugins` directory in the following steps.
-    - The location where `eclipse.exe` exists (Windows)
-    - Right click `Eclipse.app`, choice "Show Package Contents", and move into `Contants/Eclipse/` (OSX)
+1. [Download](https://github.com/posl/iArch/releases) an iArch-U package archive file.
 1. Start Eclipse.
 1. Select `Help` -> `Install New Software`
+  - Install iArch-U IDE.
+    - Select `Add` and `Archive` to designate the downloaded archive file.
+    - Uncheck `Group items by category`.
+    - Check _iArch Integrated Development Environment_ and proceed.
   - Install _Graphiti SDK Plus_ and _Xtext Complete SDK_ plug-ins from the Eclipse official site.
-  - If you use Testing Support function, also install development builds of _AspectJ Development Tools_ from the update URL shown [here](https://eclipse.org/ajdt/downloads/).
+  - If you use the Testing Support function, also install a development build of _AspectJ Development Tools_ by updating the URL to one of download sites shown [here](https://eclipse.org/ajdt/downloads/).
 1. Restart Eclipse.
 
 
