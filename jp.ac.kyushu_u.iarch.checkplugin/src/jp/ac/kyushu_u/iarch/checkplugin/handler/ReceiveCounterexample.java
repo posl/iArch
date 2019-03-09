@@ -102,6 +102,8 @@ public class ReceiveCounterexample implements IHandler {
 				sb.append("Behavior type: uncertain\n");
 			}
 			String s = ArchModelUtils.serialize(point.element);
+			// remove comment line.
+			s = s.replaceAll("//[^\n]*\n", "");
 			// hide annotations.
 			s = s.replaceAll("@\\S+(?:\\s*\\([^\\)]+\\))?", "");
 			// compress white spaces.
