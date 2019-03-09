@@ -55,7 +55,12 @@
        <command
              categoryId="jp.ac.kyushu_u.iarch.checkPlugin.iarchcategory"
              id="jp.ac.kyushu_u.iarch.checkplugin.GenerateLTS2"
-             name="Generate P-FSP for LTS (trial)">
+             name="Generate P-FSP for LTS">
+       </command>
+       <command
+             categoryId="jp.ac.kyushu_u.iarch.checkPlugin.iarchcategory"
+             id="jp.ac.kyushu_u.iarch.checkplugin.ReceiveCounterexample"
+             name="Receive LTSA-PCA output">
        </command>
        <command
              id="jp.ac.kyushu_u.iarch.checkplugin.syncModelToArch"
@@ -111,6 +116,10 @@
          </command>
          <command
                commandId="jp.ac.kyushu_u.iarch.checkplugin.GenerateLTS2"
+               style="push">
+         </command>
+         <command
+               commandId="jp.ac.kyushu_u.iarch.checkplugin.ReceiveCounterexample"
                style="push">
          </command>
          <menu
@@ -227,6 +236,10 @@
        <handler
              class="jp.ac.kyushu_u.iarch.checkplugin.handler.GenerateLTS2"
              commandId="jp.ac.kyushu_u.iarch.checkplugin.GenerateLTS2">
+       </handler>
+       <handler
+             class="jp.ac.kyushu_u.iarch.checkplugin.handler.ReceiveCounterexample"
+             commandId="jp.ac.kyushu_u.iarch.checkplugin.ReceiveCounterexample">
        </handler>
        <handler
              class="jp.ac.kyushu_u.iarch.checkplugin.handler.GenerateArchCode"
