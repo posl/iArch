@@ -2,7 +2,7 @@
 <feature
       id="jp.ac.kyushu_u.iarch"
       label="iArch Integrated Development Environment"
-      version="1.2.0.qualifier"
+      version="1.2.1.qualifier"
       provider-name="POSL Research Group">
 
    <description url="http://posl.github.io/iArch/">
