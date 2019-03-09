@@ -1,0 +1,50 @@
+interface component Printer {
+	void get();
+	//void put();
+	void print();
+}
+uncertain component uPrinter extends Printer {
+	[void put();]
+	{void a();, void b();, void c();}
+}
+
+interface component Scanner {
+	void get();
+	void put();
+	void scan();
+}
+
+interface component CopyMachine {
+	void copy();
+}
+
+interface connector System {
+	//Printer = (Printer.get -> Printer.put -> Printer);
+	CopyMachine = (
+		Printer.get -> Scanner.get ->
+		CopyMachine.copy ->
+		Scanner.put -> uPrinter.put ->
+		CopyMachine);
+}
+uncertain connector uSystem extends System {
+	Printer_alt = ({
+		@ExecRatio(0.4) uPrinter.a,
+		uPrinter.b,
+		@ExecIgnore uPrinter.c
+		} -> Printer);
+
+	Printer = (Printer.get -> @ExecForce [uPrinter.put] -> Printer);
+	Scanner = (Scanner.get -> Scanner.put -> Scanner);
+
+	CopyMachine1 = (
+		Printer.get -> Scanner.get ->
+		CopyMachine.copy ->
+		Scanner.put -> @ExecForce [uPrinter.put] ->
+		CopyMachine);
+
+	CopyMachine2 = (
+		Printer.get -> Scanner.get ->
+		CopyMachine.copy ->
+		Scanner.put -> @ExecRatio(0.875) [uPrinter.put] ->
+		CopyMachine);
+}

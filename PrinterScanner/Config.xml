@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Project name="PrinterScanner">
+  <Archfile>
+    <Path Attribute="/PrinterScanner/arch/printer_scanner.arch"/>
+  </Archfile>
+  <ClassDiagram/>
+  <SequenceDiagram/>
+  <SourceCode>
+    <Path Attribute="/PrinterScanner/src/Scanner.java"/>
+    <Path Attribute="/PrinterScanner/src/Printer.java"/>
+    <Path Attribute="/PrinterScanner/src/CopyMachine.java"/>
+  </SourceCode>
+  <ARXML>
+    <Path Attribute="/PrinterScanner/codeXML.xml"/>
+  </ARXML>
+</Project>
