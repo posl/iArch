@@ -6,6 +6,13 @@ import org.eclipse.swt.widgets.Shell;
 
 public class MessageDialogUtils {
 
+	public static void showInfo(String title, String message) {
+		showInfo(PlatformUtils.getActiveShell(), title, message);
+	}
+	public static void showInfo(Shell parent, String title, String message) {
+		MessageDialog.open(MessageDialog.INFORMATION, parent, title, message, SWT.None);
+	}
+
 	public static void showWarning(String title, String message) {
 		showWarning(PlatformUtils.getActiveShell(), title, message);
 	}

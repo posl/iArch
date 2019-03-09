@@ -5,11 +5,14 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
+import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.serializer.ISerializer;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
@@ -32,6 +35,20 @@ import jp.ac.kyushu_u.iarch.archdsl.archDSL.UncertainConnector;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.UncertainInterface;
 
 public class ArchModelUtils {
+	//
+	// Generic
+	//
+
+	public static String serialize(EObject eObj) {
+		Resource resource = eObj.eResource();
+		if (resource instanceof XtextResource) {
+			ISerializer serializer = ((XtextResource) resource).getSerializer();
+			return serializer.serialize(eObj);
+		}
+		// returns null when given eObj is not an ArchDSL (nor other Xtext) object.
+		return null;
+	}
+
 	//
 	// Interface
 	//
@@ -189,6 +206,19 @@ public class ArchModelUtils {
 	public static String getClassName(Method method, boolean allowUncertain) {
 		Interface cInterface = getInterface(method, allowUncertain);
 		return cInterface != null ? cInterface.getName() : null;
+	}
+
+	// Returns class name which directly contains the method.
+	public static String getContainedClassName(Method method) {
+		Interface cInterface = getInterface(method, false);
+		if (cInterface != null) {
+			return cInterface.getName();
+		}
+		UncertainInterface uInterface = getUncertainInterface(method);
+		if (uInterface != null) {
+			return uInterface.getName();
+		}
+		return null;
 	}
 
 	//
@@ -399,6 +429,20 @@ public class ArchModelUtils {
 		return true;
 	}
 
+	/**
+	 * Check if the Behavior contains the Method.
+	 * @param behavior
+	 * @param method
+	 */
+	public static boolean containsMethod(Behavior behavior, Method method) {
+		for (Method m : behavior.getCall()) {
+			if (m == method) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//
 	// UncertainConnector
 	//
@@ -487,6 +531,37 @@ public class ArchModelUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * Check if the Behavior contains the Method.
+	 * @param uBehavior
+	 * @param method
+	 * @return
+	 */
+	public static boolean containsMethod(UncertainBehavior uBehavior, Method method) {
+		for (SuperCall superCall : uBehavior.getCall()) {
+			if (superCall instanceof CertainCall) {
+				if (((CertainCall) superCall).getName() == method) {
+					return true;
+				}
+			} else if (superCall instanceof OptCall) {
+				if (((OptCall) superCall).getName() == method) {
+					return true;
+				}
+			} else if (superCall instanceof AltCall) {
+				AltCall altCall = (AltCall) superCall;
+				if (altCall.getName().getName() == method) {
+					return true;
+				}
+				for (AltCallChoice altCallChoice : altCall.getA_name()) {
+					if (altCallChoice.getName() == method) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	//
