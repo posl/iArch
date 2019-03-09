@@ -2,15 +2,11 @@ package jp.ac.kyushu_u.iarch.checkplugin.handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltCallChoice;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.AltMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Annotation;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Behavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.CertainCall;
@@ -20,8 +16,10 @@ import jp.ac.kyushu_u.iarch.archdsl.archDSL.Method;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.Model;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.OptCall;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.SuperCall;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.SuperMethod;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.UncertainBehavior;
 import jp.ac.kyushu_u.iarch.archdsl.archDSL.UncertainConnector;
+import jp.ac.kyushu_u.iarch.archdsl.archDSL.UncertainInterface;
 import jp.ac.kyushu_u.iarch.checkplugin.utils.ArchModelUtils;
 
 public class ConnectorToFSP {
@@ -33,8 +31,7 @@ public class ConnectorToFSP {
 		//certain connectorをFSPに変換したものをcodeに入れていく
 		//uncertain connectorをFSPに変換したものをucodeに入れていく
 		List<String> code = certainBehaviorFSP(archface);
-		Map<String, Set<String>> refSymbolsMap = new HashMap<String, Set<String>>();
-		List<String> ucode = uncertainBehaviorFSP(archface, isProbabilistic, refSymbolsMap);
+		List<String> ucode = uncertainBehaviorFSP(archface, isProbabilistic);
 		//System.out.println(ucode);
 		if (code.isEmpty() && ucode.isEmpty()) {
 			return null;
@@ -54,91 +51,16 @@ public class ConnectorToFSP {
 				if (firstUc) {
 					firstUc = false;
 				} else {
-					sb.append(".\n");
+					sb.append(",\n");
 				}
 				sb.append(uc);
 			}
 			sb.append(".");
-
-			String compositeProcess = convertRefSymbols(refSymbolsMap);
-			if (compositeProcess != null) {
-				sb.append("\n").append(compositeProcess);
-			}
 		}
 		String fspcode = sb.toString();
-		//System.out.println(fspcode);
+		System.out.println(fspcode);
 
 		return fspcode;
-	}
-
-	// Naming conventions.
-	private String makeStateName(String symbol) {
-		return "U" + (symbol != null ? symbol : "null");
-	}
-	private String makeVariableName(String symbol) {
-		return "_" + (symbol != null ? symbol : "null");
-	}
-
-	// Make a composite process.
-	private String convertRefSymbols(Map<String, Set<String>> refSymbolsMap) {
-		List<String> processes = new ArrayList<String>();
-
-		Map<String, String> processMap = new HashMap<String, String>();
-		Set<String> resources = new HashSet<String>();
-
-		// parallel processes.
-		int processCount = 1;
-		List<String> symbols = new ArrayList<String>(refSymbolsMap.keySet());
-		Collections.sort(symbols);
-		for (String symbol : symbols) {
-			Set<String> refSymbols = refSymbolsMap.get(symbol);
-			if (!refSymbols.isEmpty()) {
-				String processName = "p" + (processCount++);
-				processMap.put(symbol, processName);
-				resources.addAll(refSymbols);
-
-				processes.add(processName + ":" + makeStateName(symbol));
-			}
-		}
-
-		// common resources.
-		for (String resource : resources) {
-			List<String> useProcesses = new ArrayList<String>();
-			for (String symbol : processMap.keySet()) {
-				Set<String> refSymbols = refSymbolsMap.get(symbol);
-				if (refSymbols.contains(resource)) {
-					useProcesses.add(processMap.get(symbol));
-				}
-			}
-			if (!useProcesses.isEmpty()) {
-				Collections.sort(useProcesses);
-				StringBuffer sb = new StringBuffer("{");
-				for (String up : useProcesses) {
-					if (up != useProcesses.get(0)) {
-						sb.append(",");
-					}
-					sb.append(up);
-				}
-				sb.append("}::").append(makeVariableName(resource))
-					.append(":").append(makeStateName(resource));
-				processes.add(sb.toString());
-			}
-		}
-
-		if (processes.isEmpty()) {
-			return null;
-		} else {
-			StringBuffer sb = new StringBuffer();
-			sb.append("||SYS = (");
-			for (String p : processes) {
-				if (p != processes.get(0)) {
-					sb.append(" || ");
-				}
-				sb.append(p);
-			}
-			sb.append(").");
-			return sb.toString();
-		}
 	}
 
 	//certain connectorをFSPに変換
@@ -166,433 +88,492 @@ public class ConnectorToFSP {
 
 	//uncertain connectorをFSPに変換
 	public List<String> uncertainBehaviorFSP(Model archface) {
-		return uncertainBehaviorFSP(archface, false, null);
+		return uncertainBehaviorFSP(archface, false);
 	}
-	public List<String> uncertainBehaviorFSP(Model archface,
-			boolean isProbabilistic, Map<String, Set<String>> refSymbolsMap) {
+	public List<String> uncertainBehaviorFSP(Model archface, boolean isProbabilistic) {
 		List<String> uncertainCodeList = new ArrayList<String>();
 		for (UncertainConnector uconnector : archface.getU_connectors()) {
 			for (UncertainBehavior ubehavior : uconnector.getU_behaviors()) {
-				Set<String> refSymbols = new HashSet<String>();
-				uncertainCodeList.add(getFSPString(ubehavior, isProbabilistic, refSymbols));
-				if (refSymbolsMap != null) {
-					String symbol = ubehavior.getName();
-					refSymbolsMap.put(symbol, refSymbols);
+				if (isProbabilistic) {
+					uncertainCodeList.add(getFSPString(ubehavior));
+				} else {
+					StringBuffer uncertainCode = new StringBuffer();
+
+					uncertainCode.append("U").append(ubehavior.getName())
+					.append(" = (");
+
+					List<String> altmethods = countaltmethod(ubehavior);
+					if (altmethods.isEmpty()) {
+						uncertainCode.append(printWithoutAltMethod(ubehavior, archface));
+					} else {
+						uncertainCode.append(printwithAltMethod(altmethods, ubehavior, archface));
+					}
+
+					uncertainCode.append(")");
+					uncertainCodeList.add(uncertainCode.toString());
 				}
 			}
 		}
 		return uncertainCodeList;
 	}
 
-	private static class BranchInfo {
-		double probability;
-		// action: <probability>method -> (next)
-		Method method;
-		List<BranchInfo> next;
-		// or end state. it should not be in a branch.
-		Interface endState;
-
-		BranchInfo copy() {
-			BranchInfo bi = new BranchInfo();
-			bi.probability = probability;
-			bi.method = method;
-			bi.next = next == null ? null : new ArrayList<BranchInfo>(next);
-			bi.endState = endState;
-			return bi;
-		}
-	}
-
-	private List<BranchInfo> convertToBranchInfo(UncertainBehavior uBehavior, boolean considerAnnotation) {
-		BranchInfo tail = new BranchInfo();
-		tail.probability = 1.0;
-		tail.endState = uBehavior.getEnd();
-		List<BranchInfo> heads = Arrays.asList(tail);
-		// to indicate the possibility that endState is in a branch.
-		boolean safeTail = false;
-
-		List<SuperCall> superCalls = uBehavior.getCall();
-		for (int i = superCalls.size() - 1; i >= 0; --i) {
-			SuperCall superCall = superCalls.get(i);
-
-			if (superCall instanceof CertainCall) {
-				// (<q1>Tail1 | <q2>Tail2 ...)
-				// => <1.0>Certain -> (<q1>Tail1 | <q2>Tail2 ...)
-				BranchInfo bi = new BranchInfo();
-				bi.probability = 1.0;
-				bi.method = (Method) ((CertainCall) superCall).getName();
-				bi.next = heads;
-
-				heads = Arrays.asList(bi);
-				if (!safeTail){
-					heads = joinBranch(heads);
-					safeTail = true;
-				}
-			} else if (superCall instanceof OptCall) {
-				// (<q1>Tail1 | <q2> Tail2 ...)
-				// => (<p>Opt -> (<q1>Tail1 ...) | <(1-p)*q1>Tail1 ...)
-				OptCall optCall = (OptCall) superCall;
-
-				double probability;
-				if (considerAnnotation) {
-					probability = getOptCallProbability(optCall);
-				} else {
-					probability = 0.5;
-				}
-
-				List<BranchInfo> bis = new ArrayList<BranchInfo>();
-				// call
-				if (probability > 0.0) {
-					BranchInfo bi1 = new BranchInfo();
-					bi1.probability = probability;
-					bi1.method = (Method) optCall.getName();
-					bi1.next = heads;
-					bis.add(bi1);
-				}
-				// not call
-				if (probability < 1.0) {
-					for (BranchInfo bi : heads) {
-						BranchInfo bi2 = bi.copy();
-						bi2.probability *= 1.0 - probability;
-						bis.add(bi2);
-					}
-				} else {
-					safeTail = true;
-				}
-				heads = bis;
-			} else if (superCall instanceof AltCall) {
-				// (<q1>Tail1 | <q2>Tail2 ...)
-				// => (<p1>Alt1 -> (<q1>Tail1 ...) | <p2>Alt2 -> (<q1>Tail1 ...))
-				AltCall altCall = (AltCall) superCall;
-
-				double[] probabilities;
-				if (considerAnnotation) {
-					probabilities = getAltCallProbabilities(altCall);
-				} else {
-					int size = 1 + altCall.getA_name().size();
-					probabilities = new double[size];
-					for (int j = 0; j < size; ++j) {
-						probabilities[j] = 1.0 / size;
-					}
-				}
-
-				List<BranchInfo> bis = new ArrayList<BranchInfo>();
-				int j = 0;
-				if (probabilities[j] > 0.0) {
-					BranchInfo bi1 = new BranchInfo();
-					bi1.probability = probabilities[j++];
-					bi1.method = (Method) altCall.getName().getName();
-					bi1.next = heads;
-					bis.add(bi1);
-				} else {
-					j++;
-				}
-				for (AltCallChoice altCallChoice : altCall.getA_name()) {
-					if (probabilities[j] > 0.0) {
-						BranchInfo bi2 = new BranchInfo();
-						bi2.probability = probabilities[j++];
-						bi2.method = (Method) altCallChoice.getName();
-						bi2.next = heads;
-						bis.add(bi2);
-					} else {
-						j++;
-					}
-				}
-
-				heads = bis;
-				if (!safeTail){
-					heads = joinBranch(heads);
-					safeTail = true;
-				}
+	//optionalなメソッドの数を数える
+	public int countoptmethod(UncertainBehavior ubehavior, Model archface) {
+		int numopt = 0;
+		for (SuperCall supercall : ubehavior.getCall()) {
+			if (supercall instanceof OptCall) {
+				numopt++;
 			}
 		}
-		return heads;
+		return numopt;
 	}
-	// example of what this method does:
-	// <p>A -> (<q1>Tail1 ... | State)
-	// => (<p*z>A -> (<q1/z>Tail1 ...) | <p*(1-z)>A -> State)
-	// where z = sum_i(qi)
-	private List<BranchInfo> joinBranch(List<BranchInfo> heads) {
-		List<BranchInfo> newHeads = new ArrayList<BranchInfo>();
-		for (BranchInfo head : heads) {
-			BranchInfo endBranch = null;
-			if (head.next.size() > 1) {
-				for (BranchInfo child : head.next){
-					if (child.endState != null) {
-						endBranch = child;
+	
+	//alternativeなメソッドの数を数える
+	public List<String> countaltmethod(UncertainBehavior ubehavior) {
+		List<String> altmethods = new ArrayList<String>();
+		for (SuperCall supercall : ubehavior.getCall()) {
+			if (supercall instanceof AltCall) {
+				// Store string representation of the first alternative.
+				altmethods.add(((AltCall) supercall).getName().getName().toString());
+			}
+		}
+		return altmethods;
+	}
+
+	//alternativeなメソッドにあるメソッドをリストにする
+	//{void a(),void b(),void c()}というalternativeなメソッドがあればa(),b(),c()をリストにする
+	public List<List<String>> createAltMethod(Model archface) {
+		List<List<String>> altlist = new ArrayList<List<String>>();
+
+		for (UncertainInterface u_interface : archface.getU_interfaces()) {
+			for (AltMethod a_method : u_interface.getAltmethods()) {
+				List<String> subalt = new ArrayList<String>();
+				for (Method m : a_method.getMethods()) {
+					// Store string representation of each alternative.
+					subalt.add(m.toString());
+				}
+				altlist.add(subalt);
+			}
+		}
+		return altlist;
+	}
+
+	public String printWithoutAltMethod(UncertainBehavior ubehavior, Model archface) {
+		StringBuffer uncertainCode = new StringBuffer();
+
+		int numopt = countoptmethod(ubehavior, archface);
+		int roop = 1;
+		for (int i = 0; i < numopt; i++) {
+			roop = roop * 2;
+		}
+		int[] optbit = new int[numopt];
+
+		boolean firstPattern = true;
+		while (roop > 0) {
+			if (firstPattern) {
+				firstPattern = false;
+			} else {
+				uncertainCode.append(" |\n\t");
+			}
+
+			int i = 0;
+			for (SuperCall supercall : ubehavior.getCall()) {
+				if (supercall instanceof OptCall) {
+					if (optbit[i] == 1) {
+						uncertainCode.append(getFSPString((OptCall) supercall)).append(" -> ");
+					}
+					i++;
+				} else if (supercall instanceof AltCall) {
+					System.out.println("ERROE ALTMETHODPRINTL");
+				} else {
+					uncertainCode.append(getFSPString((CertainCall) supercall)).append(" -> ");
+				}
+			}
+			uncertainCode.append("U").append(ubehavior.getEnd().getName());
+			roop--;
+			createbit(optbit);
+		}
+
+		return uncertainCode.toString();
+	}
+
+	//alternativeなメソッドがconnectorに存在する場合の処理
+	public String printwithAltMethod(List<String> altmethods, UncertainBehavior ubehavior, Model archface) {
+		StringBuffer uncertainCode = new StringBuffer();
+
+		int numopt = countoptmethod(ubehavior, archface);
+		int optroop = 1;
+		for (int i = 0; i < numopt; i++) {
+			optroop = optroop * 2;
+		}
+		int[] optbit = new int[numopt];
+
+		List<List<String>> altlist_used = new ArrayList<List<String>>();
+		List<List<String>> altlist = createAltMethod(archface);
+		for (String firstAltMethod : altmethods) {
+			for (List<String> altMethods : altlist){
+				for (String name : altMethods) {
+					if (firstAltMethod.equals(name)) {
+						altlist_used.add(altMethods);
 						break;
 					}
 				}
 			}
-			if (endBranch == null) {
-				newHeads.add(head);
-			} else {
-				BranchInfo head1 = head.copy();
-				head1.probability *= 1.0 - endBranch.probability;
-				List<BranchInfo> next1 = new ArrayList<BranchInfo>();
-				for (BranchInfo child : head1.next) {
-					if (child != endBranch) {
-						BranchInfo newChild = child.copy();
-						newChild.probability /= 1.0 - endBranch.probability;
-						next1.add(newChild);
-					}
-				}
-				head1.next = next1;
-				newHeads.add(head1);
-
-				BranchInfo head2 = head.copy();
-				head2.probability *= endBranch.probability;
-				head2.next = Arrays.asList(endBranch);
-				newHeads.add(head2);
-			}
 		}
-		return newHeads;
-	}
 
-	// Get probability from the annotation of OptCall.
-	private double getOptCallProbability(OptCall optCall) {
-		double probability = 0.5;
-		if (! optCall.getAnnotations().isEmpty()) {
-			Annotation annotation = optCall.getAnnotations().get(0);
-			String aName = annotation.getName();
-			if ("ExecForce".equals(aName)) {
-				probability = 1.0;
-			} else if ("ExecIgnore".equals(aName)) {
-				probability = 0.0;
-			} else if ("ExecRatio".equals(aName)) {
-				if (! annotation.getArgs().isEmpty()) {
-					try {
-						double p = Double.parseDouble(annotation.getArgs().get(0));
-						probability = p > 1.0 ? 1.0 : (p > 0.0 ? p : 0.0);
-					} catch (NumberFormatException e) {
-						System.err.println("ignored ExecRatio with non-number.");
-					}
+		boolean firstPattern = true;
+		while (optroop > 0) {
+			int altroop = 1;
+			int[] selectAlt = new int[altlist_used.size()];
+			for (int k = 0; k < altlist_used.size(); k++) {
+				altroop *= altlist_used.get(k).size();
+			}
+
+			while (altroop > 0) {
+				if (firstPattern) {
+					firstPattern = false;
 				} else {
-					System.err.println("ignored ExecRatio without arguments.");
+					uncertainCode.append(" |\n\t");
 				}
-			} else if ("ExecWeight".equals(aName)) {
-				System.err.println("ignored ExecWeight.");
+
+				int altset = 0;
+				int optelement = 0;
+				for (SuperCall supercall : ubehavior.getCall()) {
+					if (supercall instanceof OptCall) {
+						if (optbit[optelement] == 1) {
+							uncertainCode.append(getFSPString((OptCall) supercall)).append(" -> ");
+						}
+						optelement++;
+					} else if (supercall instanceof AltCall) {
+						uncertainCode.append(getFSPString((AltCall) supercall, selectAlt[altset])).append(" -> ");
+						altset++;
+					} else {
+						uncertainCode.append(getFSPString((CertainCall) supercall)).append(" -> ");
+					}
+				}
+				uncertainCode.append("U").append(ubehavior.getEnd().getName());
+				altroop--;
+				incleSelectAlt(selectAlt, altlist_used);
 			}
+
+			optroop--;
+			createbit(optbit);
 		}
-		return probability;
+
+		return uncertainCode.toString();
 	}
-	// Get array of probability from the annotation of AltCall.
-	private double[] getAltCallProbabilities(AltCall altCall) {
-		// Collect annotations.
-		List<Annotation> annotationList = new ArrayList<Annotation>();
-		if (altCall.getName().getAnnotations().isEmpty()) {
-			annotationList.add(null);
-		} else {
-			annotationList.add(altCall.getName().getAnnotations().get(0));
-		}
-		for (AltCallChoice choice : altCall.getA_name()) {
-			if (choice.getAnnotations().isEmpty()) {
-				annotationList.add(null);
+
+	static int[] createbit(int num[]) {
+		for (int i = 0; i < num.length; i++) {
+			if (num[i] == 0) {
+				num[i] = 1;
+				return num;
 			} else {
-				annotationList.add(choice.getAnnotations().get(0));
+				num[i] = 0;
 			}
 		}
-		int size = annotationList.size();
-		double[] probabilities = new double[size];
-		double sum = 0.0;
+		return num;
+	}
 
-		// 1. If any call has "ExecForce", choose calls which have it.
-		for (int i = 0; i < size; ++i) {
-			Annotation an = annotationList.get(i);
-			if (an != null && "ExecForce".equals(an.getName())) {
-				probabilities[i] = 1.0;
-				sum += 1.0;
+	static int[] incleSelectAlt(int[] selectAlt, List<List<String>> altlist) {
+		for (int i = 0; i < selectAlt.length; i++) {
+			if (selectAlt[i] != altlist.get(i).size() - 1) {
+				selectAlt[i]++;
+				return selectAlt;
+			} else {
+				selectAlt[i] = 0;
 			}
 		}
-		if (sum > 0.0) {
-			for (int i = 0; i < size; ++i) {
-				probabilities[i] /= sum;
-			}
-			return probabilities;
-		}
+		return selectAlt;
+	}
 
-		// 2. If any call has ExecRatio or ExecWeight...
-		boolean hasExecRatio = false;
-		boolean hasExecWeight = false;
-		for (int i = 0; i < size; ++i) {
-			Annotation an = annotationList.get(i);
-			if (an != null) {
-				if ("ExecRatio".equals(an.getName())) {
-					if (! an.getArgs().isEmpty()) {
+	private static class BranchInfo {
+		double probability;
+		String identifier;
+		BranchInfo(double probability, String identifier) {
+			this.probability = probability;
+			this.identifier = identifier;
+		}
+		BranchInfo copy() {
+			return new BranchInfo(probability, identifier);
+		}
+	}
+
+	private List<List<BranchInfo>> convertToBranchInfo(UncertainBehavior uBehavior) {
+		List<List<BranchInfo>> info = new ArrayList<List<BranchInfo>>();
+		for (SuperCall superCall : uBehavior.getCall()) {
+			info.add(convertToBranchInfo(superCall));
+		}
+		return info;
+	}
+
+	private List<BranchInfo> convertToBranchInfo(SuperCall superCall) {
+		if (superCall instanceof CertainCall) {
+			return Arrays.asList(new BranchInfo(1.0, getFSPString((CertainCall) superCall)));
+		} else if (superCall instanceof OptCall) {
+			OptCall optCall = (OptCall) superCall;
+
+			double probability = 0.5;
+			if (! optCall.getAnnotations().isEmpty()) {
+				Annotation annotation = optCall.getAnnotations().get(0);
+				String aName = annotation.getName();
+				if ("ExecForce".equals(aName)) {
+					probability = 1.0;
+				} else if ("ExecIgnore".equals(aName)) {
+					probability = 0.0;
+				} else if ("ExecRatio".equals(aName)) {
+					if (! annotation.getArgs().isEmpty()) {
 						try {
-							Double.parseDouble(an.getArgs().get(0));
-							hasExecRatio = true;
+							probability = Double.parseDouble(annotation.getArgs().get(0));
 						} catch (NumberFormatException e) {
 							System.err.println("ignored ExecRatio with non-number.");
 						}
+					} else {
+						System.err.println("ignored ExecRatio without arguments.");
 					}
-				} else if ("ExecWeight".equals(an.getName())) {
-					if (! an.getArgs().isEmpty()) {
-						try {
-							Double.parseDouble(an.getArgs().get(0));
-							hasExecWeight = true;
-						} catch (NumberFormatException e) {
-							System.err.println("ignored ExecWeight with non-number.");
+				} else if ("ExecWeight".equals(aName)) {
+					System.err.println("ignored ExecWeight.");
+				}
+			}
+
+			if (probability <= 0.0) {
+				return Arrays.asList(new BranchInfo(1.0, null));
+			} else if (probability >= 1.0) {
+				return Arrays.asList(new BranchInfo(1.0, getFSPString((OptCall) superCall)));
+			} else {
+				BranchInfo bi1 = new BranchInfo(1.0 - probability, null);
+				BranchInfo bi2 = new BranchInfo(probability, getFSPString((OptCall) superCall));
+				return Arrays.asList(bi1, bi2);
+			}
+		} else if (superCall instanceof AltCall) {
+			AltCall altCall = (AltCall) superCall;
+
+			List<Annotation> annotationList = new ArrayList<Annotation>();
+			if (altCall.getName().getAnnotations().isEmpty()) {
+				annotationList.add(null);
+			} else {
+				annotationList.add(altCall.getName().getAnnotations().get(0));
+			}
+			for (AltCallChoice choice : altCall.getA_name()) {
+				if (choice.getAnnotations().isEmpty()) {
+					annotationList.add(null);
+				} else {
+					annotationList.add(choice.getAnnotations().get(0));
+				}
+			}
+			int size = annotationList.size();
+
+			List<String> execForceChoices = new ArrayList<String>();
+			for (int i = 0; i < size; ++i) {
+				Annotation an = annotationList.get(i);
+				if (an != null && "ExecForce".equals(an.getName())) {
+					execForceChoices.add(getFSPString(altCall, i));
+				}
+			}
+			if (! execForceChoices.isEmpty()) {
+				double probability = 1.0 / execForceChoices.size();
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
+				for (String identifier : execForceChoices) {
+					bis.add(new BranchInfo(probability, identifier));
+				}
+				return bis;
+			}
+
+			boolean hasExecRatio = false;
+			boolean hasExecWeight = false;
+			for (int i = 0; i < size; ++i) {
+				Annotation an = annotationList.get(i);
+				if (an != null) {
+					if ("ExecRatio".equals(an.getName())) {
+						if (! an.getArgs().isEmpty()) {
+							try {
+								Double.parseDouble(an.getArgs().get(0));
+								hasExecRatio = true;
+							} catch (NumberFormatException e) {
+								System.err.println("ignored ExecRatio with non-number.");
+							}
+						}
+					} else if ("ExecWeight".equals(an.getName())) {
+						if (! an.getArgs().isEmpty()) {
+							try {
+								Double.parseDouble(an.getArgs().get(0));
+								hasExecWeight = true;
+							} catch (NumberFormatException e) {
+								System.err.println("ignored ExecWeight with non-number.");
+							}
 						}
 					}
 				}
 			}
-		}
-		if (hasExecRatio) {
-			if (hasExecWeight) {
-				System.err.println("cannot set ExecRatio and ExecWeight.");
-			} else {
-				int countPositive = 0;
-				int countIgnore = 0;
+			if (hasExecRatio) {
+				if (hasExecWeight) {
+					System.err.println("cannot set ExecRatio and ExecWeight.");
+				} else {
+					double[] ratio = new double[size];
+					for (int i = 0; i < size; ++i) {
+						ratio[i] = 0.0;
+						Annotation an = annotationList.get(i);
+						if (an != null) {
+							if ("ExecRatio".equals(an.getName())) {
+								if (! an.getArgs().isEmpty()) {
+									try {
+										ratio[i] = Double.parseDouble(an.getArgs().get(0));
+									} catch (NumberFormatException e) {
+									}
+								}
+							}
+						}
+					}
+					double totalRatio = 0.0;
+					int countPositive = 0;
+					for (int i = 0; i < size; ++i) {
+						if (ratio[i] > 0.0) {
+							totalRatio += ratio[i];
+							countPositive++;
+						}
+					}
+					if (totalRatio >= 1.0) {
+						List<BranchInfo> bis = new ArrayList<BranchInfo>();
+						for (int i = 0; i < size; ++i) {
+							if (ratio[i] > 0.0) {
+								bis.add(new BranchInfo(ratio[i] / totalRatio,
+										getFSPString(altCall, i)));
+							}
+						}
+						return bis;
+					} else if (countPositive > 0) {
+						double rest = (1.0 - totalRatio) / (size - countPositive);
+						List<BranchInfo> bis = new ArrayList<BranchInfo>();
+						for (int i = 0; i < size; ++i) {
+							double p = ratio[i] > 0.0 ? ratio[i] : rest;
+							bis.add(new BranchInfo(p, getFSPString(altCall, i)));
+						}
+						return bis;
+					}
+				}
+			} else if (hasExecWeight) {
+				double[] weight = new double[size];
 				for (int i = 0; i < size; ++i) {
+					weight[i] = 0.0;
 					Annotation an = annotationList.get(i);
 					if (an != null) {
-						if ("ExecRatio".equals(an.getName())) {
+						if ("ExecWeight".equals(an.getName())) {
 							if (! an.getArgs().isEmpty()) {
 								try {
-									double p = Double.parseDouble(an.getArgs().get(0));
-									if (p > 0.0) {
-										probabilities[i] = p;
-										sum += p;
-										countPositive++;
-									}
+									weight[i] = Double.parseDouble(an.getArgs().get(0));
 								} catch (NumberFormatException e) {
 								}
 							}
-						} else if ("ExecIgnore".equals(an.getName())) {
-							countIgnore++;
 						}
 					}
 				}
-				// If total ratio is less than 1,
-				// (1 - total_ratio) is distributed to calls
-				// which does not have ratios nor ignore labels.
-				if (sum >= 1.0 || countPositive + countIgnore >= size) {
-					// can not distribute.
-					for (int i = 0; i < size; ++i) {
-						probabilities[i] /= sum;
+				double totalWeight = 0.0;
+				for (int i = 0; i < size; ++i) {
+					if (weight[i] > 0.0) {
+						totalWeight += weight[i];
 					}
-					return probabilities;
-				} else if (sum > 0.0) {
-					double rest = (1.0 - sum) / (size - countPositive - countIgnore);
+				}
+				if (totalWeight > 0.0) {
+					List<BranchInfo> bis = new ArrayList<BranchInfo>();
 					for (int i = 0; i < size; ++i) {
-						if (probabilities[i] == 0.0) {
-							Annotation an = annotationList.get(i);
-							if (!(an != null && "ExecIgnore".equals(an.getName()))) {
-								probabilities[i] = rest;
-							}
+						if (weight[i] > 0.0) {
+							double p = weight[i] / totalWeight;
+							bis.add(new BranchInfo(p, getFSPString(altCall, i)));
 						}
 					}
-					return probabilities;
+					return bis;
 				}
 			}
-		} else if (hasExecWeight) {
+
+			List<String> validChoices = new ArrayList<String>();
 			for (int i = 0; i < size; ++i) {
 				Annotation an = annotationList.get(i);
-				if (an != null && "ExecWeight".equals(an.getName())) {
-					if (! an.getArgs().isEmpty()) {
-						try {
-							double p = Double.parseDouble(an.getArgs().get(0));
-							if (p > 0.0) {
-								probabilities[i] = p;
-								sum += p;
-							}
-						} catch (NumberFormatException e) {
-						}
-					}
+				if (!(an != null && "ExecIgnore".equals(an.getName()))) {
+					validChoices.add(getFSPString(altCall, i));
 				}
 			}
-			if (sum > 0.0) {
+			if (validChoices.isEmpty()) {
+				System.err.println("ignored ExecIgnore for all choices.");
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
 				for (int i = 0; i < size; ++i) {
-					probabilities[i] /= sum;
+					bis.add(new BranchInfo(1.0 / size, getFSPString(altCall, i)));
 				}
-				return probabilities;
+				return bis;
+			} else {
+				double probability = 1.0 / validChoices.size();
+				List<BranchInfo> bis = new ArrayList<BranchInfo>();
+				for (String identifier : validChoices) {
+					bis.add(new BranchInfo(probability, identifier));
+				}
+				return bis;
 			}
 		}
-
-		// 3. excludes ExecIgnore
-		for (int i = 0; i < size; ++i) {
-			Annotation an = annotationList.get(i);
-			if (!(an != null && "ExecIgnore".equals(an.getName()))) {
-				probabilities[i] = 1.0;
-				sum += 1.0;
-			}
-		}
-		if (sum > 0.0) {
-			for (int i = 0; i < size; ++i) {
-				probabilities[i] /= sum;
-			}
-		} else {
-			System.err.println("ignored ExecIgnore for all choices.");
-			for (int i = 0; i < size; ++i) {
-				probabilities[i] = 1.0 / size;
-			}
-		}
-		return probabilities;
+		return null;
 	}
 
-	private String getFSPString(String ifName, String stateName,
-			BranchInfo bi, boolean printProbability, int indentLevel,
-			Set<String> refSymbols) {
-		StringBuffer sb = new StringBuffer();
-		if (bi.endState != null) {
-			//sb.append(makeStateName(bi.endState.getName()));
-			sb.append(stateName);
-		} else {
-			if (printProbability) {
-				sb.append("<").append(bi.probability).append("> ");
-			}
-
-			Interface cInterface = ArchModelUtils.getInterface(bi.method);
-			if (cInterface != null && !ifName.equals(cInterface.getName())) {
-				String symbol = cInterface.getName();
-				refSymbols.add(symbol);
-				sb.append(makeVariableName(symbol)).append(".");
-			}
-			sb.append(bi.method.getName()).append(" -> ");
-
-			boolean branch = (bi.next.size() > 1);
-			if (branch) {
-				sb.append("\n");
-				for (int i = 0; i <= indentLevel; ++i) {
-					sb.append("\t");
+	private List<List<BranchInfo>> flattenBranchInfo(List<List<BranchInfo>> info) {
+		List<List<BranchInfo>> flattenInfo = null;
+		for (List<BranchInfo> branch : info) {
+			if (flattenInfo == null) {
+				flattenInfo = new ArrayList<List<BranchInfo>>();
+				for (BranchInfo choice : branch) {
+					List<BranchInfo> flattenChoice = new ArrayList<BranchInfo>();
+					flattenChoice.add(choice.copy());
+					flattenInfo.add(flattenChoice);
 				}
-				sb.append("(");
-				indentLevel++;
-			}
-			for (BranchInfo child : bi.next) {
-				if (child != bi.next.get(0)) {
-					sb.append("\n");
-					for (int i = 0; i < indentLevel; ++i) {
-						sb.append("\t");
+			} else {
+				List<List<BranchInfo>> newInfo = new ArrayList<List<BranchInfo>>();
+				for (List<BranchInfo> flattenChoice : flattenInfo) {
+					for (BranchInfo choice : branch) {
+						List<BranchInfo> newChoice = new ArrayList<BranchInfo>();
+						for (BranchInfo f : flattenChoice) {
+							newChoice.add(f.copy());
+						}
+						newChoice.add(choice.copy());
+						newInfo.add(newChoice);
 					}
-					sb.append("| ");
 				}
-				String childFSP = getFSPString(ifName, stateName,
-						child, printProbability, indentLevel, refSymbols);
-				sb.append(childFSP);
-			}
-			if (branch) {
-				indentLevel--;
-				sb.append(")");
+				flattenInfo = newInfo;
 			}
 		}
-		return sb.toString();
+
+		for (List<BranchInfo> choice : flattenInfo) {
+			for (int j = 1; j < choice.size(); ++j) {
+				choice.get(0).probability *= choice.get(j).probability;
+				choice.get(j).probability = 1.0;
+			}
+		}
+		return flattenInfo;
 	}
 
-	private String getFSPString(UncertainBehavior uBehavior, boolean isProbabilistic,
-			Set<String> refSymbols) {
-		List<BranchInfo> info = convertToBranchInfo(uBehavior, isProbabilistic);
-
-		String ifName = uBehavior.getEnd().getName();
-		String stateName = makeStateName(uBehavior.getName());
+	private String getFSPString(UncertainBehavior uBehavior) {
+		List<List<BranchInfo>> info = convertToBranchInfo(uBehavior);
+		info = flattenBranchInfo(info);
 
 		StringBuffer sb = new StringBuffer();
-		sb.append(stateName).append(" = (");
-		for (BranchInfo bi : info) {
-			if (bi != info.get(0)) {
-				sb.append("\n\t| ");
+		sb.append("U").append(uBehavior.getName()).append(" = (");
+
+		boolean firstChoice = true;
+		for (List<BranchInfo> choice : info) {
+			if (firstChoice) {
+				firstChoice = false;
+			} else {
+				sb.append(" |\n\t");
 			}
-			sb.append(getFSPString(ifName, stateName, bi, isProbabilistic, 0, refSymbols));
+
+			sb.append("<").append(choice.get(0).probability).append("> ");
+			boolean first = true;
+			for (BranchInfo step : choice) {
+				if (step.identifier != null) {
+					if (first) {
+						first = false;
+					} else {
+						sb.append("<1.0> ");
+					}
+					sb.append(step.identifier).append(" -> ");
+				}
+			}
+			sb.append("U").append(uBehavior.getEnd().getName());
 		}
 
 		return sb.append(")").toString();
@@ -601,6 +582,23 @@ public class ConnectorToFSP {
 	private String getFSPString(Method methodCall) {
 		String className = ArchModelUtils.getClassName(methodCall, true);
 		String methodName = methodCall.getName();
-		return makeVariableName(className) + "." + methodName;
+		return "_" + className + "." + methodName;
 	}
+	private String getFSPString(SuperMethod superMethod) {
+		Interface cInterface = ArchModelUtils.getInterface(superMethod);
+		String className = cInterface != null ? cInterface.getName() : "";
+		String methodName = superMethod instanceof Method ? ((Method) superMethod).getName() : "";
+		return "_" + className + "." + methodName;
+	}
+	private String getFSPString(CertainCall certainCall) {
+		return getFSPString(certainCall.getName());
+	}
+	private String getFSPString(OptCall optCall) {
+		return getFSPString(optCall.getName());
+	}
+	private String getFSPString(AltCall altCall, int i) {
+		return getFSPString(i == 0 ? altCall.getName().getName()
+				: altCall.getA_name().get(i - 1).getName());
+	}
+
 }
