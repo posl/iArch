@@ -65,15 +65,23 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//UncertainBehavior/call"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//UncertainBehavior/end"/>
     </genClasses>
-    <genClasses ecoreClass="ArchDSL.ecore#//CertainCall"/>
-    <genClasses ecoreClass="ArchDSL.ecore#//OptCall"/>
+    <genClasses ecoreClass="ArchDSL.ecore#//CertainCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//CertainCall/name"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchDSL.ecore#//OptCall">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//OptCall/name"/>
+    </genClasses>
+    <genClasses ecoreClass="ArchDSL.ecore#//AltCallChoice">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//AltCallChoice/annotations"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//AltCallChoice/name"/>
+    </genClasses>
     <genClasses ecoreClass="ArchDSL.ecore#//AltCall">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ArchDSL.ecore#//AltCall/opt"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//AltCall/a_name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//AltCall/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//AltCall/a_name"/>
     </genClasses>
     <genClasses ecoreClass="ArchDSL.ecore#//SuperCall">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//SuperCall/annotations"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ArchDSL.ecore#//SuperCall/name"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

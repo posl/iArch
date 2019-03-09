@@ -77,16 +77,26 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="end" eType="#//Interface"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="CertainCall" eSuperTypes="#//SuperCall"/>
-  <eClassifiers xsi:type="ecore:EClass" name="OptCall" eSuperTypes="#//SuperCall"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CertainCall" eSuperTypes="#//SuperCall">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//SuperMethod"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OptCall" eSuperTypes="#//SuperCall">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//SuperMethod"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AltCallChoice">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
+        eType="#//Annotation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//SuperMethod"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AltCall" eSuperTypes="#//SuperCall">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="opt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="a_name" unique="false"
-        upperBound="-1" eType="#//SuperMethod"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//AltCallChoice"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="a_name" upperBound="-1"
+        eType="#//AltCallChoice" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SuperCall">
     <eStructuralFeatures xsi:type="ecore:EReference" name="annotations" upperBound="-1"
         eType="#//Annotation" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="name" eType="#//SuperMethod"/>
   </eClassifiers>
 </ecore:EPackage>
